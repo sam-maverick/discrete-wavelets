@@ -1,6 +1,6 @@
 {
   "name": "discrete-wavelets",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "A Discrete Wavelet Transform (DWT) library for the web.",
   "keywords": [
     "discrete",
@@ -28,6 +28,7 @@
     "node": ">=6.0.0"
   },
   "scripts": {
+    "prepare": "npm run build",
     "lint": "eslint src/**/*.ts",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs src/wt.ts",
