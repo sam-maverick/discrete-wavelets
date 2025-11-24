@@ -2,28 +2,30 @@ export { PaddingMode, PaddingModes, PaddingWidths, } from './padding/padding';
 export { Filters, Wavelet, WaveletBasis, WaveletType, } from './wavelets/wavelets';
 import { PaddingMode, PaddingModes, PaddingWidths } from './padding/padding';
 import { Wavelet } from "./wavelets/wavelets";
-export interface WaveletCoefficients2D {
-    approximation: number[][];
-    details: {
-        LH: number[][];
-        HL: number[][];
-        HH: number[][];
-    }[];
-    size: [number, number];
-    mask?: {
+declare namespace DiscreteWavelets {
+    interface WaveletCoefficients2D {
         approximation: number[][];
         details: {
             LH: number[][];
             HL: number[][];
             HH: number[][];
         }[];
-    };
-}
-export interface WaveletBands2D {
-    LL: number[][];
-    LH: number[][];
-    HL: number[][];
-    HH: number[][];
+        size: [number, number];
+        mask?: {
+            approximation: number[][];
+            details: {
+                LH: number[][];
+                HL: number[][];
+                HH: number[][];
+            }[];
+        };
+    }
+    interface WaveletBands2D {
+        LL: number[][];
+        LH: number[][];
+        HL: number[][];
+        HH: number[][];
+    }
 }
 /**
  * Collection of methods for Discrete Wavelet Transform (DWT).
@@ -41,20 +43,20 @@ export default class DiscreteWavelets {
         cA: number[][];
         cD: number[][];
     };
-    static dwtCols(cA: number[][], cD: number[][], wavelet: Wavelet, paddingmode: PaddingMode): WaveletBands2D;
+    static dwtCols(cA: number[][], cD: number[][], wavelet: Wavelet, paddingmode: PaddingMode): DiscreteWavelets.WaveletBands2D;
     static idwtRows(cA: number[][], cD: number[][], wavelet: Wavelet): number[][];
-    static idwtCols(bands: WaveletBands2D, wavelet: Wavelet): {
+    static idwtCols(bands: DiscreteWavelets.WaveletBands2D, wavelet: Wavelet): {
         cA: number[][];
         cD: number[][];
     };
-    static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode): WaveletBands2D;
-    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number): WaveletCoefficients2D;
+    static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode): DiscreteWavelets.WaveletBands2D;
+    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number): DiscreteWavelets.WaveletCoefficients2D;
     static idwt2(approx: number[][], detail: {
         LH: number[][];
         HL: number[][];
         HH: number[][];
     }, wavelet: Wavelet): number[][];
-    static waverec2(coeffs: WaveletCoefficients2D, wavelet: Wavelet): number[][];
+    static waverec2(coeffs: DiscreteWavelets.WaveletCoefficients2D, wavelet: Wavelet): number[][];
     /**
      *     1-D FUNCTIONS
      */

@@ -42,34 +42,34 @@ import {
  */
 const DEFAULT_PADDING_MODE: PaddingMode = PADDING_MODES.symmetric;
 
-export interface WaveletCoefficients2D {
-    approximation: number[][];  // This is the LL band
-    details: { 
-        LH: number[][],
-        HL: number[][],
-        HH: number[][]
-    }[];  // Mind that this is an array of objects!
-    // Information of the original input size must be kept to reliably undo the padding in the last step of waverec2()
-    size: [number, number];
-    mask?: { // This will store an optional mask matrix of coefficients, where 0 means that that position on the transform
-             // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
-        approximation: number[][];
-        details: { 
-            LH: number[][],
-            HL: number[][],
-            HH: number[][] 
-        }[];  // Mind that this is an array of objects!
-    }
+namespace DiscreteWavelets {
+  export interface WaveletCoefficients2D {
+      approximation: number[][];  // This is the LL band
+      details: { 
+          LH: number[][],
+          HL: number[][],
+          HH: number[][]
+      }[];  // Mind that this is an array of objects!
+      // Information of the original input size must be kept to reliably undo the padding in the last step of waverec2()
+      size: [number, number];
+      mask?: { // This will store an optional mask matrix of coefficients, where 0 means that that position on the transform
+              // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
+          approximation: number[][];
+          details: { 
+              LH: number[][],
+              HL: number[][],
+              HH: number[][] 
+          }[];  // Mind that this is an array of objects!
+      }
+  }
+
+  export interface WaveletBands2D {
+      LL: number[][],
+      LH: number[][],
+      HL: number[][],
+      HH: number[][],
+  }
 }
-
-export interface WaveletBands2D {
-    LL: number[][],
-    LH: number[][],
-    HL: number[][],
-    HH: number[][],
-}
-
-
 
 /**
  * Collection of methods for Discrete Wavelet Transform (DWT).
@@ -122,12 +122,12 @@ export default class DiscreteWavelets {
       cD: number[][], 
       wavelet: Wavelet, 
       paddingmode: PaddingMode,
-  ): WaveletBands2D {
+  ): DiscreteWavelets.WaveletBands2D {
       //const rows = cA.length;
       const cols = cA[0].length;
 
       // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
-      let bands: WaveletBands2D = { LL: [], LH: [], HL: [], HH: [] };
+      let bands: DiscreteWavelets.WaveletBands2D = { LL: [], LH: [], HL: [], HH: [] };
 
       for (let col = 0; col < cols; col++) {
           const recA = cA.map(r => r[col]);
@@ -175,7 +175,7 @@ export default class DiscreteWavelets {
   }
 
   static idwtCols(
-      bands: WaveletBands2D,
+      bands: DiscreteWavelets.WaveletBands2D,
       wavelet: Wavelet,
   ): { cA: number[][], cD: number[][] } {
 
@@ -215,7 +215,7 @@ export default class DiscreteWavelets {
       data: number[][],
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
-  ): WaveletBands2D {
+  ): DiscreteWavelets.WaveletBands2D {
       const { cA, cD } = this.dwtRows(data, wavelet, mode);
       const bands = this.dwtCols(cA, cD, wavelet, mode);
       return bands;
@@ -226,7 +226,7 @@ export default class DiscreteWavelets {
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
       level?: number,
-  ): WaveletCoefficients2D {
+  ): DiscreteWavelets.WaveletCoefficients2D {
 
       const rows = data.length;
       const cols = data[0].length;
@@ -250,7 +250,7 @@ export default class DiscreteWavelets {
       // Coefficients that are not affected by original data must be a result of padding; they are synthetic
       let currentMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 1
 
-      const result: WaveletCoefficients2D = {
+      const result: DiscreteWavelets.WaveletCoefficients2D = {
           // We need to initialize approximation:data, because there is the possibility that numLevels==0 
           approximation: data,  // Reminder: WaveletCoefficients2D['approximation'] is number[][]
           details: [],  // Reminder: WaveletCoefficients2D['details'] variable types are an array of objects, where each object has 3 elements, and each element is a number[][]
@@ -263,8 +263,8 @@ export default class DiscreteWavelets {
 
       for (let level = 0; level < numLevels; level++) {
 
-          const bands: WaveletBands2D = this.dwt2(current, wavelet, mode);  // Perform one level of decomposition
-          const bandsMask: WaveletBands2D = this.dwt2(currentMask, wavelet, mode);  // We do taint analysis to detect synthetic coefficients
+          const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, mode);  // Perform one level of decomposition
+          const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, mode);  // We do taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
           result.approximation = bands.LL;
@@ -291,7 +291,7 @@ export default class DiscreteWavelets {
   }
 
   static waverec2(
-      coeffs: WaveletCoefficients2D,
+      coeffs: DiscreteWavelets.WaveletCoefficients2D,
       wavelet: Wavelet,
   ): number[][] {
 
