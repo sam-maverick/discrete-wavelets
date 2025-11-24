@@ -1,3 +1,33 @@
+/******************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __spreadArray(to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+}
+
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+
 /**
  * Symmetric padding.
  */
@@ -586,6 +616,177 @@ var DiscreteWavelets = /** @class */ (function () {
     function DiscreteWavelets() {
     }
     /**
+     *     2-D FUNCTIONS
+     */
+    DiscreteWavelets.maxLevel2 = function (size, wavelet) {
+        // !!! Assuming that the decimation factor is 2, it should be equal to:
+        // Math.floor(Math.log2(Math.min(rows, cols)))
+        return Math.min(this.maxLevel(size[0], wavelet), this.maxLevel(size[1], wavelet));
+    };
+    DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode) {
+        var rows = matrix.length;
+        //const cols = matrix[0].length;
+        var cA = [];
+        var cD = [];
+        for (var r = 0; r < rows; r++) {
+            var _a = this.dwt(matrix[r], wavelet, paddingmode), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
+            cA.push(approx);
+            cD.push(detail);
+        }
+        return { cA: cA, cD: cD }; // cA.length = cD.length = rows
+    };
+    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode) {
+        //const rows = cA.length;
+        var cols = cA[0].length;
+        // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
+        var bands = { LL: [], LH: [], HL: [], HH: [] };
+        var _loop_1 = function (col) {
+            var recA = cA.map(function (r) { return r[col]; });
+            var _a = this_1.dwt(recA, wavelet, paddingmode), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+            var recD = cD.map(function (r) { return r[col]; });
+            var _b = this_1.dwt(recD, wavelet, paddingmode), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+            // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
+            if (col == 0) {
+                bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
+                bands.LH = Array.from({ length: cols }, function () { return Array(D1.length).fill(0); });
+                bands.HL = Array.from({ length: cols }, function () { return Array(A2.length).fill(0); }); // A2.length = D2.length
+                bands.HH = Array.from({ length: cols }, function () { return Array(D2.length).fill(0); });
+            }
+            // assign column results for cA
+            for (var i = 0; i < A1.length; i++) {
+                bands.LL[col][i] = A1[i];
+                bands.LH[col][i] = D1[i];
+            }
+            // assign column results for cD
+            for (var i = 0; i < A2.length; i++) {
+                bands.HL[col][i] = A2[i];
+                bands.HH[col][i] = D2[i];
+            }
+        };
+        var this_1 = this;
+        for (var col = 0; col < cols; col++) {
+            _loop_1(col);
+        }
+        return bands;
+    };
+    DiscreteWavelets.idwtRows = function (cA, cD, wavelet) {
+        var rows = cA.length;
+        var result = [];
+        for (var r = 0; r < rows; r++) {
+            var row = this.idwt(cA[r], cD[r], wavelet);
+            result.push(row);
+        }
+        return result;
+    };
+    DiscreteWavelets.idwtCols = function (bands, wavelet) {
+        var trimmedLL = bands.LL.map(function (row) { return __spreadArray([], row, true); });
+        // Undo the padding(s)
+        // !!! Assuming that the decimation factor is 2
+        if (bands.LL.length > bands.LH.length) {
+            trimmedLL.pop();
+        }
+        if (bands.LL[0].length > bands.LH[0].length) {
+            for (var _i = 0, trimmedLL_1 = trimmedLL; _i < trimmedLL_1.length; _i++) {
+                var row = trimmedLL_1[_i];
+                row.pop();
+            }
+        }
+        var cols = trimmedLL.length;
+        var rows = trimmedLL[0].length * 2;
+        var cA = Array.from({ length: rows }, function () { return Array(cols).fill(0); });
+        var cD = Array.from({ length: rows }, function () { return Array(cols).fill(0); });
+        for (var col = 0; col < cols; col++) {
+            var recA = this.idwt(trimmedLL[col] /*approx*/, bands.LH[col] /*details*/, wavelet);
+            var recD = this.idwt(bands.HL[col] /*approx*/, bands.HH[col] /*details*/, wavelet);
+            for (var r = 0; r < recA.length; r++) {
+                cA[r][col] = recA[r];
+                cD[r][col] = recD[r];
+            }
+        }
+        return { cA: cA, cD: cD };
+    };
+    DiscreteWavelets.dwt2 = function (data, wavelet, mode) {
+        if (mode === void 0) { mode = 'symmetric'; }
+        var _a = this.dwtRows(data, wavelet, mode), cA = _a.cA, cD = _a.cD;
+        var bands = this.dwtCols(cA, cD, wavelet, mode);
+        return bands;
+    };
+    DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level) {
+        if (mode === void 0) { mode = 'symmetric'; }
+        var rows = data.length;
+        var cols = data[0].length;
+        var maxLevels = this.maxLevel2([rows, cols], wavelet);
+        var numLevels;
+        if (level === undefined) {
+            numLevels = maxLevels;
+        }
+        else {
+            if (!(Number.isInteger(level) && level > 0)) {
+                throw new Error('Level parameter must be an integer greater than zero');
+            }
+            if (level > maxLevels) {
+                throw new Error('Can\'t decompose more times than the maximum number of levels ' + maxLevels);
+            }
+            numLevels = level;
+        }
+        var current = data;
+        // We will use the taint analysis technique to track which coefficients are affected by original data (1) and which not(0)
+        // Coefficients that are not affected by original data must be a result of padding; they are synthetic
+        var currentMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 1
+        var result = {
+            // We need to initialize approximation:data, because there is the possibility that numLevels==0 
+            approximation: data,
+            details: [],
+            size: [rows, cols],
+            mask: {
+                approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }),
+                details: [],
+            }
+        };
+        for (var level_1 = 0; level_1 < numLevels; level_1++) {
+            var bands = this.dwt2(current, wavelet, mode); // Perform one level of decomposition
+            var bandsMask = this.dwt2(currentMask, wavelet, mode); // We do taint analysis to detect synthetic coefficients
+            // We keep LL for the next iteration or as the last-level approximation
+            result.approximation = bands.LL;
+            if (result.mask)
+                result.mask.approximation = bandsMask.LL;
+            // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
+            result.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
+            if (result.mask)
+                result.mask.details.push({ LH: bandsMask.LH, HL: bandsMask.HL, HH: bandsMask.HH });
+            current = result.approximation; // Recurse only on the LL band
+            if (result.mask)
+                currentMask = result.mask.approximation;
+        }
+        return result;
+    };
+    DiscreteWavelets.idwt2 = function (approx, detail, wavelet) {
+        var _a = this.idwtCols({ LL: approx, LH: detail.LH, HL: detail.HL, HH: detail.HH }, wavelet), cA = _a.cA, cD = _a.cD;
+        var data = this.idwtRows(cA, cD, wavelet);
+        return data;
+    };
+    DiscreteWavelets.waverec2 = function (coeffs, wavelet) {
+        var current = coeffs.approximation;
+        for (var level = coeffs.details.length - 1; level >= 0; level--) {
+            current = this.idwt2(current, coeffs.details[level], wavelet); // Perform one level of recomposition
+        }
+        // Undo the padding(s) of the last step
+        // !!! Assuming that the decimation factor is 2
+        if (current.length > coeffs.size[0]) {
+            current.pop();
+        }
+        if (current[0].length > coeffs.size[1]) {
+            for (var _i = 0, current_1 = current; _i < current_1.length; _i++) {
+                var row = current_1[_i];
+                row.pop();
+            }
+        }
+        return current;
+    };
+    /**
+     *     1-D FUNCTIONS
+     */
+    /**
      * Single level Discrete Wavelet Transform.
      *
      * @param  data    Input data.
@@ -798,5 +999,5 @@ var DiscreteWavelets = /** @class */ (function () {
     return DiscreteWavelets;
 }());
 
-export default DiscreteWavelets;
+export { DiscreteWavelets as default };
 //# sourceMappingURL=discrete-wavelets.es5.js.map
