@@ -2,7 +2,7 @@ export { PaddingMode, PaddingModes, PaddingWidths, } from './padding/padding';
 export { Filters, Wavelet, WaveletBasis, WaveletType, } from './wavelets/wavelets';
 import { PaddingMode, PaddingModes, PaddingWidths } from './padding/padding';
 import { Wavelet } from "./wavelets/wavelets";
-declare namespace DiscreteWavelets {
+export declare namespace DiscreteWavelets {
     interface WaveletCoefficients2D {
         approximation: number[][];
         details: {

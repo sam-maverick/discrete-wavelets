@@ -42,7 +42,7 @@ import {
  */
 const DEFAULT_PADDING_MODE: PaddingMode = PADDING_MODES.symmetric;
 
-namespace DiscreteWavelets {
+export namespace DiscreteWavelets {
   export interface WaveletCoefficients2D {
       approximation: number[][];  // This is the LL band
       details: { 
