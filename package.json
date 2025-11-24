@@ -1,6 +1,6 @@
 {
   "name": "discrete-wavelets",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "A Discrete Wavelet Transform (DWT) library for the web.",
   "keywords": [
     "discrete",
@@ -14,9 +14,6 @@
   "main": "dist/discrete-wavelets.umd.js",
   "module": "dist/discrete-wavelets.es5.js",
   "typings": "dist/types/wt.d.ts",
-  "files": [
-    "dist"
-  ],
   "author": "Simon Hochholzer <simon@symmetronic.com>",
   "repository": {
     "type": "git",
