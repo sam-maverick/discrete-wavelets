@@ -1,6 +1,6 @@
 {
   "name": "discrete-wavelets",
-  "version": "5.7.0",
+  "version": "5.1.0",
   "description": "A Discrete Wavelet Transform (DWT) library for the web.",
   "keywords": [
     "discrete",
@@ -14,6 +14,9 @@
   "main": "dist/discrete-wavelets.umd.js",
   "module": "dist/discrete-wavelets.es5.js",
   "typings": "dist/types/wt.d.ts",
+  "files": [
+    "dist"
+  ],
   "author": "Simon Hochholzer <simon@symmetronic.com>",
   "repository": {
     "type": "git",
@@ -28,7 +31,6 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "prepare": "npm run build",
     "lint": "eslint src/**/*.ts",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs src/wt.ts",
@@ -81,7 +83,7 @@
     "jest": "^27.2.5",
     "jest-config": "^27.2.5",
     "lodash.camelcase": "^4.3.0",
-    "rimraf": "^2.6.2",
+    "rimraf": "^2.7.1",
     "rollup": "^2.44.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.26.0",
