@@ -630,27 +630,29 @@
             return Math.min(this.maxLevel(size[0], wavelet), this.maxLevel(size[1], wavelet));
         };
         DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode, taintAnalysisOnly) {
+            if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
             var rows = matrix.length;
             //const cols = matrix[0].length;
             var cA = [];
             var cD = [];
             for (var r = 0; r < rows; r++) {
-                var _a = this.dwt(matrix[r], wavelet, paddingmode), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
+                var _a = this.dwt(matrix[r], wavelet, paddingmode, taintAnalysisOnly), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
                 cA.push(approx);
                 cD.push(detail);
             }
             return { cA: cA, cD: cD }; // cA.length = cD.length = rows
         };
         DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode, taintAnalysisOnly) {
+            if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
             //const rows = cA.length;
             var cols = cA[0].length;
             // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
             var bands = { LL: [], LH: [], HL: [], HH: [] };
             var _loop_1 = function (col) {
                 var recA = cA.map(function (r) { return r[col]; });
-                var _a = this_1.dwt(recA, wavelet, paddingmode), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+                var _a = this_1.dwt(recA, wavelet, paddingmode, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
                 var recD = cD.map(function (r) { return r[col]; });
-                var _b = this_1.dwt(recD, wavelet, paddingmode), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+                var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
                 // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
                 if (col == 0) {
                     bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length

@@ -112,7 +112,7 @@ export default class DiscreteWavelets {
       const cD: number[][] = [];
 
       for (let r = 0; r < rows; r++) {
-          const [approx, detail] = this.dwt(matrix[r], wavelet, paddingmode);  // approx.length = detail.length = padding + cols / 2
+          const [approx, detail] = this.dwt(matrix[r], wavelet, paddingmode, taintAnalysisOnly);  // approx.length = detail.length = padding + cols / 2
           cA.push(approx);
           cD.push(detail);
       }
@@ -135,9 +135,9 @@ export default class DiscreteWavelets {
 
       for (let col = 0; col < cols; col++) {
           const recA = cA.map(r => r[col]);
-          const [A1, D1] = this.dwt(recA, wavelet, paddingmode);  // A1.length = D1.length = padding + cA.length / 2
+          const [A1, D1] = this.dwt(recA, wavelet, paddingmode, taintAnalysisOnly);  // A1.length = D1.length = padding + cA.length / 2
           const recD = cD.map(r => r[col]);
-          const [A2, D2] = this.dwt(recD, wavelet, paddingmode);  // A2.length = D2.length = padding + cD.length / 2
+          const [A2, D2] = this.dwt(recD, wavelet, paddingmode, taintAnalysisOnly);  // A2.length = D2.length = padding + cD.length / 2
 
           // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
           if (col == 0) {

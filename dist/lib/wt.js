@@ -36,7 +36,7 @@ var DiscreteWavelets = /** @class */ (function () {
         var cA = [];
         var cD = [];
         for (var r = 0; r < rows; r++) {
-            var _a = this.dwt(matrix[r], wavelet, paddingmode), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
+            var _a = this.dwt(matrix[r], wavelet, paddingmode, taintAnalysisOnly), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
             cA.push(approx);
             cD.push(detail);
         }
@@ -50,9 +50,9 @@ var DiscreteWavelets = /** @class */ (function () {
         var bands = { LL: [], LH: [], HL: [], HH: [] };
         var _loop_1 = function (col) {
             var recA = cA.map(function (r) { return r[col]; });
-            var _a = this_1.dwt(recA, wavelet, paddingmode), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+            var _a = this_1.dwt(recA, wavelet, paddingmode, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
             var recD = cD.map(function (r) { return r[col]; });
-            var _b = this_1.dwt(recD, wavelet, paddingmode), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+            var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
             // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
             if (col == 0) {
                 bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
