@@ -826,6 +826,8 @@
                 console.log(filters.low);
                 console.log('filters.high:');
                 console.log(filters.high);
+                console.log('values:');
+                console.log(values);
                 if (taintAnalysisOnly) {
                     var taintValue = values.some(function (v) { return v === 1; }) ? 1 : 0;
                     approx.push(taintValue);
