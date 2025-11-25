@@ -819,10 +819,7 @@
                 var values = data.slice(offset, offset + filterLength);
                 /* Calculate approximation coefficients. */
                 approx.push(dot(values, filters.low));
-                console.log('values:');
-                console.log(values);
-                console.log('filters.low');
-                console.log(filters.low);
+                console.log(filterLength);
                 /* Calculate detail coefficients. */
                 detail.push(dot(values, filters.high));
             }

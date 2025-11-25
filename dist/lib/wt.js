@@ -222,10 +222,7 @@ var DiscreteWavelets = /** @class */ (function () {
             var values = data.slice(offset, offset + filterLength);
             /* Calculate approximation coefficients. */
             approx.push((0, helpers_1.dot)(values, filters.low));
-            console.log('values:');
-            console.log(values);
-            console.log('filters.low');
-            console.log(filters.low);
+            console.log(filterLength);
             /* Calculate detail coefficients. */
             detail.push((0, helpers_1.dot)(values, filters.high));
         }
