@@ -366,7 +366,7 @@ console.log(data);
 console.log('filters.low:');
 console.log(filters.low);
 console.log('filters.high:');
-console.log(filters.high);
+console.log(filters.high);;
 
 
       if (taintAnalysisOnly) {
