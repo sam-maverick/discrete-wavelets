@@ -363,6 +363,12 @@ console.log(data);
       /* Determine slice of values. */
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
+console.log('filters.low:');
+console.log(filters.low);
+console.log('filters.high:');
+console.log(filters.high);
+
+
       if (taintAnalysisOnly) {
         const taintValue = values.some(v => v === 1) ? 1 : 0;
         approx.push(taintValue);
