@@ -711,7 +711,7 @@
             }
             return { cA: cA, cD: cD };
         };
-        DiscreteWavelets.dwt2 = function (data, wavelet, mode) {
+        DiscreteWavelets.dwt2 = function (data, wavelet, mode, taintAnalysisOnly) {
             if (mode === void 0) { mode = 'symmetric'; }
             var _a = this.dwtRows(data, wavelet, mode), cA = _a.cA, cD = _a.cD;
             var bands = this.dwtCols(cA, cD, wavelet, mode);
@@ -751,7 +751,7 @@
             };
             for (var level_1 = 0; level_1 < numLevels; level_1++) {
                 var bands = this.dwt2(current, wavelet, mode); // Perform one level of decomposition
-                var bandsMask = this.dwt2(currentMask, wavelet, mode); // We do taint analysis to detect synthetic coefficients
+                var bandsMask = this.dwt2(currentMask, wavelet, 'zero', true); // We do taint analysis to detect synthetic coefficients
                 // We keep LL for the next iteration or as the last-level approximation
                 result.approximation = bands.LL;
                 if (result.mask)

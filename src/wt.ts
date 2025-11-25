@@ -81,6 +81,8 @@ export default class DiscreteWavelets {
   static readonly Modes: Readonly<PaddingModes> = PADDING_MODES;
 
 
+
+
 /**
  *     2-D FUNCTIONS
  */
@@ -215,6 +217,7 @@ export default class DiscreteWavelets {
       data: number[][],
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
+      taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
       const { cA, cD } = this.dwtRows(data, wavelet, mode);
       const bands = this.dwtCols(cA, cD, wavelet, mode);
@@ -264,7 +267,7 @@ export default class DiscreteWavelets {
       for (let level = 0; level < numLevels; level++) {
 
           const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, mode);  // Perform one level of decomposition
-          const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, mode);  // We do taint analysis to detect synthetic coefficients
+          const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, 'zero', true);  // We do taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
           result.approximation = bands.LL;

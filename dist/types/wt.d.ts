@@ -49,7 +49,7 @@ export default class DiscreteWavelets {
         cA: number[][];
         cD: number[][];
     };
-    static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode): DiscreteWavelets.WaveletBands2D;
+    static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
     static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number): DiscreteWavelets.WaveletCoefficients2D;
     static idwt2(approx: number[][], detail: {
         LH: number[][];
