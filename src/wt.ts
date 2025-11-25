@@ -352,7 +352,8 @@ export default class DiscreteWavelets {
 
     /* Add padding. */
     data = this.pad(data, padWidths(data.length, filterLength), mode);
-
+console.log('data:');
+console.log(data);
     /* Initialize approximation and detail coefficients. */
     let approx: number[] = [];
     let detail: number[] = [];
@@ -363,7 +364,6 @@ export default class DiscreteWavelets {
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
       if (taintAnalysisOnly) {
-        console.log('doing taint analysis');
         const taintValue = values.some(v => v === 1) ? 1 : 0;
         approx.push(taintValue);
         detail.push(taintValue);

@@ -807,6 +807,8 @@ var DiscreteWavelets = /** @class */ (function () {
         var filterLength = filters.low.length;
         /* Add padding. */
         data = this.pad(data, padWidths(data.length, filterLength), mode);
+        console.log('data:');
+        console.log(data);
         /* Initialize approximation and detail coefficients. */
         var approx = [];
         var detail = [];
@@ -815,7 +817,6 @@ var DiscreteWavelets = /** @class */ (function () {
             /* Determine slice of values. */
             var values = data.slice(offset, offset + filterLength);
             if (taintAnalysisOnly) {
-                console.log('doing taint analysis');
                 var taintValue = values.some(function (v) { return v === 1; }) ? 1 : 0;
                 approx.push(taintValue);
                 detail.push(taintValue);
