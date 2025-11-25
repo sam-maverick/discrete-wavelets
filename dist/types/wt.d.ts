@@ -39,11 +39,11 @@ export default class DiscreteWavelets {
      *     2-D FUNCTIONS
      */
     static maxLevel2(size: [number, number], wavelet: Wavelet): number;
-    static dwtRows(matrix: number[][], wavelet: Wavelet, paddingmode: PaddingMode): {
+    static dwtRows(matrix: number[][], wavelet: Wavelet, paddingmode: PaddingMode, taintAnalysisOnly?: boolean): {
         cA: number[][];
         cD: number[][];
     };
-    static dwtCols(cA: number[][], cD: number[][], wavelet: Wavelet, paddingmode: PaddingMode): DiscreteWavelets.WaveletBands2D;
+    static dwtCols(cA: number[][], cD: number[][], wavelet: Wavelet, paddingmode: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
     static idwtRows(cA: number[][], cD: number[][], wavelet: Wavelet): number[][];
     static idwtCols(bands: DiscreteWavelets.WaveletBands2D, wavelet: Wavelet): {
         cA: number[][];
@@ -68,7 +68,7 @@ export default class DiscreteWavelets {
      * @param  mode    Signal extension mode.
      * @return         Approximation and detail coefficients as result of the transform.
      */
-    static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, mode?: PaddingMode): number[][];
+    static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, mode?: PaddingMode, taintAnalysisOnly?: boolean): number[][];
     /**
      * Calculates the energy as sum of squares of an array of data or
      * coefficients.

@@ -623,7 +623,7 @@ var DiscreteWavelets = /** @class */ (function () {
         // Math.floor(Math.log2(Math.min(rows, cols)))
         return Math.min(this.maxLevel(size[0], wavelet), this.maxLevel(size[1], wavelet));
     };
-    DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode) {
+    DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode, taintAnalysisOnly) {
         var rows = matrix.length;
         //const cols = matrix[0].length;
         var cA = [];
@@ -635,7 +635,7 @@ var DiscreteWavelets = /** @class */ (function () {
         }
         return { cA: cA, cD: cD }; // cA.length = cD.length = rows
     };
-    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode) {
+    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode, taintAnalysisOnly) {
         //const rows = cA.length;
         var cols = cA[0].length;
         // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
@@ -707,8 +707,9 @@ var DiscreteWavelets = /** @class */ (function () {
     };
     DiscreteWavelets.dwt2 = function (data, wavelet, mode, taintAnalysisOnly) {
         if (mode === void 0) { mode = 'symmetric'; }
-        var _a = this.dwtRows(data, wavelet, mode), cA = _a.cA, cD = _a.cD;
-        var bands = this.dwtCols(cA, cD, wavelet, mode);
+        if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
+        var _a = this.dwtRows(data, wavelet, mode, taintAnalysisOnly), cA = _a.cA, cD = _a.cD;
+        var bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
         return bands;
     };
     DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level) {
@@ -794,7 +795,7 @@ var DiscreteWavelets = /** @class */ (function () {
      * @param  mode    Signal extension mode.
      * @return         Approximation and detail coefficients as result of the transform.
      */
-    DiscreteWavelets.dwt = function (data, wavelet, mode) {
+    DiscreteWavelets.dwt = function (data, wavelet, mode, taintAnalysisOnly) {
         if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
         /* Determine wavelet basis and filters. */
         var waveletBasis = basisFromWavelet(wavelet);
@@ -812,6 +813,10 @@ var DiscreteWavelets = /** @class */ (function () {
             var values = data.slice(offset, offset + filterLength);
             /* Calculate approximation coefficients. */
             approx.push(dot(values, filters.low));
+            console.log('values:');
+            console.log(values);
+            console.log('filters.low');
+            console.log(filters.low);
             /* Calculate detail coefficients. */
             detail.push(dot(values, filters.high));
         }

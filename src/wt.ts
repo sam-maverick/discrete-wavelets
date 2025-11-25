@@ -103,6 +103,7 @@ export default class DiscreteWavelets {
       matrix: number[][], 
       wavelet: Wavelet, 
       paddingmode: PaddingMode,
+      taintAnalysisOnly: boolean = false,
   ): {cA: number[][], cD: number[][]} {
       const rows = matrix.length;
       //const cols = matrix[0].length;
@@ -124,6 +125,7 @@ export default class DiscreteWavelets {
       cD: number[][], 
       wavelet: Wavelet, 
       paddingmode: PaddingMode,
+      taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
       //const rows = cA.length;
       const cols = cA[0].length;
@@ -219,8 +221,8 @@ export default class DiscreteWavelets {
       mode: PaddingMode = 'symmetric',
       taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
-      const { cA, cD } = this.dwtRows(data, wavelet, mode);
-      const bands = this.dwtCols(cA, cD, wavelet, mode);
+      const { cA, cD } = this.dwtRows(data, wavelet, mode, taintAnalysisOnly);
+      const bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
       return bands;
   }
 
@@ -339,7 +341,8 @@ export default class DiscreteWavelets {
   static dwt(
     data: ReadonlyArray<number>,
     wavelet: Readonly<Wavelet>,
-    mode: PaddingMode = DEFAULT_PADDING_MODE
+    mode: PaddingMode = DEFAULT_PADDING_MODE,
+    taintAnalysisOnly: boolean = false,
   ): number[][] {
     /* Determine wavelet basis and filters. */
     const waveletBasis: Readonly<WaveletBasis> = basisFromWavelet(wavelet);
@@ -361,6 +364,11 @@ export default class DiscreteWavelets {
 
       /* Calculate approximation coefficients. */
       approx.push(dot(values, filters.low));
+
+      console.log('values:');
+      console.log(values);
+      console.log('filters.low');
+      console.log(filters.low);
 
       /* Calculate detail coefficients. */
       detail.push(dot(values, filters.high));
