@@ -358,17 +358,21 @@ export default class DiscreteWavelets {
     let detail: number[] = [];
 
     /* Calculate coefficients. */
-    for (let offset: number = 0; offset + filterLength <= data.length; offset += 2) {
+    for (let offset: number = 0; offset + filterLength <= data.length; offset += filterLength) {
       /* Determine slice of values. */
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
-      /* Calculate approximation coefficients. */
-      approx.push(dot(values, filters.low));
+      if (taintAnalysisOnly) {
+        const taintValue = values.some(v => v === 1) ? 1 : 0;
+        approx.push(taintValue);
+        detail.push(taintValue);
+      } else {
+        /* Calculate approximation coefficients. */
+        approx.push(dot(values, filters.low));
 
-      console.log(filterLength);
-
-      /* Calculate detail coefficients. */
-      detail.push(dot(values, filters.high));
+        /* Calculate detail coefficients. */
+        detail.push(dot(values, filters.high));
+      }
     }
 
     /* Return approximation and detail coefficients. */

@@ -803,6 +803,7 @@
          */
         DiscreteWavelets.dwt = function (data, wavelet, mode, taintAnalysisOnly) {
             if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
+            if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
             /* Determine wavelet basis and filters. */
             var waveletBasis = basisFromWavelet(wavelet);
             var filters = waveletBasis.dec;
@@ -814,14 +815,20 @@
             var approx = [];
             var detail = [];
             /* Calculate coefficients. */
-            for (var offset = 0; offset + filterLength <= data.length; offset += 2) {
+            for (var offset = 0; offset + filterLength <= data.length; offset += filterLength) {
                 /* Determine slice of values. */
                 var values = data.slice(offset, offset + filterLength);
-                /* Calculate approximation coefficients. */
-                approx.push(dot(values, filters.low));
-                console.log(filterLength);
-                /* Calculate detail coefficients. */
-                detail.push(dot(values, filters.high));
+                if (taintAnalysisOnly) {
+                    var taintValue = values.some(function (v) { return v === 1; }) ? 1 : 0;
+                    approx.push(taintValue);
+                    detail.push(taintValue);
+                }
+                else {
+                    /* Calculate approximation coefficients. */
+                    approx.push(dot(values, filters.low));
+                    /* Calculate detail coefficients. */
+                    detail.push(dot(values, filters.high));
+                }
             }
             /* Return approximation and detail coefficients. */
             return [approx, detail];

@@ -217,14 +217,20 @@ var DiscreteWavelets = /** @class */ (function () {
         var approx = [];
         var detail = [];
         /* Calculate coefficients. */
-        for (var offset = 0; offset + filterLength <= data.length; offset += 2) {
+        for (var offset = 0; offset + filterLength <= data.length; offset += filterLength) {
             /* Determine slice of values. */
             var values = data.slice(offset, offset + filterLength);
-            /* Calculate approximation coefficients. */
-            approx.push((0, helpers_1.dot)(values, filters.low));
-            console.log(filterLength);
-            /* Calculate detail coefficients. */
-            detail.push((0, helpers_1.dot)(values, filters.high));
+            if (taintAnalysisOnly) {
+                var taintValue = values.some(function (v) { return v === 1; }) ? 1 : 0;
+                approx.push(taintValue);
+                detail.push(taintValue);
+            }
+            else {
+                /* Calculate approximation coefficients. */
+                approx.push((0, helpers_1.dot)(values, filters.low));
+                /* Calculate detail coefficients. */
+                detail.push((0, helpers_1.dot)(values, filters.high));
+            }
         }
         /* Return approximation and detail coefficients. */
         return [approx, detail];
