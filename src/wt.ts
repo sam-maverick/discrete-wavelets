@@ -363,6 +363,7 @@ export default class DiscreteWavelets {
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
       if (taintAnalysisOnly) {
+        console.log('doing taint analysis');
         const taintValue = values.some(v => v === 1) ? 1 : 0;
         approx.push(taintValue);
         detail.push(taintValue);
