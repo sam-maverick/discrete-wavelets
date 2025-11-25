@@ -352,7 +352,12 @@ export default class DiscreteWavelets {
 
     /* Add padding. */
     data = this.pad(data, padWidths(data.length, filterLength), mode);
-console.log('data:');
+console.log('dwt CALLED ----');    
+//console.log('filters.low:');
+//console.log(filters.low);
+//console.log('filters.high:');
+//console.log(filters.high);
+console.log('padded data:');
 console.log(data);
     /* Initialize approximation and detail coefficients. */
     let approx: number[] = [];
@@ -363,12 +368,11 @@ console.log(data);
       /* Determine slice of values. */
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
-console.log('filters.low:');
-console.log(filters.low);
-console.log('filters.high:');
-console.log(filters.high);
 console.log('values:');
 console.log(values);
+console.log('intermediate [1approx, 1detail]:');
+console.log(dot(values, filters.low));
+console.log(dot(values, filters.high));
 
 
       if (taintAnalysisOnly) {
@@ -383,6 +387,8 @@ console.log(values);
         detail.push(dot(values, filters.high));
       }
     }
+console.log('final [approx, detail]:');
+console.log([approx, detail]);
 
     /* Return approximation and detail coefficients. */
     return [approx, detail];

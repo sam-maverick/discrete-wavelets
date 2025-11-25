@@ -807,7 +807,12 @@ var DiscreteWavelets = /** @class */ (function () {
         var filterLength = filters.low.length;
         /* Add padding. */
         data = this.pad(data, padWidths(data.length, filterLength), mode);
-        console.log('data:');
+        console.log('dwt CALLED ----');
+        //console.log('filters.low:');
+        //console.log(filters.low);
+        //console.log('filters.high:');
+        //console.log(filters.high);
+        console.log('padded data:');
         console.log(data);
         /* Initialize approximation and detail coefficients. */
         var approx = [];
@@ -816,12 +821,11 @@ var DiscreteWavelets = /** @class */ (function () {
         for (var offset = 0; offset + filterLength <= data.length; offset += filterLength) {
             /* Determine slice of values. */
             var values = data.slice(offset, offset + filterLength);
-            console.log('filters.low:');
-            console.log(filters.low);
-            console.log('filters.high:');
-            console.log(filters.high);
             console.log('values:');
             console.log(values);
+            console.log('intermediate [1approx, 1detail]:');
+            console.log(dot(values, filters.low));
+            console.log(dot(values, filters.high));
             if (taintAnalysisOnly) {
                 var taintValue = values.some(function (v) { return v === 1; }) ? 1 : 0;
                 approx.push(taintValue);
@@ -834,6 +838,8 @@ var DiscreteWavelets = /** @class */ (function () {
                 detail.push(dot(values, filters.high));
             }
         }
+        console.log('final [approx, detail]:');
+        console.log([approx, detail]);
         /* Return approximation and detail coefficients. */
         return [approx, detail];
     };
