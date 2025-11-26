@@ -11,14 +11,6 @@ export declare namespace DiscreteWavelets {
             HH: number[][];
         }[];
         size: [number, number];
-        mask?: {
-            approximation: number[][];
-            details: {
-                LH: number[][];
-                HL: number[][];
-                HH: number[][];
-            }[];
-        };
     }
     interface WaveletBands2D {
         LL: number[][];
@@ -50,7 +42,10 @@ export default class DiscreteWavelets {
         cD: number[][];
     };
     static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
-    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number): DiscreteWavelets.WaveletCoefficients2D;
+    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number): {
+        coeffs: DiscreteWavelets.WaveletCoefficients2D;
+        mask: DiscreteWavelets.WaveletCoefficients2D;
+    };
     static idwt2(approx: number[][], detail: {
         LH: number[][];
         HL: number[][];

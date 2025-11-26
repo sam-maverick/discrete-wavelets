@@ -52,15 +52,6 @@ export namespace DiscreteWavelets {
       }[];  // Mind that this is an array of objects!
       // Information of the original input size must be kept to reliably undo the padding in the last step of waverec2()
       size: [number, number];
-      mask?: { // This will store an optional mask matrix of coefficients, where 0 means that that position on the transform
-              // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
-          approximation: number[][];
-          details: { 
-              LH: number[][],
-              HL: number[][],
-              HH: number[][] 
-          }[];  // Mind that this is an array of objects!
-      }
   }
 
   export interface WaveletBands2D {
@@ -231,7 +222,7 @@ export default class DiscreteWavelets {
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
       level?: number,
-  ): DiscreteWavelets.WaveletCoefficients2D {
+  ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D } {
 
       const rows = data.length;
       const cols = data[0].length;
@@ -255,15 +246,19 @@ export default class DiscreteWavelets {
       // Coefficients that are not affected by original data must be a result of padding; they are synthetic
       let currentMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 1
 
-      const result: DiscreteWavelets.WaveletCoefficients2D = {
-          // We need to initialize approximation:data, because there is the possibility that numLevels==0 
-          approximation: data,  // Reminder: WaveletCoefficients2D['approximation'] is number[][]
-          details: [],  // Reminder: WaveletCoefficients2D['details'] variable types are an array of objects, where each object has 3 elements, and each element is a number[][]
-          size: [rows,cols],
-          mask: {
-              approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(1)),
-              details: [],
-          }
+      const coeffs: DiscreteWavelets.WaveletCoefficients2D = {
+        // We need to initialize approximation:data, because there is the possibility that numLevels==0 
+        approximation: data,  // Reminder: WaveletCoefficients2D['approximation'] is number[][]
+        details: [],  // Reminder: WaveletCoefficients2D['details'] variable types are an array of objects, where each object has 3 elements, and each element is a number[][]
+        size: [rows,cols],
+      }
+
+      // This will store an optional mask matrix of coefficients, where 0 means that that position on the transform
+      // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
+      const mask: DiscreteWavelets.WaveletCoefficients2D = {
+        approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(1)),
+        details: [],
+        size: [0,0],  // Dummy value
       }
 
       for (let level = 0; level < numLevels; level++) {
@@ -272,17 +267,17 @@ export default class DiscreteWavelets {
           const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, mode, true);  // We do taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
-          result.approximation = bands.LL;
-          if (result.mask)  result.mask.approximation = bandsMask.LL;
+          coeffs.approximation = bands.LL;
+          mask.approximation = bandsMask.LL;
           // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
-          result.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
-          if (result.mask)  result.mask.details.push({ LH: bandsMask.LH, HL: bandsMask.HL, HH: bandsMask.HH });
+          coeffs.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
+          mask.details.push({ LH: bandsMask.LH, HL: bandsMask.HL, HH: bandsMask.HH });
 
-          current = result.approximation; // Recurse only on the LL band
-          if (result.mask)  currentMask = result.mask.approximation;
+          current = coeffs.approximation; // Recurse only on the LL band
+          currentMask = mask.approximation;
       }
 
-      return result;
+      return { coeffs, mask };
   }
 
   static idwt2(
