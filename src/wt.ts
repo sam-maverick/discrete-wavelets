@@ -221,6 +221,7 @@ export default class DiscreteWavelets {
       mode: PaddingMode = 'symmetric',
       taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
+    console.log('dwt2 called with taintAnalysisOnly '+taintAnalysisOnly);
       const { cA, cD } = this.dwtRows(data, wavelet, mode, taintAnalysisOnly);
       const bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
       return bands;
