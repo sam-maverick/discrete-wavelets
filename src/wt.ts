@@ -377,8 +377,10 @@ console.log(dot(values, filters.high));
 
       if (taintAnalysisOnly) {
         if (filterLength==2 && mode=='symmetric' && wavelet=='haar') {
+          console.log('taint analysis');
           // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
           if (values[0]==1 && values[1]==0) {
+            console.log('zero detected');
             approx.push(1);  // Dotproduct of [a,a] with [f1,f1] depends on a
             detail.push(0);  // Dotproduct of [a,a] with [f1,-f1] is 0
           } else if (values[0]==0 && values[1]==0) {
