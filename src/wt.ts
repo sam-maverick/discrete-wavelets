@@ -344,7 +344,6 @@ export default class DiscreteWavelets {
     mode: PaddingMode = DEFAULT_PADDING_MODE,
     taintAnalysisOnly: boolean = false,
   ): number[][] {
-console.log('dwt called with taintAnalysisOnly '+taintAnalysisOnly);
     /* Determine wavelet basis and filters. */
     const waveletBasis: Readonly<WaveletBasis> = basisFromWavelet(wavelet);
     const filters: Readonly<Filters> = waveletBasis.dec;
@@ -353,13 +352,7 @@ console.log('dwt called with taintAnalysisOnly '+taintAnalysisOnly);
 
     /* Add padding. */
     data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'zero' : mode);
-console.log('dwt CALLED ----');    
-//console.log('filters.low:');
-//console.log(filters.low);
-//console.log('filters.high:');
-//console.log(filters.high);
-console.log('padded data:');
-console.log(data);
+
     /* Initialize approximation and detail coefficients. */
     let approx: number[] = [];
     let detail: number[] = [];
@@ -369,22 +362,10 @@ console.log(data);
       /* Determine slice of values. */
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
-console.log('values:');
-console.log(values);
-console.log('intermediate [1approx, 1detail]:');
-console.log(dot(values, filters.low));
-console.log(dot(values, filters.high));
-
-console.log('$$');
-console.log('filterLength='+filterLength);
-console.log('mode='+mode);
-console.log('wavelet='+wavelet);
       if (taintAnalysisOnly) {
         if (filterLength==2 && mode=='symmetric' && wavelet=='haar') {
-          console.log('taint analysis');
           // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
           if (values[0]==1 && values[1]==0) {
-            console.log('zero detected');
             approx.push(1);  // Dotproduct of [a,a] with [f1,f1] depends on a
             detail.push(0);  // Dotproduct of [a,a] with [f1,-f1] is 0
           } else if (values[0]==0 && values[1]==0) {
@@ -409,8 +390,6 @@ console.log('wavelet='+wavelet);
         detail.push(dot(values, filters.high));
       }
     }
-console.log('final [approx, detail]:');
-console.log([approx, detail]);
 
     /* Return approximation and detail coefficients. */
     return [approx, detail];

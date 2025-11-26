@@ -206,7 +206,6 @@ var DiscreteWavelets = /** @class */ (function () {
     DiscreteWavelets.dwt = function (data, wavelet, mode, taintAnalysisOnly) {
         if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
-        console.log('dwt called with taintAnalysisOnly ' + taintAnalysisOnly);
         /* Determine wavelet basis and filters. */
         var waveletBasis = (0, helpers_1.basisFromWavelet)(wavelet);
         var filters = waveletBasis.dec;
@@ -214,13 +213,6 @@ var DiscreteWavelets = /** @class */ (function () {
         var filterLength = filters.low.length;
         /* Add padding. */
         data = this.pad(data, (0, helpers_1.padWidths)(data.length, filterLength), taintAnalysisOnly ? 'zero' : mode);
-        console.log('dwt CALLED ----');
-        //console.log('filters.low:');
-        //console.log(filters.low);
-        //console.log('filters.high:');
-        //console.log(filters.high);
-        console.log('padded data:');
-        console.log(data);
         /* Initialize approximation and detail coefficients. */
         var approx = [];
         var detail = [];
@@ -228,21 +220,10 @@ var DiscreteWavelets = /** @class */ (function () {
         for (var offset = 0; offset + filterLength <= data.length; offset += filterLength) {
             /* Determine slice of values. */
             var values = data.slice(offset, offset + filterLength);
-            console.log('values:');
-            console.log(values);
-            console.log('intermediate [1approx, 1detail]:');
-            console.log((0, helpers_1.dot)(values, filters.low));
-            console.log((0, helpers_1.dot)(values, filters.high));
-            console.log('$$');
-            console.log('filterLength=' + filterLength);
-            console.log('mode=' + mode);
-            console.log('wavelet=' + wavelet);
             if (taintAnalysisOnly) {
                 if (filterLength == 2 && mode == 'symmetric' && wavelet == 'haar') {
-                    console.log('taint analysis');
                     // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
                     if (values[0] == 1 && values[1] == 0) {
-                        console.log('zero detected');
                         approx.push(1); // Dotproduct of [a,a] with [f1,f1] depends on a
                         detail.push(0); // Dotproduct of [a,a] with [f1,-f1] is 0
                     }
@@ -270,8 +251,6 @@ var DiscreteWavelets = /** @class */ (function () {
                 detail.push((0, helpers_1.dot)(values, filters.high));
             }
         }
-        console.log('final [approx, detail]:');
-        console.log([approx, detail]);
         /* Return approximation and detail coefficients. */
         return [approx, detail];
     };
