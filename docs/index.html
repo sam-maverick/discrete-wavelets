@@ -1,11 +1,8 @@
-<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>discrete-wavelets</title><meta name="description" content="Documentation for discrete-wavelets"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">discrete-wavelets</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>discrete-wavelets </h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography"><p><a href="https://github.com/Symmetronic/discrete-wavelets/actions?query=workflow%3Abuild+branch%3Amain"><img src="https://github.com/Symmetronic/discrete-wavelets/workflows/build/badge.svg?branch=main" alt="Build Status"></a> <a href="https://coveralls.io/github/Symmetronic/discrete-wavelets?branch=main"><img src="https://coveralls.io/repos/github/Symmetronic/discrete-wavelets/badge.svg?branch=main" alt="Coverage Status"></a> <a href="https://github.com/Symmetronic/discrete-wavelets/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Symmetronic/discrete-wavelets" alt="GitHub License"></a> <a href="https://www.npmjs.com/package/discrete-wavelets"><img src="https://img.shields.io/npm/v/discrete-wavelets" alt="NPM Version"></a> <a href="https://npmcharts.com/compare/discrete-wavelets?minimal=true"><img src="https://img.shields.io/npm/dm/discrete-wavelets" alt="Monthly Downloads"></a></p>
-<p><strong>This library is no longer actively maintained. This means that no new functionality or documentation is added.</strong></p>
-
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>discrete-wavelets</title><meta name="description" content="Documentation for discrete-wavelets"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">discrete-wavelets</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>discrete-wavelets </h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
 <a href="#discrete-wavelets" id="discrete-wavelets" style="color: inherit; text-decoration: none;">
   <h1>Discrete Wavelets</h1>
 </a>
-<p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web.</p>
-<p>This library is well tested. Still, it may contain some errors. Therefore it is recommended to double check the results with another library such as <a href="https://github.com/PyWavelets/pywt">PyWavelets</a>. If you find any errors, please let me know by opening an issue or a pull request.</p>
+<p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web, for one-dimensional and two-dimensional inputs.</p>
 
 <a href="#importing-this-library" id="importing-this-library" style="color: inherit; text-decoration: none;">
   <h2>Importing this library</h2>
@@ -15,16 +12,10 @@
   <h3>Node Modules</h3>
 </a>
 <ul>
-<li>Run <code>npm install discrete-wavelets</code></li>
-<li>Add an import to the npm package <code>import wt from &#39;discrete-wavelets&#39;;</code></li>
-<li>Then you can use the library in your code.</li>
-</ul>
-
-<a href="#cdn" id="cdn" style="color: inherit; text-decoration: none;">
-  <h3>CDN</h3>
-</a>
-<ul>
-<li>Put the following script tag <code>&lt;script src=&quot;https://cdn.jsdelivr.net/npm/discrete-wavelets@5/dist/discrete-wavelets.umd.min.js&quot;&gt;&lt;/script&gt;</code> in the head of your HTML file.</li>
+<li>Run <code>npm install github:sam-maverick/discrete-wavelets</code></li>
+<li>Add these imports to your program:
+<code>import WT from &quot;discrete-wavelets&quot;;</code>
+<code>import {DiscreteWavelets as DW} from &quot;discrete-wavelets&quot;;</code></li>
 <li>Then you can use the library in your code.</li>
 </ul>
 
@@ -86,7 +77,7 @@
 </tr>
 </tbody></table>
 <p>You can get a list of the supported signal extension modes:</p>
-<pre><code class="language-javascript"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-0">Modes</span><span class="hl-1">.</span><span class="hl-0">modes</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: Array [&#39;zero&#39;, &#39;constant&#39;, &#39;symmetric&#39;, &#39;periodic&#39;, &#39;smooth&#39;, &#39;reflect&#39;, &#39;antisymmetric&#39;]</span>
+<pre><code class="language-javascript"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-0">Modes</span><span class="hl-1">.</span><span class="hl-0">modes</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [&#39;zero&#39;, &#39;constant&#39;, &#39;symmetric&#39;, &#39;periodic&#39;, &#39;smooth&#39;, &#39;reflect&#39;, &#39;antisymmetric&#39;]</span>
 </code></pre>
 
 <a href="#wavelets" id="wavelets" style="color: inherit; text-decoration: none;">
@@ -142,129 +133,130 @@
 </tr>
 </tbody></table>
 
+<a href="#interfaces" id="interfaces" style="color: inherit; text-decoration: none;">
+  <h2>Interfaces</h2>
+</a>
+<p>The library uses the following interfaces:</p>
+<ul>
+<li><p><a href="#WaveletCoefficients2D">WaveletCoefficients2D</a>: All the coefficients that result from the transformation, the original input dimensions, and the mask data.
+The mask data is a structure with the same shape as the coefficients of the transform, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.</p>
+<blockquote>
+<p>[!WARNING]</p>
+<p>At the moment, mask data is only supported in the <code>haar</code> wavelet with <code>symmetric</code> padding.</p>
+</blockquote>
+</li>
+<li><p><a href="#WaveletBands2D">WaveletBands2D</a>: The four bands that result from a single-level decomposition.</p>
+</li>
+</ul>
+
+<a href="#waveletcoefficients2d" id="waveletcoefficients2d" style="color: inherit; text-decoration: none;">
+  <h3>WaveletCoefficients2D</h3>
+</a>
+<pre><code><span class="hl-5">approximation</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][];  </span><span class="hl-4">// This is the LL band</span><br/><span class="hl-5">details</span><span class="hl-1">: { </span><br/><span class="hl-1">  </span><span class="hl-5">LH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">  </span><span class="hl-5">HL</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">  </span><span class="hl-5">HH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][]</span><br/><span class="hl-1">}[];  </span><span class="hl-4">// Mind that this is an array of objects!</span><br/><span class="hl-4">// Information of the original input size must be kept to reliably undo the padding </span><br/><span class="hl-4">// in the last step of waverec2()</span><br/><span class="hl-5">size</span><span class="hl-1">: [</span><span class="hl-0">number</span><span class="hl-1">, </span><span class="hl-0">number</span><span class="hl-1">];</span><br/><span class="hl-0">mask</span><span class="hl-1">?: { </span><span class="hl-4">// This will store an optional mask matrix of coefficients, where 0 means that </span><br/><span class="hl-1">         </span><span class="hl-4">// that position on the transform result is a synthetic zero produced by the </span><br/><span class="hl-1">         </span><span class="hl-4">// padding, and anything else means &#39;position with actual data&#39;</span><br/><span class="hl-1">  </span><span class="hl-0">approximation:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][];</span><br/><span class="hl-1">  </span><span class="hl-0">details</span><span class="hl-1">: { </span><br/><span class="hl-1">      </span><span class="hl-0">LH:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">      </span><span class="hl-0">HL:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">      </span><span class="hl-0">HH:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][] </span><br/><span class="hl-1">  }[];  </span><span class="hl-4">// Mind that this is an array of objects!</span><br/><span class="hl-1">}</span>
+</code></pre>
+
+<a href="#waveletbands2d" id="waveletbands2d" style="color: inherit; text-decoration: none;">
+  <h3>WaveletBands2D</h3>
+</a>
+<pre><code><span class="hl-5">LL</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-5">LH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-5">HL</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-5">HH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span>
+</code></pre>
+
 <a href="#api" id="api" style="color: inherit; text-decoration: none;">
   <h2>API</h2>
 </a>
-<p>The library offers the following functions:</p>
+<p>The library offers the functions below. A &#39;2&#39; at the end of a function name means that it is for 2D instead of 1D.</p>
 <ul>
 <li>Discrete Wavelet Transform (DWT)<ul>
-<li><a href="#dwt">dwt</a>: Single level Discrete Wavelet Transform.</li>
-<li><a href="#wavedec">wavedec</a>: 1D wavelet decomposition. Transforms data by calculating coefficients from input data.</li>
+<li><a href="#dwt">dwt</a> and <a href="#dwt2">dwt2</a>: Single level transform.</li>
+<li><a href="#wavedec">wavedec</a> and <a href="#wavedec2">wavedec2</a>: Wavelet decomposition. Transforms data by calculating coefficients from input data.</li>
 </ul>
 </li>
 <li>Inverse Discrete Wavelet Transform (IDWT)<ul>
-<li><a href="#idwt">idwt</a>: Single level inverse Discrete Wavelet Transform.</li>
-<li><a href="#waverec">waverec</a>: 1D wavelet reconstruction. Inverses a transform by calculating input data from coefficients.</li>
+<li><a href="#idwt">idwt</a> and <a href="#idwt2">idwt2</a>: Single level inverse transform.</li>
+<li><a href="#waverec">waverec</a> and <a href="#waverec2">waverec2</a>: Eavelet reconstruction. Inverses a transform by calculating input data from coefficients.</li>
 </ul>
 </li>
 <li>Other<ul>
 <li><a href="#energy">energy</a>: Calculates the energy as sum of squares of an array of data or coefficients.</li>
-<li><a href="#maxLevel">maxLevel</a>: Determines the maximum level of useful decomposition.</li>
+<li><a href="#maxLevel">maxLevel</a> and <a href="#maxLevel2">maxLevel2</a>: Determines the maximum level of useful decomposition.</li>
 <li><a href="#pad">pad</a>: Extends a signal with a given padding mode.</li>
 </ul>
 </li>
 </ul>
 
-<a href="#dwt" id="dwt" style="color: inherit; text-decoration: none;">
-  <h3>dwt</h3>
+<a href="#dwt-and-dwt2" id="dwt-and-dwt2" style="color: inherit; text-decoration: none;">
+  <h3>dwt and dwt2</h3>
 </a>
 <p>Single level Discrete Wavelet Transform.</p>
-
-<a href="#arguments" id="arguments" style="color: inherit; text-decoration: none;">
-  <h4>Arguments</h4>
-</a>
+<p><strong>Arguments</strong></p>
 <ul>
-<li><code>data</code> (<code>number[]</code>): Input data.</li>
+<li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
 </ul>
-
-<a href="#return" id="return" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>coeffs</code> (<code>number[][]</code>): Approximation and detail coefficients as result of the transform.</p>
-
-<a href="#example" id="example" style="color: inherit; text-decoration: none;">
-  <h4>Example</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">dwt</span><span class="hl-1">([</span><span class="hl-5">1</span><span class="hl-1">, </span><span class="hl-5">2</span><span class="hl-1">, </span><span class="hl-5">3</span><span class="hl-1">, </span><span class="hl-5">4</span><span class="hl-1">], </span><span class="hl-6">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: Array [[2.1213203435596425, 4.9497474683058326], [-0.7071067811865475, -0.7071067811865475]]</span>
+<p><strong>Return</strong></p>
+<p><code>number[][]</code> or <code>DiscreteWavelets.WaveletBands2D</code>: Approximation and detail coefficients as result of the transform.</p>
+<p><strong>Example</strong></p>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">dwt</span><span class="hl-1">([</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">3</span><span class="hl-1">, </span><span class="hl-7">4</span><span class="hl-1">], </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [[2.1213203435596425, 4.9497474683058326], [-0.7071067811865475, -0.7071067811865475]]</span>
 </code></pre>
 
-<a href="#wavedec" id="wavedec" style="color: inherit; text-decoration: none;">
-  <h3>wavedec</h3>
+<a href="#wavedec-and-wavedec2" id="wavedec-and-wavedec2" style="color: inherit; text-decoration: none;">
+  <h3>wavedec and wavedec2</h3>
 </a>
-<p>1D wavelet decomposition. Transforms data by calculating coefficients from input data.</p>
-
-<a href="#arguments-1" id="arguments-1" style="color: inherit; text-decoration: none;">
-  <h4>Arguments</h4>
-</a>
+<p>Wavelet decomposition. Transforms data by calculating coefficients from input data.</p>
+<p><strong>Arguments</strong></p>
 <ul>
-<li><code>data</code> (<code>number[]</code>): Input data.</li>
+<li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
 <li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> function.</li>
 </ul>
-
-<a href="#return-1" id="return-1" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>coeffs</code> (<code>number[][]</code>): Coefficients as result of the transform.</p>
-
-<a href="#example-1" id="example-1" style="color: inherit; text-decoration: none;">
-  <h4>Example</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">wavedec</span><span class="hl-1">([</span><span class="hl-5">1</span><span class="hl-1">, </span><span class="hl-5">2</span><span class="hl-1">, </span><span class="hl-5">3</span><span class="hl-1">, </span><span class="hl-5">4</span><span class="hl-1">], </span><span class="hl-6">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: Array [[4.999999999999999], [-1.9999999999999993], [-0.7071067811865475, -0.7071067811865475]]</span>
+<p><strong>Return</strong></p>
+<p><code>number[][]</code> or <code>DiscreteWavelets.WaveletCoefficients2D</code>: Coefficients as result of the transform.</p>
+<p><strong>Example</strong></p>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">wavedec</span><span class="hl-1">([</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">3</span><span class="hl-1">, </span><span class="hl-7">4</span><span class="hl-1">], </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [[4.999999999999999], [-1.9999999999999993], [-0.7071067811865475, -0.7071067811865475]]</span>
 </code></pre>
 <p><em>Be aware that due to floating point imprecision the result diverges slightly from the analytical solution <code>[[5], [-2], [-0.7071067811865475, -0.7071067811865475]]</code></em></p>
 
-<a href="#idwt" id="idwt" style="color: inherit; text-decoration: none;">
-  <h3>idwt</h3>
+<a href="#idwt-and-idwt2" id="idwt-and-idwt2" style="color: inherit; text-decoration: none;">
+  <h3>idwt and idwt2</h3>
 </a>
 <p>Single level inverse Discrete Wavelet Transform.</p>
-
-<a href="#arguments-2" id="arguments-2" style="color: inherit; text-decoration: none;">
-  <h4>Arguments</h4>
-</a>
+<p><strong>Arguments</strong></p>
 <ul>
-<li><code>approx</code> (<code>number[]</code>): Approximation coefficients. If <code>undefined</code>, it will be set to an array of zeros with length equal to the detail coefficients.</li>
-<li><code>detail</code> (<code>number[]</code>): Detail coefficients. If <code>undefined</code>, it will be set to an array of zeros with length equal to the approximation coefficients.</li>
+<li><code>approx</code> (<code>number[]</code> or <code>number[][]</code>): Approximation coefficients.</li>
+<li><code>detail</code> (<code>number[]</code> or <code>{ LH: number[][], HL: number[][], HH: number[][] }</code>): Detail coefficients.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 </ul>
-
-<a href="#return-2" id="return-2" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>rec</code> (<code>number[]</code>): Approximation coefficients of previous level of transform.</p>
-
-<a href="#example-2" id="example-2" style="color: inherit; text-decoration: none;">
-  <h4>Example</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">rec</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">idwt</span><span class="hl-1">(</span><br/><span class="hl-1">  [(</span><span class="hl-5">1</span><span class="hl-1"> + </span><span class="hl-5">2</span><span class="hl-1">) / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2, (</span><span class="hl-5">3</span><span class="hl-1"> + </span><span class="hl-5">4</span><span class="hl-1">) / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2],</span><br/><span class="hl-1">  [(</span><span class="hl-5">1</span><span class="hl-1"> - </span><span class="hl-5">2</span><span class="hl-1">) / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2, (</span><span class="hl-5">3</span><span class="hl-1"> - </span><span class="hl-5">4</span><span class="hl-1">) / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2],</span><br/><span class="hl-1">  </span><span class="hl-6">&quot;haar&quot;</span><br/><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">rec</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: Array [0.9999999999999999, 1.9999999999999996, 2.9999999999999996, 3.9999999999999996]</span>
+<p><strong>Return</strong></p>
+<p><code>number[]</code> or <code>number[][]</code>: Approximation coefficients of previous level of transform.</p>
+<p><strong>Example</strong></p>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">rec</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">idwt</span><span class="hl-1">(</span><br/><span class="hl-1">  [(</span><span class="hl-7">1</span><span class="hl-1"> + </span><span class="hl-7">2</span><span class="hl-1">) / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2, (</span><span class="hl-7">3</span><span class="hl-1"> + </span><span class="hl-7">4</span><span class="hl-1">) / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2],</span><br/><span class="hl-1">  [(</span><span class="hl-7">1</span><span class="hl-1"> - </span><span class="hl-7">2</span><span class="hl-1">) / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2, (</span><span class="hl-7">3</span><span class="hl-1"> - </span><span class="hl-7">4</span><span class="hl-1">) / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2],</span><br/><span class="hl-1">  </span><span class="hl-8">&quot;haar&quot;</span><br/><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">rec</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [0.9999999999999999, 1.9999999999999996, 2.9999999999999996, 3.9999999999999996]</span>
 </code></pre>
 <p><em>Be aware that due to floating point imprecision the result diverges slightly from the analytical solution <code>[1, 2, 3, 4]</code></em></p>
 
-<a href="#waverec" id="waverec" style="color: inherit; text-decoration: none;">
-  <h3>waverec</h3>
+<a href="#waverec-and-waverec2" id="waverec-and-waverec2" style="color: inherit; text-decoration: none;">
+  <h3>waverec and waverec2</h3>
 </a>
-<p>1D wavelet reconstruction. Inverses a transform by calculating input data from coefficients.</p>
-
-<a href="#arguments-3" id="arguments-3" style="color: inherit; text-decoration: none;">
-  <h4>Arguments</h4>
-</a>
+<p>Wavelet reconstruction. Inverses a transform by calculating input data from coefficients.</p>
+<blockquote>
+<p>[!WARNING]</p>
+<p>In 1D, this function assumes that the shape of the original data is the same shape as <code>coeffs</code>. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
+In 2D, <code>DiscreteWavelets.WaveletCoefficients2D.size</code> is used to accurately restore the original data with the original shape.</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE]</p>
+<p><code>DiscreteWavelets.WaveletCoefficients2D.mask</code> is not used in this function. You can omit it or set it to null or undefined.</p>
+</blockquote>
+<p><strong>Arguments</strong></p>
 <ul>
-<li><code>coeffs</code> (<code>number[][]</code>): Coefficients as result of a transform.</li>
+<li><code>coeffs</code> (<code>number[][]</code> or <code>DiscreteWavelets.WaveletCoefficients2D</code>): Coefficients as result of a transform.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 </ul>
-
-<a href="#return-3" id="return-3" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>data</code> (<code>number[]</code>): Input data as result of the inverse transform.</p>
-
-<a href="#example-3" id="example-3" style="color: inherit; text-decoration: none;">
-  <h4>Example</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">data</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">waverec</span><span class="hl-1">([[</span><span class="hl-5">5</span><span class="hl-1">], [-</span><span class="hl-5">2</span><span class="hl-1">], [-</span><span class="hl-5">1</span><span class="hl-1"> / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2, -</span><span class="hl-5">1</span><span class="hl-1"> / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2]], </span><span class="hl-6">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">data</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: Array [0.9999999999999999, 1.9999999999999996, 2.999999999999999, 3.999999999999999]</span>
+<p><strong>Return</strong></p>
+<p><code>number[]</code> or <code>number[][]</code>: Original data as result of the inverse transform.</p>
+<p><strong>Example</strong></p>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">data</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">waverec</span><span class="hl-1">([[</span><span class="hl-7">5</span><span class="hl-1">], [-</span><span class="hl-7">2</span><span class="hl-1">], [-</span><span class="hl-7">1</span><span class="hl-1"> / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2, -</span><span class="hl-7">1</span><span class="hl-1"> / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2]], </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">data</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [0.9999999999999999, 1.9999999999999996, 2.999999999999999, 3.999999999999999]</span>
 </code></pre>
 <p><em>Be aware that due to floating point imprecision the result diverges slightly from the analytical solution <code>[1, 2, 3, 4]</code></em></p>
 
@@ -272,74 +264,47 @@
   <h3>energy</h3>
 </a>
 <p>Calculates the energy as sum of squares of an array of data or coefficients.</p>
-
-<a href="#argument" id="argument" style="color: inherit; text-decoration: none;">
-  <h4>Argument</h4>
-</a>
+<p><strong>Argument</strong></p>
 <ul>
 <li><code>values</code> (<code>number[] | number[][]</code>): Array of data or coefficients.</li>
 </ul>
-
-<a href="#return-4" id="return-4" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>energy</code> (<code>number</code>): Energy of values as the sum of squares.</p>
-
-<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-  <h4>Examples</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">energy</span><span class="hl-1">([-</span><span class="hl-5">1</span><span class="hl-1">, </span><span class="hl-5">2</span><span class="hl-1">, </span><span class="hl-5">6</span><span class="hl-1">, </span><span class="hl-5">1</span><span class="hl-1">]));</span><br/><span class="hl-3">// expected output: 42</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">energy</span><span class="hl-1">([[</span><span class="hl-5">5</span><span class="hl-1">], [-</span><span class="hl-5">2</span><span class="hl-1">], [-</span><span class="hl-5">1</span><span class="hl-1"> / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2, -</span><span class="hl-5">1</span><span class="hl-1"> / </span><span class="hl-7">Math</span><span class="hl-1">.SQRT2]]));</span><br/><span class="hl-3">// expected output: 30</span>
+<p><strong>Return</strong></p>
+<p><code>number</code>: Energy of values as the sum of squares.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="language-javascript"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">energy</span><span class="hl-1">([-</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">6</span><span class="hl-1">, </span><span class="hl-7">1</span><span class="hl-1">]));</span><br/><span class="hl-4">// expected output: 42</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">energy</span><span class="hl-1">([[</span><span class="hl-7">5</span><span class="hl-1">], [-</span><span class="hl-7">2</span><span class="hl-1">], [-</span><span class="hl-7">1</span><span class="hl-1"> / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2, -</span><span class="hl-7">1</span><span class="hl-1"> / </span><span class="hl-9">Math</span><span class="hl-1">.SQRT2]]));</span><br/><span class="hl-4">// expected output: 30</span>
 </code></pre>
 
-<a href="#maxlevel" id="maxlevel" style="color: inherit; text-decoration: none;">
-  <h3>maxLevel</h3>
+<a href="#maxlevel-and-maxlevel2" id="maxlevel-and-maxlevel2" style="color: inherit; text-decoration: none;">
+  <h3>maxLevel and maxLevel2</h3>
 </a>
 <p>Determines the maximum level of useful decomposition.</p>
-
-<a href="#arguments-4" id="arguments-4" style="color: inherit; text-decoration: none;">
-  <h4>Arguments</h4>
-</a>
+<p><strong>Arguments</strong></p>
 <ul>
-<li><code>dataLength</code> (<code>number</code>): Length of input data.</li>
+<li><code>dataLength</code> (<code>number</code> or <code>[number,number]</code>): Dimensions of input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 </ul>
-
-<a href="#return-5" id="return-5" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>maxLevel</code> (<code>number</code>): Maximum useful level of decomposition.</p>
-
-<a href="#examples-1" id="examples-1" style="color: inherit; text-decoration: none;">
-  <h4>Examples</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">maxLevel</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">maxLevel</span><span class="hl-1">(</span><span class="hl-5">4</span><span class="hl-1">, </span><span class="hl-6">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">maxLevel</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: 2</span>
+<p><strong>Return</strong></p>
+<p><code>number</code>: Maximum useful level of decomposition.</p>
+<p><strong>Examples</strong></p>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">maxLevel</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">maxLevel</span><span class="hl-1">(</span><span class="hl-7">4</span><span class="hl-1">, </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">maxLevel</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: 2</span>
 </code></pre>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">maxLevel</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">maxLevel</span><span class="hl-1">(</span><span class="hl-5">1024</span><span class="hl-1">, </span><span class="hl-6">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">maxLevel</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: 10</span>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">maxLevel</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">maxLevel</span><span class="hl-1">(</span><span class="hl-7">1024</span><span class="hl-1">, </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">maxLevel</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: 10</span>
 </code></pre>
 
 <a href="#pad" id="pad" style="color: inherit; text-decoration: none;">
   <h3>pad</h3>
 </a>
 <p>Extends a signal with a given padding mode.</p>
-
-<a href="#arguments-5" id="arguments-5" style="color: inherit; text-decoration: none;">
-  <h4>Arguments</h4>
-</a>
+<p><strong>Arguments</strong></p>
 <ul>
 <li><code>data</code> (<code>number[]</code>): Input data.</li>
 <li><code>padWidths</code> (<code>[number, number]</code>): Widths of padding at front and back.</li>
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode.</li>
 </ul>
-
-<a href="#return-6" id="return-6" style="color: inherit; text-decoration: none;">
-  <h4>Return</h4>
-</a>
-<p><code>pad</code> (<code>number[]</code>): Data with padding.</p>
-
-<a href="#example-4" id="example-4" style="color: inherit; text-decoration: none;">
-  <h4>Example</h4>
-</a>
-<pre><code class="language-javascript"><span class="hl-4">var</span><span class="hl-1"> </span><span class="hl-0">pad</span><span class="hl-1"> = </span><span class="hl-0">wt</span><span class="hl-1">.</span><span class="hl-2">pad</span><span class="hl-1">([</span><span class="hl-5">42</span><span class="hl-1">, </span><span class="hl-5">51</span><span class="hl-1">], [</span><span class="hl-5">2</span><span class="hl-1">, </span><span class="hl-5">1</span><span class="hl-1">], </span><span class="hl-6">&quot;zero&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">pad</span><span class="hl-1">);</span><br/><span class="hl-3">// expected output: Array [0, 0, 42, 51, 0]</span>
+<p><strong>Return</strong></p>
+<p><code>number[]</code>: Data with padding.</p>
+<p><strong>Example</strong></p>
+<pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">pad</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">pad</span><span class="hl-1">([</span><span class="hl-7">42</span><span class="hl-1">, </span><span class="hl-7">51</span><span class="hl-1">], [</span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">1</span><span class="hl-1">], </span><span class="hl-8">&quot;zero&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">pad</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [0, 0, 42, 51, 0]</span>
 </code></pre>
 
 <a href="#npm-scripts" id="npm-scripts" style="color: inherit; text-decoration: none;">

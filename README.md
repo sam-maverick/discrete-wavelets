@@ -1,25 +1,20 @@
-[![Build Status](https://github.com/Symmetronic/discrete-wavelets/workflows/build/badge.svg?branch=main)](https://github.com/Symmetronic/discrete-wavelets/actions?query=workflow%3Abuild+branch%3Amain) [![Coverage Status](https://coveralls.io/repos/github/Symmetronic/discrete-wavelets/badge.svg?branch=main)](https://coveralls.io/github/Symmetronic/discrete-wavelets?branch=main) [![GitHub License](https://img.shields.io/github/license/Symmetronic/discrete-wavelets)](https://github.com/Symmetronic/discrete-wavelets/blob/main/LICENSE) [![NPM Version](https://img.shields.io/npm/v/discrete-wavelets)](https://www.npmjs.com/package/discrete-wavelets) [![Monthly Downloads](https://img.shields.io/npm/dm/discrete-wavelets)](https://npmcharts.com/compare/discrete-wavelets?minimal=true)
-
-**This library is no longer actively maintained. This means that no new functionality or documentation is added.**
-
 # Discrete Wavelets
 
-A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web.
+A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web, for one-dimensional and two-dimensional inputs.
 
-This library is well tested. Still, it may contain some errors. Therefore it is recommended to double check the results with another library such as [PyWavelets](https://github.com/PyWavelets/pywt). If you find any errors, please let me know by opening an issue or a pull request.
+
 
 ## Importing this library
 
 ### Node Modules
 
-- Run `npm install discrete-wavelets`
-- Add an import to the npm package `import wt from 'discrete-wavelets';`
+- Run `npm install github:sam-maverick/discrete-wavelets`
+- Add these imports to your program:
+  `import WT from "discrete-wavelets";`
+  `import {DiscreteWavelets as DW} from "discrete-wavelets";`
 - Then you can use the library in your code.
 
-### CDN
 
-- Put the following script tag `<script src="https://cdn.jsdelivr.net/npm/discrete-wavelets@5/dist/discrete-wavelets.umd.min.js"></script>` in the head of your HTML file.
-- Then you can use the library in your code.
 
 ## Types
 
@@ -45,7 +40,7 @@ The following values for `PaddingMode` are supported at the moment:
 You can get a list of the supported signal extension modes:
 
 ```javascript
-console.log(wt.Modes.modes);
+console.log(WT.Modes.modes);
 // expected output: Array ['zero', 'constant', 'symmetric', 'periodic', 'smooth', 'reflect', 'antisymmetric']
 ```
 
@@ -66,63 +61,113 @@ The following `Wavelet` types are supported at the moment:
 | Daubechies 9                                                      | `'db9'`, `'D18'`          |
 | Daubechies 10                                                     | `'db10'`, `'D20'`         |
 
+
+
+## Interfaces
+
+The library uses the following interfaces:
+
+- [WaveletCoefficients2D](#WaveletCoefficients2D): All the coefficients that result from the transformation, the original input dimensions, and the mask data.
+  The mask data is a structure with the same shape as the coefficients of the transform, where a '1' means that it is a position that holds actual data, and a '0' means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.
+
+  > [!WARNING]
+  >
+  > At the moment, mask data is only supported in the `haar` wavelet with `symmetric` padding.
+
+- [WaveletBands2D](#WaveletBands2D): The four bands that result from a single-level decomposition.
+
+### WaveletCoefficients2D
+
+```
+approximation: number[][];  // This is the LL band
+details: { 
+  LH: number[][],
+  HL: number[][],
+  HH: number[][]
+}[];  // Mind that this is an array of objects!
+// Information of the original input size must be kept to reliably undo the padding 
+// in the last step of waverec2()
+size: [number, number];
+mask?: { // This will store an optional mask matrix of coefficients, where 0 means that 
+         // that position on the transform result is a synthetic zero produced by the 
+         // padding, and anything else means 'position with actual data'
+  approximation: number[][];
+  details: { 
+      LH: number[][],
+      HL: number[][],
+      HH: number[][] 
+  }[];  // Mind that this is an array of objects!
+}
+```
+
+### WaveletBands2D
+
+```
+LL: number[][],
+LH: number[][],
+HL: number[][],
+HH: number[][],
+```
+
+
+
 ## API
 
-The library offers the following functions:
+The library offers the functions below. A '2' at the end of a function name means that it is for 2D instead of 1D.
 
 - Discrete Wavelet Transform (DWT)
-  - [dwt](#dwt): Single level Discrete Wavelet Transform.
-  - [wavedec](#wavedec): 1D wavelet decomposition. Transforms data by calculating coefficients from input data.
+  - [dwt](#dwt) and [dwt2](#dwt2): Single level transform.
+  - [wavedec](#wavedec) and [wavedec2](#wavedec2): Wavelet decomposition. Transforms data by calculating coefficients from input data.
 - Inverse Discrete Wavelet Transform (IDWT)
-  - [idwt](#idwt): Single level inverse Discrete Wavelet Transform.
-  - [waverec](#waverec): 1D wavelet reconstruction. Inverses a transform by calculating input data from coefficients.
+  - [idwt](#idwt) and [idwt2](#idwt2): Single level inverse transform.
+  - [waverec](#waverec) and [waverec2](#waverec2): Eavelet reconstruction. Inverses a transform by calculating input data from coefficients.
 - Other
   - [energy](#energy): Calculates the energy as sum of squares of an array of data or coefficients.
-  - [maxLevel](#maxLevel): Determines the maximum level of useful decomposition.
+  - [maxLevel](#maxLevel) and [maxLevel2](#maxLevel2): Determines the maximum level of useful decomposition.
   - [pad](#pad): Extends a signal with a given padding mode.
 
-### dwt
+### dwt and dwt2
 
 Single level Discrete Wavelet Transform.
 
-#### Arguments
+**Arguments**
 
-- `data` (`number[]`): Input data.
+- `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 - `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
 
-#### Return
+**Return**
 
-`coeffs` (`number[][]`): Approximation and detail coefficients as result of the transform.
+`number[][]` or `DiscreteWavelets.WaveletBands2D`: Approximation and detail coefficients as result of the transform.
 
-#### Example
+**Example**
 
 ```javascript
-var coeffs = wt.dwt([1, 2, 3, 4], "haar");
+var coeffs = WT.dwt([1, 2, 3, 4], "haar");
 
 console.log(coeffs);
 // expected output: Array [[2.1213203435596425, 4.9497474683058326], [-0.7071067811865475, -0.7071067811865475]]
 ```
 
-### wavedec
+### wavedec and wavedec2
 
-1D wavelet decomposition. Transforms data by calculating coefficients from input data.
+Wavelet decomposition. Transforms data by calculating coefficients from input data.
 
-#### Arguments
+**Arguments**
 
-- `data` (`number[]`): Input data.
+- `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 - `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
 - `level` (`number`): Decomposition level. Defaults to level calculated by [maxLevel](#maxLevel) function.
 
-#### Return
+**Return**
 
-`coeffs` (`number[][]`): Coefficients as result of the transform.
+`number[][]` or `DiscreteWavelets.WaveletCoefficients2D`: Coefficients as result of the transform.
 
-#### Example
+**Example**
 
 ```javascript
-var coeffs = wt.wavedec([1, 2, 3, 4], "haar");
+var coeffs = WT.wavedec([1, 2, 3, 4], "haar");
 
 console.log(coeffs);
 // expected output: Array [[4.999999999999999], [-1.9999999999999993], [-0.7071067811865475, -0.7071067811865475]]
@@ -130,24 +175,24 @@ console.log(coeffs);
 
 _Be aware that due to floating point imprecision the result diverges slightly from the analytical solution `[[5], [-2], [-0.7071067811865475, -0.7071067811865475]]`_
 
-### idwt
+### idwt and idwt2
 
 Single level inverse Discrete Wavelet Transform.
 
-#### Arguments
+**Arguments**
 
-- `approx` (`number[]`): Approximation coefficients. If `undefined`, it will be set to an array of zeros with length equal to the detail coefficients.
-- `detail` (`number[]`): Detail coefficients. If `undefined`, it will be set to an array of zeros with length equal to the approximation coefficients.
+- `approx` (`number[]` or `number[][]`): Approximation coefficients.
+- `detail` (`number[]` or `{ LH: number[][], HL: number[][], HH: number[][] }`): Detail coefficients.
 - `wavelet` (`Wavelet`): Wavelet to use.
 
-#### Return
+**Return**
 
-`rec` (`number[]`): Approximation coefficients of previous level of transform.
+`number[]` or `number[][]`: Approximation coefficients of previous level of transform.
 
-#### Example
+**Example**
 
 ```javascript
-var rec = wt.idwt(
+var rec = WT.idwt(
   [(1 + 2) / Math.SQRT2, (3 + 4) / Math.SQRT2],
   [(1 - 2) / Math.SQRT2, (3 - 4) / Math.SQRT2],
   "haar"
@@ -159,23 +204,32 @@ console.log(rec);
 
 _Be aware that due to floating point imprecision the result diverges slightly from the analytical solution `[1, 2, 3, 4]`_
 
-### waverec
+### waverec and waverec2
 
-1D wavelet reconstruction. Inverses a transform by calculating input data from coefficients.
+Wavelet reconstruction. Inverses a transform by calculating input data from coefficients.
 
-#### Arguments
+> [!WARNING]
+>
+> In 1D, this function assumes that the shape of the original data is the same shape as `coeffs`. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
+> In 2D, `DiscreteWavelets.WaveletCoefficients2D.size` is used to accurately restore the original data with the original shape.
 
-- `coeffs` (`number[][]`): Coefficients as result of a transform.
+> [!NOTE]
+>
+> `DiscreteWavelets.WaveletCoefficients2D.mask` is not used in this function. You can omit it or set it to null or undefined.
+
+**Arguments**
+
+- `coeffs` (`number[][]` or `DiscreteWavelets.WaveletCoefficients2D`): Coefficients as result of a transform.
 - `wavelet` (`Wavelet`): Wavelet to use.
 
-#### Return
+**Return**
 
-`data` (`number[]`): Input data as result of the inverse transform.
+`number[]` or `number[][]`: Original data as result of the inverse transform.
 
-#### Example
+**Example**
 
 ```javascript
-var data = wt.waverec([[5], [-2], [-1 / Math.SQRT2, -1 / Math.SQRT2]], "haar");
+var data = WT.waverec([[5], [-2], [-1 / Math.SQRT2, -1 / Math.SQRT2]], "haar");
 
 console.log(data);
 // expected output: Array [0.9999999999999999, 1.9999999999999996, 2.999999999999999, 3.999999999999999]
@@ -187,48 +241,48 @@ _Be aware that due to floating point imprecision the result diverges slightly fr
 
 Calculates the energy as sum of squares of an array of data or coefficients.
 
-#### Argument
+**Argument**
 
 - `values` (`number[] | number[][]`): Array of data or coefficients.
 
-#### Return
+**Return**
 
-`energy` (`number`): Energy of values as the sum of squares.
+`number`: Energy of values as the sum of squares.
 
-#### Examples
+**Examples**
 
 ```javascript
-console.log(wt.energy([-1, 2, 6, 1]));
+console.log(WT.energy([-1, 2, 6, 1]));
 // expected output: 42
 
-console.log(wt.energy([[5], [-2], [-1 / Math.SQRT2, -1 / Math.SQRT2]]));
+console.log(WT.energy([[5], [-2], [-1 / Math.SQRT2, -1 / Math.SQRT2]]));
 // expected output: 30
 ```
 
-### maxLevel
+### maxLevel and maxLevel2
 
 Determines the maximum level of useful decomposition.
 
-#### Arguments
+**Arguments**
 
-- `dataLength` (`number`): Length of input data.
+- `dataLength` (`number` or `[number,number]`): Dimensions of input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 
-#### Return
+**Return**
 
-`maxLevel` (`number`): Maximum useful level of decomposition.
+`number`: Maximum useful level of decomposition.
 
-#### Examples
+**Examples**
 
 ```javascript
-var maxLevel = wt.maxLevel(4, "haar");
+var maxLevel = WT.maxLevel(4, "haar");
 
 console.log(maxLevel);
 // expected output: 2
 ```
 
 ```javascript
-var maxLevel = wt.maxLevel(1024, "haar");
+var maxLevel = WT.maxLevel(1024, "haar");
 
 console.log(maxLevel);
 // expected output: 10
@@ -238,24 +292,26 @@ console.log(maxLevel);
 
 Extends a signal with a given padding mode.
 
-#### Arguments
+**Arguments**
 
 - `data` (`number[]`): Input data.
 - `padWidths` (`[number, number]`): Widths of padding at front and back.
 - `mode` (`PaddingMode`): Signal extension mode.
 
-#### Return
+**Return**
 
-`pad` (`number[]`): Data with padding.
+`number[]`: Data with padding.
 
-#### Example
+**Example**
 
 ```javascript
-var pad = wt.pad([42, 51], [2, 1], "zero");
+var pad = WT.pad([42, 51], [2, 1], "zero");
 
 console.log(pad);
 // expected output: Array [0, 0, 42, 51, 0]
 ```
+
+
 
 ## NPM scripts
 
