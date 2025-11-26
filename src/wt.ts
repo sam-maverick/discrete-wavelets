@@ -269,7 +269,7 @@ export default class DiscreteWavelets {
       for (let level = 0; level < numLevels; level++) {
 
           const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, mode);  // Perform one level of decomposition
-          const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, 'zero', true);  // We do taint analysis to detect synthetic coefficients
+          const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, mode, true);  // We do taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
           result.approximation = bands.LL;
@@ -352,7 +352,7 @@ console.log('dwt called with taintAnalysisOnly '+taintAnalysisOnly);
     const filterLength: number = filters.low.length;
 
     /* Add padding. */
-    data = this.pad(data, padWidths(data.length, filterLength), mode);
+    data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'zero' : mode);
 console.log('dwt CALLED ----');    
 //console.log('filters.low:');
 //console.log(filters.low);

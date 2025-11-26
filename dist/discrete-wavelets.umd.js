@@ -754,7 +754,7 @@
             };
             for (var level_1 = 0; level_1 < numLevels; level_1++) {
                 var bands = this.dwt2(current, wavelet, mode); // Perform one level of decomposition
-                var bandsMask = this.dwt2(currentMask, wavelet, 'zero', true); // We do taint analysis to detect synthetic coefficients
+                var bandsMask = this.dwt2(currentMask, wavelet, mode, true); // We do taint analysis to detect synthetic coefficients
                 // We keep LL for the next iteration or as the last-level approximation
                 result.approximation = bands.LL;
                 if (result.mask)
@@ -813,7 +813,7 @@
             assertValidFilters(filters);
             var filterLength = filters.low.length;
             /* Add padding. */
-            data = this.pad(data, padWidths(data.length, filterLength), mode);
+            data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'zero' : mode);
             console.log('dwt CALLED ----');
             //console.log('filters.low:');
             //console.log(filters.low);
