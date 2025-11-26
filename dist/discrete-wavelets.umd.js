@@ -716,7 +716,6 @@
         DiscreteWavelets.dwt2 = function (data, wavelet, mode, taintAnalysisOnly) {
             if (mode === void 0) { mode = 'symmetric'; }
             if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
-            console.log('dwt2 called with taintAnalysisOnly ' + taintAnalysisOnly);
             var _a = this.dwtRows(data, wavelet, mode, taintAnalysisOnly), cA = _a.cA, cD = _a.cD;
             var bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
             return bands;
@@ -807,6 +806,7 @@
         DiscreteWavelets.dwt = function (data, wavelet, mode, taintAnalysisOnly) {
             if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
             if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
+            console.log('dwt called with taintAnalysisOnly ' + taintAnalysisOnly);
             /* Determine wavelet basis and filters. */
             var waveletBasis = basisFromWavelet(wavelet);
             var filters = waveletBasis.dec;
