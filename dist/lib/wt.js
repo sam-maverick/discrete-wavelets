@@ -233,9 +233,28 @@ var DiscreteWavelets = /** @class */ (function () {
             console.log((0, helpers_1.dot)(values, filters.low));
             console.log((0, helpers_1.dot)(values, filters.high));
             if (taintAnalysisOnly) {
-                var taintValue = values.some(function (v) { return v === 1; }) ? 1 : 0;
-                approx.push(taintValue);
-                detail.push(taintValue);
+                if (filterLength == 2 && mode == 'symmetric' && wavelet == 'haar') {
+                    // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
+                    if (values[0] == 1 && values[1] == 0) {
+                        approx.push(1); // Dotproduct of [a,a] with [f1,f1] depends on a
+                        detail.push(0); // Dotproduct of [a,a] with [f1,-f1] is 0
+                    }
+                    else if (values[0] == 0 && values[1] == 0) {
+                        // Dotproduct of [0,0] with [_,_] is 0
+                        approx.push(0);
+                        detail.push(0);
+                    }
+                    else {
+                        // The result of the dotproduct depents on values[0] and values[1]
+                        approx.push(1);
+                        detail.push(1);
+                    }
+                }
+                else {
+                    // NOT IMPLEMENTED !
+                    approx.push(1);
+                    detail.push(1);
+                }
             }
             else {
                 /* Calculate approximation coefficients. */
