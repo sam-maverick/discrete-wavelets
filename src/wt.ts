@@ -376,6 +376,9 @@ console.log(dot(values, filters.low));
 console.log(dot(values, filters.high));
 
 console.log('$$');
+console.log('filterLength='+filterLength);
+console.log('mode='+mode);
+console.log('wavelet='+wavelet);
       if (taintAnalysisOnly) {
         if (filterLength==2 && mode=='symmetric' && wavelet=='haar') {
           console.log('taint analysis');
