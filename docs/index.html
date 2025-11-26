@@ -138,15 +138,15 @@
 </a>
 <p>The library uses the following interfaces:</p>
 <ul>
-<li><p><a href="#WaveletCoefficients2D">WaveletCoefficients2D</a>: All the coefficients that result from the transformation, the original input dimensions, and the mask data.
-The mask data is a structure with the same shape as the coefficients of the transform, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.</p>
+<li><a href="#WaveletCoefficients2D">WaveletCoefficients2D</a>: All the coefficients that result from the transformation, the original input dimensions, and the mask data.
+The mask data is a structure with the same shape as the coefficients of the transform, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.</li>
+</ul>
 <blockquote>
 <p>[!WARNING]</p>
 <p>At the moment, mask data is only supported in the <code>haar</code> wavelet with <code>symmetric</code> padding.</p>
 </blockquote>
-</li>
-<li><p><a href="#WaveletBands2D">WaveletBands2D</a>: The four bands that result from a single-level decomposition.</p>
-</li>
+<ul>
+<li><a href="#WaveletBands2D">WaveletBands2D</a>: The four bands that result from a single-level decomposition.</li>
 </ul>
 
 <a href="#waveletcoefficients2d" id="waveletcoefficients2d" style="color: inherit; text-decoration: none;">

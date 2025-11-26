@@ -70,9 +70,9 @@ The library uses the following interfaces:
 - [WaveletCoefficients2D](#WaveletCoefficients2D): All the coefficients that result from the transformation, the original input dimensions, and the mask data.
   The mask data is a structure with the same shape as the coefficients of the transform, where a '1' means that it is a position that holds actual data, and a '0' means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.
 
-  > [!WARNING]
-  >
-  > At the moment, mask data is only supported in the `haar` wavelet with `symmetric` padding.
+> [!WARNING]
+>
+> At the moment, mask data is only supported in the `haar` wavelet with `symmetric` padding.
 
 - [WaveletBands2D](#WaveletBands2D): The four bands that result from a single-level decomposition.
 
