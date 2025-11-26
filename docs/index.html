@@ -138,21 +138,14 @@
 </a>
 <p>The library uses the following interfaces:</p>
 <ul>
-<li><a href="#WaveletCoefficients2D">WaveletCoefficients2D</a>: All the coefficients that result from the transformation, the original input dimensions, and the mask data.
-The mask data is a structure with the same shape as the coefficients of the transform, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.</li>
-</ul>
-<blockquote>
-<p>[!WARNING]</p>
-<p>At the moment, mask data is only supported in the <code>haar</code> wavelet with <code>symmetric</code> padding.</p>
-</blockquote>
-<ul>
+<li><a href="#WaveletCoefficients2D">WaveletCoefficients2D</a>: The set of coefficients that result from the transformation, plus the original input dimensions</li>
 <li><a href="#WaveletBands2D">WaveletBands2D</a>: The four bands that result from a single-level decomposition.</li>
 </ul>
 
 <a href="#waveletcoefficients2d" id="waveletcoefficients2d" style="color: inherit; text-decoration: none;">
   <h3>WaveletCoefficients2D</h3>
 </a>
-<pre><code><span class="hl-5">approximation</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][];  </span><span class="hl-4">// This is the LL band</span><br/><span class="hl-5">details</span><span class="hl-1">: { </span><br/><span class="hl-1">  </span><span class="hl-5">LH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">  </span><span class="hl-5">HL</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">  </span><span class="hl-5">HH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][]</span><br/><span class="hl-1">}[];  </span><span class="hl-4">// Mind that this is an array of objects!</span><br/><span class="hl-4">// Information of the original input size must be kept to reliably undo the padding </span><br/><span class="hl-4">// in the last step of waverec2()</span><br/><span class="hl-5">size</span><span class="hl-1">: [</span><span class="hl-0">number</span><span class="hl-1">, </span><span class="hl-0">number</span><span class="hl-1">];</span><br/><span class="hl-0">mask</span><span class="hl-1">?: { </span><span class="hl-4">// This will store an optional mask matrix of coefficients, where 0 means that </span><br/><span class="hl-1">         </span><span class="hl-4">// that position on the transform result is a synthetic zero produced by the </span><br/><span class="hl-1">         </span><span class="hl-4">// padding, and anything else means &#39;position with actual data&#39;</span><br/><span class="hl-1">  </span><span class="hl-0">approximation:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][];</span><br/><span class="hl-1">  </span><span class="hl-0">details</span><span class="hl-1">: { </span><br/><span class="hl-1">      </span><span class="hl-0">LH:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">      </span><span class="hl-0">HL:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">      </span><span class="hl-0">HH:</span><span class="hl-1"> </span><span class="hl-0">number</span><span class="hl-1">[][] </span><br/><span class="hl-1">  }[];  </span><span class="hl-4">// Mind that this is an array of objects!</span><br/><span class="hl-1">}</span>
+<pre><code><span class="hl-5">approximation</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][];  </span><span class="hl-4">// This is the LL band</span><br/><span class="hl-5">details</span><span class="hl-1">: { </span><br/><span class="hl-1">  </span><span class="hl-5">LH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">  </span><span class="hl-5">HL</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][],</span><br/><span class="hl-1">  </span><span class="hl-5">HH</span><span class="hl-1">: </span><span class="hl-0">number</span><span class="hl-1">[][]</span><br/><span class="hl-1">}[];  </span><span class="hl-4">// Mind that this is an array of objects!</span><br/><span class="hl-4">// Information of the original input size must be kept to reliably undo the padding </span><br/><span class="hl-4">// in the last step of waverec2()</span><br/><span class="hl-5">size</span><span class="hl-1">: [</span><span class="hl-0">number</span><span class="hl-1">, </span><span class="hl-0">number</span><span class="hl-1">];</span><br/><span class="hl-1">}</span>
 </code></pre>
 
 <a href="#waveletbands2d" id="waveletbands2d" style="color: inherit; text-decoration: none;">
@@ -212,7 +205,13 @@ The mask data is a structure with the same shape as the coefficients of the tran
 <li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> function.</li>
 </ul>
 <p><strong>Return</strong></p>
-<p><code>number[][]</code> or <code>DiscreteWavelets.WaveletCoefficients2D</code>: Coefficients as result of the transform.</p>
+<p><code>number[][]</code> or <code>{ coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D }</code>:
+number[][] and coeffs are the coefficients as result of the transform, for 1D and 2D respectively.
+In 2D, the <em><strong>mask</strong></em> is a structure with the same shape as the coefficients of the transform, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that coefficient position.</p>
+<blockquote>
+<p>[!WARNING]</p>
+<p>At the moment, mask data is only supported in the <code>haar</code> wavelet with <code>symmetric</code> padding.</p>
+</blockquote>
 <p><strong>Example</strong></p>
 <pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">wavedec</span><span class="hl-1">([</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">3</span><span class="hl-1">, </span><span class="hl-7">4</span><span class="hl-1">], </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [[4.999999999999999], [-1.9999999999999993], [-0.7071067811865475, -0.7071067811865475]]</span>
 </code></pre>
@@ -243,10 +242,6 @@ The mask data is a structure with the same shape as the coefficients of the tran
 <p>[!WARNING]</p>
 <p>In 1D, this function assumes that the shape of the original data is the same shape as <code>coeffs</code>. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
 In 2D, <code>DiscreteWavelets.WaveletCoefficients2D.size</code> is used to accurately restore the original data with the original shape.</p>
-</blockquote>
-<blockquote>
-<p>[!NOTE]</p>
-<p><code>DiscreteWavelets.WaveletCoefficients2D.mask</code> is not used in this function. You can omit it or set it to null or undefined.</p>
 </blockquote>
 <p><strong>Arguments</strong></p>
 <ul>

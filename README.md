@@ -67,13 +67,7 @@ The following `Wavelet` types are supported at the moment:
 
 The library uses the following interfaces:
 
-- [WaveletCoefficients2D](#WaveletCoefficients2D): All the coefficients that result from the transformation, the original input dimensions, and the mask data.
-  The mask data is a structure with the same shape as the coefficients of the transform, where a '1' means that it is a position that holds actual data, and a '0' means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask data, this means that any input with the same shape will always produce a 0 in that coefficient position.
-
-> [!WARNING]
->
-> At the moment, mask data is only supported in the `haar` wavelet with `symmetric` padding.
-
+- [WaveletCoefficients2D](#WaveletCoefficients2D): The set of coefficients that result from the transformation, plus the original input dimensions
 - [WaveletBands2D](#WaveletBands2D): The four bands that result from a single-level decomposition.
 
 ### WaveletCoefficients2D
@@ -88,15 +82,6 @@ details: {
 // Information of the original input size must be kept to reliably undo the padding 
 // in the last step of waverec2()
 size: [number, number];
-mask?: { // This will store an optional mask matrix of coefficients, where 0 means that 
-         // that position on the transform result is a synthetic zero produced by the 
-         // padding, and anything else means 'position with actual data'
-  approximation: number[][];
-  details: { 
-      LH: number[][],
-      HL: number[][],
-      HH: number[][] 
-  }[];  // Mind that this is an array of objects!
 }
 ```
 
@@ -162,7 +147,13 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 
 **Return**
 
-`number[][]` or `DiscreteWavelets.WaveletCoefficients2D`: Coefficients as result of the transform.
+`number[][]` or `{ coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D }`:
+number\[]\[] and coeffs are the coefficients as result of the transform, for 1D and 2D respectively.
+In 2D, the ***mask*** is a structure with the same shape as the coefficients of the transform, where a '1' means that it is a position that holds actual data, and a '0' means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that coefficient position.
+
+> [!WARNING]
+>
+> At the moment, mask data is only supported in the `haar` wavelet with `symmetric` padding.
 
 **Example**
 
@@ -212,10 +203,6 @@ Wavelet reconstruction. Inverses a transform by calculating input data from coef
 >
 > In 1D, this function assumes that the shape of the original data is the same shape as `coeffs`. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
 > In 2D, `DiscreteWavelets.WaveletCoefficients2D.size` is used to accurately restore the original data with the original shape.
-
-> [!NOTE]
->
-> `DiscreteWavelets.WaveletCoefficients2D.mask` is not used in this function. You can omit it or set it to null or undefined.
 
 **Arguments**
 

@@ -258,7 +258,7 @@ export default class DiscreteWavelets {
       const mask: DiscreteWavelets.WaveletCoefficients2D = {
         approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(1)),
         details: [],
-        size: [0,0],  // Dummy value
+        size: [rows,cols],  // This would not be strictly necessary in the data model
       }
 
       for (let level = 0; level < numLevels; level++) {

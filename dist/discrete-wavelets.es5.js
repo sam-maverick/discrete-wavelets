@@ -747,7 +747,7 @@ var DiscreteWavelets = /** @class */ (function () {
         var mask = {
             approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }),
             details: [],
-            size: [0, 0], // Dummy value
+            size: [rows, cols], // This would not be strictly necessary in the data model
         };
         for (var level_1 = 0; level_1 < numLevels; level_1++) {
             var bands = this.dwt2(current, wavelet, mode); // Perform one level of decomposition
