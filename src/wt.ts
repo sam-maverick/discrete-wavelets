@@ -374,7 +374,7 @@ console.log('intermediate [1approx, 1detail]:');
 console.log(dot(values, filters.low));
 console.log(dot(values, filters.high));
 
-
+console.log('$$');
       if (taintAnalysisOnly) {
         if (filterLength==2 && mode=='symmetric' && wavelet=='haar') {
           console.log('taint analysis');

@@ -232,6 +232,7 @@ var DiscreteWavelets = /** @class */ (function () {
             console.log('intermediate [1approx, 1detail]:');
             console.log((0, helpers_1.dot)(values, filters.low));
             console.log((0, helpers_1.dot)(values, filters.high));
+            console.log('$$');
             if (taintAnalysisOnly) {
                 if (filterLength == 2 && mode == 'symmetric' && wavelet == 'haar') {
                     console.log('taint analysis');
