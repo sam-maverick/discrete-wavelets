@@ -752,12 +752,6 @@ var DiscreteWavelets = /** @class */ (function () {
             numLevels = maxLevels;
         }
         else {
-            if (!(Number.isInteger(level) && level > 0)) {
-                throw new Error('Level parameter must be an integer greater than zero');
-            }
-            if (level > maxLevels) {
-                throw new Error('Can\'t decompose more times than the maximum number of levels ' + maxLevels);
-            }
             numLevels = level;
         }
         var current = data;
