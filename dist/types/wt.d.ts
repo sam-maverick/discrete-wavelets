@@ -35,10 +35,10 @@ export default class DiscreteWavelets {
      *
      * @param  dataLength Length of input data.
      * @param  wavelet    Wavelet to use.
-     * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+     * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
      * @return            Maximum useful level of decomposition.
      */
-    static maxLevel2(size: [number, number], wavelet: Wavelet, padding?: boolean): number;
+    static maxLevel2(size: [number, number], wavelet: Wavelet, mode?: PaddingMode | null): number;
     private static dwtRows;
     private static dwtCols;
     private static idwtRows;
@@ -123,10 +123,10 @@ export default class DiscreteWavelets {
      *
      * @param  dataLength Length of input data.
      * @param  wavelet    Wavelet to use.
-     * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+     * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
      * @return            Maximum useful level of decomposition.
      */
-    static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, padding?: boolean): number;
+    static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, mode?: PaddingMode | null): number;
     /**
      * Extends a signal with a given padding mode.
      *

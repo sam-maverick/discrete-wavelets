@@ -143,7 +143,7 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 - `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 - `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
-- `level` (`number`): Decomposition level. Defaults to level calculated by [maxLevel](#maxLevel) function.
+- `level` (`number`): Decomposition level. Defaults to level calculated by [maxLevel](#maxLevel) function (with mode specified in 2D, without mode specified in 1D).
 
 **Return**
 
@@ -254,6 +254,7 @@ Determines the maximum level of useful decomposition.
 
 - `dataLength` (`number` or `[number,number]`): Dimensions of input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
+- `mode` (`PaddingMode`): When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
 
 **Return**
 

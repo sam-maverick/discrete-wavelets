@@ -629,14 +629,14 @@
          *
          * @param  dataLength Length of input data.
          * @param  wavelet    Wavelet to use.
-         * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+         * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
          * @return            Maximum useful level of decomposition.
          */
-        DiscreteWavelets.maxLevel2 = function (size, wavelet, padding) {
-            if (padding === void 0) { padding = false; }
+        DiscreteWavelets.maxLevel2 = function (size, wavelet, mode) {
+            if (mode === void 0) { mode = null; }
             // !!! Assuming that the decimation factor is 2, it should be equal to:
             // Math.floor(Math.log2(Math.min(rows, cols)))
-            return Math.min(this.maxLevel(size[0], wavelet, padding), this.maxLevel(size[1], wavelet, padding));
+            return Math.min(this.maxLevel(size[0], wavelet, mode), this.maxLevel(size[1], wavelet, mode));
         };
         DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode, taintAnalysisOnly) {
             if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
@@ -752,7 +752,7 @@
             if (mode === void 0) { mode = 'symmetric'; }
             var rows = data.length;
             var cols = data[0].length;
-            var maxLevels = this.maxLevel2([rows, cols], wavelet);
+            var maxLevels = this.maxLevel2([rows, cols], wavelet, mode);
             var numLevels;
             if (level === undefined) {
                 numLevels = maxLevels;
@@ -960,11 +960,11 @@
          *
          * @param  dataLength Length of input data.
          * @param  wavelet    Wavelet to use.
-         * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+         * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
          * @return            Maximum useful level of decomposition.
          */
-        DiscreteWavelets.maxLevel = function (dataLength, wavelet, padding) {
-            if (padding === void 0) { padding = false; }
+        DiscreteWavelets.maxLevel = function (dataLength, wavelet, mode) {
+            if (mode === void 0) { mode = null; }
             /* Check for non-integer length. */
             if (!Number.isInteger(dataLength)) {
                 throw new Error("Length of data is not an integer. This is not allowed.");
@@ -980,12 +980,14 @@
             var waveletBasis = basisFromWavelet(wavelet);
             /* Determine length of filter. */
             var filterLength = waveletBasis.dec.low.length;
-            if (!padding) {
+            if (mode === null) {
                 // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
                 return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
             }
             else {
-                return Math.max(0, Math.ceil(Math.log2(dataLength / (filterLength - 1))));
+                var dummyData = Array(dataLength).fill(0);
+                var dummyPaddedData = this.pad(dummyData, padWidths(dummyData.length, filterLength), mode);
+                return Math.max(0, Math.floor(Math.log2(dummyPaddedData.length / (filterLength - 1))));
             }
         };
         /**

@@ -83,19 +83,19 @@ export default class DiscreteWavelets {
    *
    * @param  dataLength Length of input data.
    * @param  wavelet    Wavelet to use.
-   * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+   * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
    * @return            Maximum useful level of decomposition.
    */
   static maxLevel2(
       size: [number, number], 
       wavelet: Wavelet,
-      padding: boolean = false,
+      mode: PaddingMode|null = null,
   ): number {
       // !!! Assuming that the decimation factor is 2, it should be equal to:
       // Math.floor(Math.log2(Math.min(rows, cols)))
       return Math.min(
-          this.maxLevel(size[0], wavelet, padding),
-          this.maxLevel(size[1], wavelet, padding)
+          this.maxLevel(size[0], wavelet, mode),
+          this.maxLevel(size[1], wavelet, mode)
       );
   }
 
@@ -255,7 +255,7 @@ export default class DiscreteWavelets {
       const rows = data.length;
       const cols = data[0].length;
 
-      const maxLevels = this.maxLevel2([rows, cols], wavelet);
+      const maxLevels = this.maxLevel2([rows, cols], wavelet, mode);
       let numLevels: number;
       if (level === undefined) {
           numLevels = maxLevels;
@@ -507,10 +507,10 @@ export default class DiscreteWavelets {
    *
    * @param  dataLength Length of input data.
    * @param  wavelet    Wavelet to use.
-   * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+   * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
    * @return            Maximum useful level of decomposition.
    */
-  static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, padding: boolean = false): number {
+  static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, mode: PaddingMode|null = null): number {
     /* Check for non-integer length. */
     if (!Number.isInteger(dataLength)) {
       throw new Error("Length of data is not an integer. This is not allowed.");
@@ -530,11 +530,13 @@ export default class DiscreteWavelets {
     /* Determine length of filter. */
     const filterLength: number = waveletBasis.dec.low.length;
 
-    if (! padding) {
+    if (mode === null) {
       // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
       return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
     } else {
-      return Math.max(0, Math.ceil(Math.log2(dataLength / (filterLength - 1))));
+      const dummyData = Array(dataLength).fill(0);
+      const dummyPaddedData = this.pad(dummyData, padWidths(dummyData.length, filterLength), mode);
+      return Math.max(0, Math.floor(Math.log2(dummyPaddedData.length / (filterLength - 1))));
     }
   }
 

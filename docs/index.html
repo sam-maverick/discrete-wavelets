@@ -202,7 +202,7 @@
 <li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
-<li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> function.</li>
+<li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> function (with mode specified in 2D, without mode specified in 1D).</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }</code>:
@@ -277,6 +277,7 @@ In 2D, <code>DW.WaveletCoefficients2D.size</code> is used to accurately restore 
 <ul>
 <li><code>dataLength</code> (<code>number</code> or <code>[number,number]</code>): Dimensions of input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
+<li><code>mode</code> (<code>PaddingMode</code>): When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number</code>: Maximum useful level of decomposition.</p>
