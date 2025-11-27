@@ -24,10 +24,19 @@ var DiscreteWavelets = /** @class */ (function () {
     /**
      *     2-D FUNCTIONS
      */
-    DiscreteWavelets.maxLevel2 = function (size, wavelet) {
+    /**
+     * Determines the maximum level of useful decomposition in 2d.
+     *
+     * @param  dataLength Length of input data.
+     * @param  wavelet    Wavelet to use.
+     * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+     * @return            Maximum useful level of decomposition.
+     */
+    DiscreteWavelets.maxLevel2 = function (size, wavelet, padding) {
+        if (padding === void 0) { padding = false; }
         // !!! Assuming that the decimation factor is 2, it should be equal to:
         // Math.floor(Math.log2(Math.min(rows, cols)))
-        return Math.min(this.maxLevel(size[0], wavelet), this.maxLevel(size[1], wavelet));
+        return Math.min(this.maxLevel(size[0], wavelet, padding), this.maxLevel(size[1], wavelet, padding));
     };
     DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode, taintAnalysisOnly) {
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
@@ -113,6 +122,15 @@ var DiscreteWavelets = /** @class */ (function () {
         }
         return { cA: cA, cD: cD };
     };
+    /**
+     * Single level 2D Discrete Wavelet Transform.
+     *
+     * @param  data              Input data.
+     * @param  wavelet           Wavelet to use.
+     * @param  mode              Signal extension mode.
+     * @param  taintAnalysisOnly If set to true it will only calculate the mask matrix, otherwise it will calculate the DWT coefficients
+     * @return                   Approximation and detail coefficients as result of the transform.
+     */
     DiscreteWavelets.dwt2 = function (data, wavelet, mode, taintAnalysisOnly) {
         if (mode === void 0) { mode = 'symmetric'; }
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
@@ -120,6 +138,16 @@ var DiscreteWavelets = /** @class */ (function () {
         var bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
         return bands;
     };
+    /**
+     * 2D wavelet decomposition. Transforms data by calculating coefficients from
+     * input data.
+     *
+     * @param  data    Input data.
+     * @param  wavelet Wavelet to use.
+     * @param  mode    Signal extension mode.
+     * @param  level   Decomposition level. Defaults to level calculated by maxLevel function.
+     * @return         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+     */
     DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level) {
         if (mode === void 0) { mode = 'symmetric'; }
         var rows = data.length;
@@ -169,11 +197,27 @@ var DiscreteWavelets = /** @class */ (function () {
         }
         return { coeffs: coeffs, mask: mask };
     };
+    /**
+     * Single level inverse 2D Discrete Wavelet Transform.
+     *
+     * @param  approx  Approximation coefficients. If undefined, it will be set to an array of zeros with length equal to the detail coefficients.
+     * @param  detail  Detail coefficients. If undefined, it will be set to an array of zeros with length equal to the approximation coefficients.
+     * @param  wavelet Wavelet to use.
+     * @return         Approximation coefficients of previous level of transform.
+     */
     DiscreteWavelets.idwt2 = function (approx, detail, wavelet) {
         var _a = this.idwtCols({ LL: approx, LH: detail.LH, HL: detail.HL, HH: detail.HH }, wavelet), cA = _a.cA, cD = _a.cD;
         var data = this.idwtRows(cA, cD, wavelet);
         return data;
     };
+    /**
+     * 2D wavelet reconstruction. Inverses a transform by calculating input data
+     * from coefficients.
+     *
+     * @param  coeffs  Coefficients as result of a transform.
+     * @param  wavelet Wavelet to use.
+     * @return         Input data as result of the inverse transform.
+     */
     DiscreteWavelets.waverec2 = function (coeffs, wavelet) {
         var current = coeffs.approximation;
         for (var level = coeffs.details.length - 1; level >= 0; level--) {
@@ -196,7 +240,7 @@ var DiscreteWavelets = /** @class */ (function () {
      *     1-D FUNCTIONS
      */
     /**
-     * Single level Discrete Wavelet Transform.
+     * Single level 1D Discrete Wavelet Transform.
      *
      * @param  data    Input data.
      * @param  wavelet Wavelet to use.
@@ -273,7 +317,7 @@ var DiscreteWavelets = /** @class */ (function () {
         return energy;
     };
     /**
-     * Single level inverse Discrete Wavelet Transform.
+     * Single level inverse 1D Discrete Wavelet Transform.
      *
      * @param  approx  Approximation coefficients. If undefined, it will be set to an array of zeros with length equal to the detail coefficients.
      * @param  detail  Detail coefficients. If undefined, it will be set to an array of zeros with length equal to the approximation coefficients.
@@ -318,13 +362,15 @@ var DiscreteWavelets = /** @class */ (function () {
         return pad.slice(filterLength - 2, pad.length - (filterLength - 2));
     };
     /**
-     * Determines the maximum level of useful decomposition.
+     * Determines the maximum level of useful decomposition in 1D.
      *
      * @param  dataLength Length of input data.
      * @param  wavelet    Wavelet to use.
+     * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
      * @return            Maximum useful level of decomposition.
      */
-    DiscreteWavelets.maxLevel = function (dataLength, wavelet) {
+    DiscreteWavelets.maxLevel = function (dataLength, wavelet, padding) {
+        if (padding === void 0) { padding = false; }
         /* Check for non-integer length. */
         if (!Number.isInteger(dataLength)) {
             throw new Error("Length of data is not an integer. This is not allowed.");
@@ -340,8 +386,13 @@ var DiscreteWavelets = /** @class */ (function () {
         var waveletBasis = (0, helpers_1.basisFromWavelet)(wavelet);
         /* Determine length of filter. */
         var filterLength = waveletBasis.dec.low.length;
-        // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
-        return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
+        if (!padding) {
+            // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
+            return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
+        }
+        else {
+            return Math.max(0, Math.ceil(Math.log2(dataLength / (filterLength - 1))));
+        }
     };
     /**
      * Extends a signal with a given padding mode.

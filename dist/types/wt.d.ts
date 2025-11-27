@@ -30,33 +30,70 @@ export default class DiscreteWavelets {
     /**
      *     2-D FUNCTIONS
      */
-    static maxLevel2(size: [number, number], wavelet: Wavelet): number;
-    static dwtRows(matrix: number[][], wavelet: Wavelet, paddingmode: PaddingMode, taintAnalysisOnly?: boolean): {
-        cA: number[][];
-        cD: number[][];
-    };
-    static dwtCols(cA: number[][], cD: number[][], wavelet: Wavelet, paddingmode: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
-    static idwtRows(cA: number[][], cD: number[][], wavelet: Wavelet): number[][];
-    static idwtCols(bands: DiscreteWavelets.WaveletBands2D, wavelet: Wavelet): {
-        cA: number[][];
-        cD: number[][];
-    };
+    /**
+     * Determines the maximum level of useful decomposition in 2d.
+     *
+     * @param  dataLength Length of input data.
+     * @param  wavelet    Wavelet to use.
+     * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+     * @return            Maximum useful level of decomposition.
+     */
+    static maxLevel2(size: [number, number], wavelet: Wavelet, padding?: boolean): number;
+    private static dwtRows;
+    private static dwtCols;
+    private static idwtRows;
+    private static idwtCols;
+    /**
+     * Single level 2D Discrete Wavelet Transform.
+     *
+     * @param  data              Input data.
+     * @param  wavelet           Wavelet to use.
+     * @param  mode              Signal extension mode.
+     * @param  taintAnalysisOnly If set to true it will only calculate the mask matrix, otherwise it will calculate the DWT coefficients
+     * @return                   Approximation and detail coefficients as result of the transform.
+     */
     static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
+    /**
+     * 2D wavelet decomposition. Transforms data by calculating coefficients from
+     * input data.
+     *
+     * @param  data    Input data.
+     * @param  wavelet Wavelet to use.
+     * @param  mode    Signal extension mode.
+     * @param  level   Decomposition level. Defaults to level calculated by maxLevel function.
+     * @return         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+     */
     static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number): {
         coeffs: DiscreteWavelets.WaveletCoefficients2D;
         mask: DiscreteWavelets.WaveletCoefficients2D;
     };
+    /**
+     * Single level inverse 2D Discrete Wavelet Transform.
+     *
+     * @param  approx  Approximation coefficients. If undefined, it will be set to an array of zeros with length equal to the detail coefficients.
+     * @param  detail  Detail coefficients. If undefined, it will be set to an array of zeros with length equal to the approximation coefficients.
+     * @param  wavelet Wavelet to use.
+     * @return         Approximation coefficients of previous level of transform.
+     */
     static idwt2(approx: number[][], detail: {
         LH: number[][];
         HL: number[][];
         HH: number[][];
     }, wavelet: Wavelet): number[][];
+    /**
+     * 2D wavelet reconstruction. Inverses a transform by calculating input data
+     * from coefficients.
+     *
+     * @param  coeffs  Coefficients as result of a transform.
+     * @param  wavelet Wavelet to use.
+     * @return         Input data as result of the inverse transform.
+     */
     static waverec2(coeffs: DiscreteWavelets.WaveletCoefficients2D, wavelet: Wavelet): number[][];
     /**
      *     1-D FUNCTIONS
      */
     /**
-     * Single level Discrete Wavelet Transform.
+     * Single level 1D Discrete Wavelet Transform.
      *
      * @param  data    Input data.
      * @param  wavelet Wavelet to use.
@@ -73,7 +110,7 @@ export default class DiscreteWavelets {
      */
     static energy(values: ReadonlyArray<number> | ReadonlyArray<ReadonlyArray<number>>): number;
     /**
-     * Single level inverse Discrete Wavelet Transform.
+     * Single level inverse 1D Discrete Wavelet Transform.
      *
      * @param  approx  Approximation coefficients. If undefined, it will be set to an array of zeros with length equal to the detail coefficients.
      * @param  detail  Detail coefficients. If undefined, it will be set to an array of zeros with length equal to the approximation coefficients.
@@ -82,13 +119,14 @@ export default class DiscreteWavelets {
      */
     static idwt(approx: ReadonlyArray<number> | undefined, detail: ReadonlyArray<number> | undefined, wavelet: Wavelet): number[];
     /**
-     * Determines the maximum level of useful decomposition.
+     * Determines the maximum level of useful decomposition in 1D.
      *
      * @param  dataLength Length of input data.
      * @param  wavelet    Wavelet to use.
+     * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
      * @return            Maximum useful level of decomposition.
      */
-    static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>): number;
+    static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, padding?: boolean): number;
     /**
      * Extends a signal with a given padding mode.
      *

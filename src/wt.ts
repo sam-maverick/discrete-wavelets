@@ -78,19 +78,28 @@ export default class DiscreteWavelets {
  *     2-D FUNCTIONS
  */
 
+  /**
+   * Determines the maximum level of useful decomposition in 2d.
+   *
+   * @param  dataLength Length of input data.
+   * @param  wavelet    Wavelet to use.
+   * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
+   * @return            Maximum useful level of decomposition.
+   */
   static maxLevel2(
       size: [number, number], 
       wavelet: Wavelet,
+      padding: boolean = false,
   ): number {
       // !!! Assuming that the decimation factor is 2, it should be equal to:
       // Math.floor(Math.log2(Math.min(rows, cols)))
       return Math.min(
-          this.maxLevel(size[0], wavelet),
-          this.maxLevel(size[1], wavelet)
+          this.maxLevel(size[0], wavelet, padding),
+          this.maxLevel(size[1], wavelet, padding)
       );
   }
 
-  static dwtRows(
+  private static dwtRows(
       matrix: number[][], 
       wavelet: Wavelet, 
       paddingmode: PaddingMode,
@@ -111,7 +120,7 @@ export default class DiscreteWavelets {
       return { cA, cD };  // cA.length = cD.length = rows
   }
 
-  static dwtCols(
+  private static dwtCols(
       cA: number[][], 
       cD: number[][], 
       wavelet: Wavelet, 
@@ -153,7 +162,7 @@ export default class DiscreteWavelets {
       return bands;
   }
 
-  static idwtRows(
+  private static idwtRows(
       cA: number[][], 
       cD: number[][], 
       wavelet: Wavelet,
@@ -169,7 +178,7 @@ export default class DiscreteWavelets {
       return result;
   }
 
-  static idwtCols(
+  private static idwtCols(
       bands: DiscreteWavelets.WaveletBands2D,
       wavelet: Wavelet,
   ): { cA: number[][], cD: number[][] } {
@@ -206,6 +215,15 @@ export default class DiscreteWavelets {
       return { cA, cD };
   }
 
+  /**
+   * Single level 2D Discrete Wavelet Transform.
+   *
+   * @param  data              Input data.
+   * @param  wavelet           Wavelet to use.
+   * @param  mode              Signal extension mode.
+   * @param  taintAnalysisOnly If set to true it will only calculate the mask matrix, otherwise it will calculate the DWT coefficients
+   * @return                   Approximation and detail coefficients as result of the transform.
+   */  
   static dwt2(
       data: number[][],
       wavelet: Wavelet,
@@ -217,6 +235,16 @@ export default class DiscreteWavelets {
       return bands;
   }
 
+  /**
+   * 2D wavelet decomposition. Transforms data by calculating coefficients from
+   * input data.
+   *
+   * @param  data    Input data.
+   * @param  wavelet Wavelet to use.
+   * @param  mode    Signal extension mode.
+   * @param  level   Decomposition level. Defaults to level calculated by maxLevel function.
+   * @return         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+   */  
   static wavedec2(
       data: number[][],
       wavelet: Wavelet,
@@ -280,6 +308,14 @@ export default class DiscreteWavelets {
       return { coeffs, mask };
   }
 
+  /**
+   * Single level inverse 2D Discrete Wavelet Transform.
+   *
+   * @param  approx  Approximation coefficients. If undefined, it will be set to an array of zeros with length equal to the detail coefficients.
+   * @param  detail  Detail coefficients. If undefined, it will be set to an array of zeros with length equal to the approximation coefficients.
+   * @param  wavelet Wavelet to use.
+   * @return         Approximation coefficients of previous level of transform.
+   */  
   static idwt2(
       approx: number[][],
       detail: { LH: number[][], HL: number[][], HH: number[][] },
@@ -290,6 +326,14 @@ export default class DiscreteWavelets {
       return data;
   }
 
+  /**
+   * 2D wavelet reconstruction. Inverses a transform by calculating input data
+   * from coefficients.
+   *
+   * @param  coeffs  Coefficients as result of a transform.
+   * @param  wavelet Wavelet to use.
+   * @return         Input data as result of the inverse transform.
+   */  
   static waverec2(
       coeffs: DiscreteWavelets.WaveletCoefficients2D,
       wavelet: Wavelet,
@@ -326,7 +370,7 @@ export default class DiscreteWavelets {
 
 
   /**
-   * Single level Discrete Wavelet Transform.
+   * Single level 1D Discrete Wavelet Transform.
    *
    * @param  data    Input data.
    * @param  wavelet Wavelet to use.
@@ -407,7 +451,7 @@ export default class DiscreteWavelets {
   }
 
   /**
-   * Single level inverse Discrete Wavelet Transform.
+   * Single level inverse 1D Discrete Wavelet Transform.
    *
    * @param  approx  Approximation coefficients. If undefined, it will be set to an array of zeros with length equal to the detail coefficients.
    * @param  detail  Detail coefficients. If undefined, it will be set to an array of zeros with length equal to the approximation coefficients.
@@ -465,13 +509,14 @@ export default class DiscreteWavelets {
   }
 
   /**
-   * Determines the maximum level of useful decomposition.
+   * Determines the maximum level of useful decomposition in 1D.
    *
    * @param  dataLength Length of input data.
    * @param  wavelet    Wavelet to use.
+   * @param  padding    Whether padding will be used and the padded signal shouuld be used here to calculate this maximum level.
    * @return            Maximum useful level of decomposition.
    */
-  static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>): number {
+  static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, padding: boolean = false): number {
     /* Check for non-integer length. */
     if (!Number.isInteger(dataLength)) {
       throw new Error("Length of data is not an integer. This is not allowed.");
@@ -491,8 +536,12 @@ export default class DiscreteWavelets {
     /* Determine length of filter. */
     const filterLength: number = waveletBasis.dec.low.length;
 
-    // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
-    return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
+    if (! padding) {
+      // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
+      return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
+    } else {
+      return Math.max(0, Math.ceil(Math.log2(dataLength / (filterLength - 1))));
+    }
   }
 
   /**
