@@ -81,21 +81,21 @@ export default class DiscreteWavelets {
   /**
    * Determines the maximum level of useful decomposition in 2d.
    *
-   * @param  dataLength Length of input data.
-   * @param  wavelet    Wavelet to use.
-   * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
-   * @return            Maximum useful level of decomposition.
+   * @param  dataLength     Length of input data.
+   * @param  wavelet        Wavelet to use.
+   * @param  roundingOption When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW
+   * @return                Maximum useful level of decomposition.
    */
   static maxLevel2(
       size: [number, number], 
       wavelet: Wavelet,
-      mode: PaddingMode|null = null,
+      roundingOption: 'LOW'|'HIGH' = 'LOW',
   ): number {
       // !!! Assuming that the decimation factor is 2, it should be equal to:
       // Math.floor(Math.log2(Math.min(rows, cols)))
       return Math.min(
-          this.maxLevel(size[0], wavelet, mode),
-          this.maxLevel(size[1], wavelet, mode)
+          this.maxLevel(size[0], wavelet, roundingOption),
+          this.maxLevel(size[1], wavelet, roundingOption)
       );
   }
 
@@ -239,23 +239,25 @@ export default class DiscreteWavelets {
    * 2D wavelet decomposition. Transforms data by calculating coefficients from
    * input data.
    *
-   * @param  data    Input data.
-   * @param  wavelet Wavelet to use.
-   * @param  mode    Signal extension mode.
-   * @param  level   Decomposition level. Defaults to level calculated by maxLevel function.
-   * @return         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+   * @param  data           Input data.
+   * @param  wavelet        Wavelet to use.
+   * @param  mode           Signal extension mode.
+   * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
+   * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+   * @return                Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
    */  
   static wavedec2(
       data: number[][],
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
       level?: number,
+      roundingOption: 'LOW'|'HIGH' = 'LOW',
   ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D } {
 
       const rows = data.length;
       const cols = data[0].length;
 
-      const maxLevels = this.maxLevel2([rows, cols], wavelet, mode);
+      const maxLevels = this.maxLevel2([rows, cols], wavelet, roundingOption);
       let numLevels: number;
       if (level === undefined) {
           numLevels = maxLevels;
@@ -505,12 +507,16 @@ export default class DiscreteWavelets {
   /**
    * Determines the maximum level of useful decomposition in 1D.
    *
-   * @param  dataLength Length of input data.
-   * @param  wavelet    Wavelet to use.
-   * @param  mode       When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
-   * @return            Maximum useful level of decomposition.
+   * @param  dataLength     Length of input data.
+   * @param  wavelet        Wavelet to use.
+   * @param  roundingOption When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW
+   * @return                Maximum useful level of decomposition.
    */
-  static maxLevel(dataLength: number, wavelet: Readonly<Wavelet>, mode: PaddingMode|null = null): number {
+  static maxLevel(
+    dataLength: number, 
+    wavelet: Readonly<Wavelet>, 
+    roundingOption: 'LOW'|'HIGH' = 'LOW',
+  ): number {
     /* Check for non-integer length. */
     if (!Number.isInteger(dataLength)) {
       throw new Error("Length of data is not an integer. This is not allowed.");
@@ -530,13 +536,11 @@ export default class DiscreteWavelets {
     /* Determine length of filter. */
     const filterLength: number = waveletBasis.dec.low.length;
 
-    if (mode === null) {
+    if (roundingOption === 'LOW') {
       // SOURCE: https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level
       return Math.max(0, Math.floor(Math.log2(dataLength / (filterLength - 1))));
     } else {
-      const dummyData = Array(dataLength).fill(0);
-      const dummyPaddedData = this.pad(dummyData, padWidths(dummyData.length, filterLength), mode);
-      return Math.max(0, Math.floor(Math.log2(dummyPaddedData.length / (filterLength - 1))));
+      return Math.max(0, Math.ceil(Math.log2(dataLength / (filterLength - 1))));
     }
   }
 
@@ -572,20 +576,22 @@ export default class DiscreteWavelets {
    * 1D wavelet decomposition. Transforms data by calculating coefficients from
    * input data.
    *
-   * @param  data    Input data.
-   * @param  wavelet Wavelet to use.
-   * @param  mode    Signal extension mode.
-   * @param  level   Decomposition level. Defaults to level calculated by maxLevel function.
-   * @return         Coefficients as result of the transform.
+   * @param  data           Input data.
+   * @param  wavelet        Wavelet to use.
+   * @param  mode           Signal extension mode.
+   * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
+   * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+   * @return                Coefficients as result of the transform.
    */
   static wavedec(
     data: ReadonlyArray<number>,
     wavelet: Readonly<Wavelet>,
     mode: PaddingMode = DEFAULT_PADDING_MODE,
-    level?: number
+    level?: number,
+    roundingOption: 'LOW'|'HIGH' = 'LOW',
   ): number[][] {
     /* Determine decomposition level. */
-    if (level === undefined) level = this.maxLevel(data.length, wavelet);
+    if (level === undefined) level = this.maxLevel(data.length, wavelet, roundingOption);
     if (level < 0) {
       throw new Error("Decomposition level must not be less than zero");
     }

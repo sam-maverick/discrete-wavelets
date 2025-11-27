@@ -3,6 +3,7 @@
   <h1>Discrete Wavelets</h1>
 </a>
 <p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web, for one-dimensional and two-dimensional inputs. This project is a fork of <a href="https://github.com/Symmetronic/discrete-wavelets">https://github.com/Symmetronic/discrete-wavelets</a>.</p>
+<p>It performs transform to padded data only, in other words, a padding mode is mandatory. See below the supported padding modes.</p>
 
 <a href="#importing-this-library" id="importing-this-library" style="color: inherit; text-decoration: none;">
   <h2>Importing this library</h2>
@@ -202,7 +203,8 @@
 <li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
-<li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> function (with mode specified in 2D, without mode specified in 1D).</li>
+<li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> or <a href="#maxLevel2">maxLevel2</a> function.</li>
+<li><code>RoundingOption</code> (<code>&#39;LOW&#39;|&#39;HIGH&#39;</code>): Rounding option for calculating maxLevel or maxLevel2. Defaults to LOW.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }</code>:
@@ -277,7 +279,7 @@ In 2D, <code>DW.WaveletCoefficients2D.size</code> is used to accurately restore 
 <ul>
 <li><code>dataLength</code> (<code>number</code> or <code>[number,number]</code>): Dimensions of input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
-<li><code>mode</code> (<code>PaddingMode</code>): When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.</li>
+<li><code>RoundingOption</code> (<code>&#39;LOW&#39;|&#39;HIGH&#39;</code>): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number</code>: Maximum useful level of decomposition.</p>

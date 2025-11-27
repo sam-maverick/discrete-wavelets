@@ -2,6 +2,8 @@
 
 A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web, for one-dimensional and two-dimensional inputs. This project is a fork of [https://github.com/Symmetronic/discrete-wavelets](https://github.com/Symmetronic/discrete-wavelets).
 
+It performs transform to padded data only, in other words, a padding mode is mandatory. See below the supported padding modes.
+
 
 
 ## Importing this library
@@ -143,7 +145,8 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 - `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 - `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
-- `level` (`number`): Decomposition level. Defaults to level calculated by [maxLevel](#maxLevel) function (with mode specified in 2D, without mode specified in 1D).
+- `level` (`number`): Decomposition level. Defaults to level calculated by [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function.
+- `RoundingOption` (`'LOW'|'HIGH'`): Rounding option for calculating maxLevel or maxLevel2. Defaults to LOW.
 
 **Return**
 
@@ -254,7 +257,7 @@ Determines the maximum level of useful decomposition.
 
 - `dataLength` (`number` or `[number,number]`): Dimensions of input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
-- `mode` (`PaddingMode`): When specified, the padded data is the one used to calculate the maximum level. When not specified, unpadded data is the one used to calculate the maximum level.
+- `RoundingOption` (`'LOW'|'HIGH'`): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.
 
 **Return**
 
