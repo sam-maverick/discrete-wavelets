@@ -242,25 +242,22 @@ export default class DiscreteWavelets {
    * @param  data           Input data.
    * @param  wavelet        Wavelet to use.
    * @param  mode           Signal extension mode.
-   * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
-   * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+   * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
    * @return                Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
    */  
   static wavedec2(
       data: number[][],
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
-      level?: number,
-      roundingOption: 'LOW'|'HIGH' = 'LOW',
+      level: number|'LOW'|'HIGH' = 'LOW',
   ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D } {
 
       const rows = data.length;
       const cols = data[0].length;
 
-      const maxLevels = this.maxLevel2([rows, cols], wavelet, roundingOption);
       let numLevels: number;
-      if (level === undefined) {
-          numLevels = maxLevels;
+      if (typeof level === 'string') {
+          numLevels = this.maxLevel2([rows, cols], wavelet, level);
       } else {
           numLevels = level;
       }
@@ -579,20 +576,19 @@ export default class DiscreteWavelets {
    * @param  data           Input data.
    * @param  wavelet        Wavelet to use.
    * @param  mode           Signal extension mode.
-   * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
-   * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+   * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
    * @return                Coefficients as result of the transform.
    */
   static wavedec(
     data: ReadonlyArray<number>,
     wavelet: Readonly<Wavelet>,
     mode: PaddingMode = DEFAULT_PADDING_MODE,
-    level?: number,
-    roundingOption: 'LOW'|'HIGH' = 'LOW',
+    level: number|'LOW'|'HIGH' = 'LOW',
   ): number[][] {
     /* Determine decomposition level. */
-    if (level === undefined) level = this.maxLevel(data.length, wavelet, roundingOption);
-    if (level < 0) {
+    if (typeof level === 'string') {
+      level = this.maxLevel(data.length, wavelet, level);
+    } else if (level < 0) {
       throw new Error("Decomposition level must not be less than zero");
     }
 

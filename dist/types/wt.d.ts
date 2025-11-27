@@ -60,11 +60,10 @@ export default class DiscreteWavelets {
      * @param  data           Input data.
      * @param  wavelet        Wavelet to use.
      * @param  mode           Signal extension mode.
-     * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
-     * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+     * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
      * @return                Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
      */
-    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number, roundingOption?: 'LOW' | 'HIGH'): {
+    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number | 'LOW' | 'HIGH'): {
         coeffs: DiscreteWavelets.WaveletCoefficients2D;
         mask: DiscreteWavelets.WaveletCoefficients2D;
     };
@@ -144,11 +143,10 @@ export default class DiscreteWavelets {
      * @param  data           Input data.
      * @param  wavelet        Wavelet to use.
      * @param  mode           Signal extension mode.
-     * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
-     * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+     * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
      * @return                Coefficients as result of the transform.
      */
-    static wavedec(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, mode?: PaddingMode, level?: number, roundingOption?: 'LOW' | 'HIGH'): number[][];
+    static wavedec(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, mode?: PaddingMode, level?: number | 'LOW' | 'HIGH'): number[][];
     /**
      * 1D wavelet reconstruction. Inverses a transform by calculating input data
      * from coefficients.

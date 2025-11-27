@@ -739,19 +739,17 @@ var DiscreteWavelets = /** @class */ (function () {
      * @param  data           Input data.
      * @param  wavelet        Wavelet to use.
      * @param  mode           Signal extension mode.
-     * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
-     * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+     * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
      * @return                Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
      */
-    DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level, roundingOption) {
+    DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level) {
         if (mode === void 0) { mode = 'symmetric'; }
-        if (roundingOption === void 0) { roundingOption = 'LOW'; }
+        if (level === void 0) { level = 'LOW'; }
         var rows = data.length;
         var cols = data[0].length;
-        var maxLevels = this.maxLevel2([rows, cols], wavelet, roundingOption);
         var numLevels;
-        if (level === undefined) {
-            numLevels = maxLevels;
+        if (typeof level === 'string') {
+            numLevels = this.maxLevel2([rows, cols], wavelet, level);
         }
         else {
             numLevels = level;
@@ -1012,17 +1010,17 @@ var DiscreteWavelets = /** @class */ (function () {
      * @param  data           Input data.
      * @param  wavelet        Wavelet to use.
      * @param  mode           Signal extension mode.
-     * @param  level          Decomposition level. Defaults to level calculated by maxLevel function.
-     * @param  roundingOption Option for the maxLevel function. Defaults to 'LOW'
+     * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
      * @return                Coefficients as result of the transform.
      */
-    DiscreteWavelets.wavedec = function (data, wavelet, mode, level, roundingOption) {
+    DiscreteWavelets.wavedec = function (data, wavelet, mode, level) {
         if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
-        if (roundingOption === void 0) { roundingOption = 'LOW'; }
+        if (level === void 0) { level = 'LOW'; }
         /* Determine decomposition level. */
-        if (level === undefined)
-            level = this.maxLevel(data.length, wavelet, roundingOption);
-        if (level < 0) {
+        if (typeof level === 'string') {
+            level = this.maxLevel(data.length, wavelet, level);
+        }
+        else if (level < 0) {
             throw new Error("Decomposition level must not be less than zero");
         }
         /*  Initialize transform. */
