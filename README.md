@@ -145,8 +145,7 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 - `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 - `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
-- `level` (`number`): Decomposition level. Defaults to level calculated by [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function.
-- `RoundingOption` (`'LOW'|'HIGH'`): Rounding option for calculating maxLevel or maxLevel2. Defaults to LOW.
+- `level` (`number|'LOW|'HIGH'`): Either decomposition level or roundingOption for calculating via [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function. Defaults to level calculated by  [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function with 'LOW' roundingOption.
 
 **Return**
 
@@ -257,7 +256,7 @@ Determines the maximum level of useful decomposition.
 
 - `dataLength` (`number` or `[number,number]`): Dimensions of input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
-- `RoundingOption` (`'LOW'|'HIGH'`): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.
+- `roundingOption` (`'LOW'|'HIGH'`): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.
 
 **Return**
 

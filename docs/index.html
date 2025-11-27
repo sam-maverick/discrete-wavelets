@@ -203,8 +203,7 @@
 <li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
-<li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> or <a href="#maxLevel2">maxLevel2</a> function.</li>
-<li><code>RoundingOption</code> (<code>&#39;LOW&#39;|&#39;HIGH&#39;</code>): Rounding option for calculating maxLevel or maxLevel2. Defaults to LOW.</li>
+<li><code>level</code> (<code>number|&#39;LOW|&#39;HIGH&#39;</code>): Either decomposition level or roundingOption for calculating via <a href="#maxLevel">maxLevel</a> or <a href="#maxLevel2">maxLevel2</a> function. Defaults to level calculated by  <a href="#maxLevel">maxLevel</a> or <a href="#maxLevel2">maxLevel2</a> function with &#39;LOW&#39; roundingOption.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }</code>:
@@ -279,7 +278,7 @@ In 2D, <code>DW.WaveletCoefficients2D.size</code> is used to accurately restore 
 <ul>
 <li><code>dataLength</code> (<code>number</code> or <code>[number,number]</code>): Dimensions of input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
-<li><code>RoundingOption</code> (<code>&#39;LOW&#39;|&#39;HIGH&#39;</code>): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.</li>
+<li><code>roundingOption</code> (<code>&#39;LOW&#39;|&#39;HIGH&#39;</code>): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number</code>: Maximum useful level of decomposition.</p>
