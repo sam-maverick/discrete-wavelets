@@ -1,6 +1,6 @@
 # Discrete Wavelets
 
-A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web, for one-dimensional and two-dimensional inputs.
+A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web, for one-dimensional and two-dimensional inputs. This project is a fork of [https://github.com/Symmetronic/discrete-wavelets](https://github.com/Symmetronic/discrete-wavelets).
 
 
 
@@ -123,7 +123,7 @@ Single level Discrete Wavelet Transform.
 
 **Return**
 
-`number[][]` or `DiscreteWavelets.WaveletBands2D`: Approximation and detail coefficients as result of the transform.
+`number[][]` or `DW.WaveletBands2D`: Approximation and detail coefficients as result of the transform.
 
 **Example**
 
@@ -147,7 +147,7 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 
 **Return**
 
-`number[][]` or `{ coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D }`:
+`number[][]` or `{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }`:
 number\[]\[] and coeffs are the coefficients as result of the transform, for 1D and 2D respectively.
 In 2D, the ***mask*** is a structure with the same shape as the coefficients of the transform, where a '1' means that it is a position that holds actual data, and a '0' means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that coefficient position.
 
@@ -202,11 +202,11 @@ Wavelet reconstruction. Inverses a transform by calculating input data from coef
 > [!WARNING]
 >
 > In 1D, this function assumes that the shape of the original data is the same shape as `coeffs`. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
-> In 2D, `DiscreteWavelets.WaveletCoefficients2D.size` is used to accurately restore the original data with the original shape.
+> In 2D, `DW.WaveletCoefficients2D.size` is used to accurately restore the original data with the original shape.
 
 **Arguments**
 
-- `coeffs` (`number[][]` or `DiscreteWavelets.WaveletCoefficients2D`): Coefficients as result of a transform.
+- `coeffs` (`number[][]` or `DW.WaveletCoefficients2D`): Coefficients as result of a transform.
 - `wavelet` (`Wavelet`): Wavelet to use.
 
 **Return**

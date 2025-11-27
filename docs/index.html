@@ -2,7 +2,7 @@
 <a href="#discrete-wavelets" id="discrete-wavelets" style="color: inherit; text-decoration: none;">
   <h1>Discrete Wavelets</h1>
 </a>
-<p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web, for one-dimensional and two-dimensional inputs.</p>
+<p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web, for one-dimensional and two-dimensional inputs. This project is a fork of <a href="https://github.com/Symmetronic/discrete-wavelets">https://github.com/Symmetronic/discrete-wavelets</a>.</p>
 
 <a href="#importing-this-library" id="importing-this-library" style="color: inherit; text-decoration: none;">
   <h2>Importing this library</h2>
@@ -188,7 +188,7 @@
 <li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
 </ul>
 <p><strong>Return</strong></p>
-<p><code>number[][]</code> or <code>DiscreteWavelets.WaveletBands2D</code>: Approximation and detail coefficients as result of the transform.</p>
+<p><code>number[][]</code> or <code>DW.WaveletBands2D</code>: Approximation and detail coefficients as result of the transform.</p>
 <p><strong>Example</strong></p>
 <pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">dwt</span><span class="hl-1">([</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">3</span><span class="hl-1">, </span><span class="hl-7">4</span><span class="hl-1">], </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [[2.1213203435596425, 4.9497474683058326], [-0.7071067811865475, -0.7071067811865475]]</span>
 </code></pre>
@@ -205,7 +205,7 @@
 <li><code>level</code> (<code>number</code>): Decomposition level. Defaults to level calculated by <a href="#maxLevel">maxLevel</a> function.</li>
 </ul>
 <p><strong>Return</strong></p>
-<p><code>number[][]</code> or <code>{ coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D }</code>:
+<p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }</code>:
 number[][] and coeffs are the coefficients as result of the transform, for 1D and 2D respectively.
 In 2D, the <em><strong>mask</strong></em> is a structure with the same shape as the coefficients of the transform, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that coefficient position.</p>
 <blockquote>
@@ -241,11 +241,11 @@ In 2D, the <em><strong>mask</strong></em> is a structure with the same shape as 
 <blockquote>
 <p>[!WARNING]</p>
 <p>In 1D, this function assumes that the shape of the original data is the same shape as <code>coeffs</code>. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
-In 2D, <code>DiscreteWavelets.WaveletCoefficients2D.size</code> is used to accurately restore the original data with the original shape.</p>
+In 2D, <code>DW.WaveletCoefficients2D.size</code> is used to accurately restore the original data with the original shape.</p>
 </blockquote>
 <p><strong>Arguments</strong></p>
 <ul>
-<li><code>coeffs</code> (<code>number[][]</code> or <code>DiscreteWavelets.WaveletCoefficients2D</code>): Coefficients as result of a transform.</li>
+<li><code>coeffs</code> (<code>number[][]</code> or <code>DW.WaveletCoefficients2D</code>): Coefficients as result of a transform.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
 </ul>
 <p><strong>Return</strong></p>
