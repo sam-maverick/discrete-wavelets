@@ -746,7 +746,7 @@
             // For correct matching of the coefficients with their meaning in the spatial domain:
             for (var _i = 0, _b = ['LL', 'LH', 'HL', 'HH']; _i < _b.length; _i++) {
                 var band = _b[_i];
-                bandsValues.LL = this.transposeMatrix(bandsValues[band]);
+                bandsValues[band] = this.transposeMatrix(bandsValues[band]);
             }
             return bandsValues;
         };
@@ -816,7 +816,7 @@
             // For correct matching of the coefficients with their meaning in the spatial domain:
             for (var _i = 0, _a = ['LL', 'LH', 'HL', 'HH']; _i < _a.length; _i++) {
                 var band = _a[_i];
-                bandsValues.LL = this.transposeMatrix(bandsValues[band]);
+                bandsValues[band] = this.transposeMatrix(bandsValues[band]);
             }
             var _b = this.idwtCols(bandsValues, wavelet), cA = _b.cA, cD = _b.cD;
             var data = this.idwtRows(cA, cD, wavelet);

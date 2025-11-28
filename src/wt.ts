@@ -240,7 +240,7 @@ export default class DiscreteWavelets {
       const bandsValues = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
       // For correct matching of the coefficients with their meaning in the spatial domain:
       for (const band of ['LL', 'LH', 'HL', 'HH']) {
-        bandsValues.LL = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
+        bandsValues[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
       }
       return bandsValues;
   }
@@ -327,7 +327,7 @@ export default class DiscreteWavelets {
       const bandsValues: DiscreteWavelets.WaveletBands2D = { LL: approx, LH: detail.LH, HL:detail.HL, HH: detail.HH };
       // For correct matching of the coefficients with their meaning in the spatial domain:
       for (const band of ['LL', 'LH', 'HL', 'HH']) {
-        bandsValues.LL = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
+        bandsValues[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
       }
       const { cA, cD } = this.idwtCols(bandsValues,  wavelet);
       let data = this.idwtRows(cA, cD, wavelet); 
