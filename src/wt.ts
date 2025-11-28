@@ -120,7 +120,6 @@ export default class DiscreteWavelets {
           cA.push(approx);
           cD.push(detail);
       }
-      console.dir({ cA, cD }, {maxArrayLength: null, depth: null});
       return { cA, cD };  // cA.length = cD.length = rows
   }
 
@@ -139,15 +138,9 @@ export default class DiscreteWavelets {
 
       for (let col = 0; col < cols; col++) {
           const recA: number[] = cA.map(r => r[col]);  // Effectively slices column col from cA[][]
-          console.log('recA: ');console.dir(recA, {maxArrayLength: null, depth: null});
           const [A1, D1] = this.dwt(recA, wavelet, paddingmode, taintAnalysisOnly);  // A1.length = D1.length = padding + cA.length / 2
-          console.log('A1: ');console.dir(A1, {maxArrayLength: null, depth: null});
-          console.log('D1: ');console.dir(D1, {maxArrayLength: null, depth: null});
           const recD: number[] = cD.map(r => r[col]);  // Effectively slices column col from cD[][]
-          console.log('recD: ');console.dir(recD, {maxArrayLength: null, depth: null});
           const [A2, D2] = this.dwt(recD, wavelet, paddingmode, taintAnalysisOnly);  // A2.length = D2.length = padding + cD.length / 2
-          console.log('A2: ');console.dir(A2, {maxArrayLength: null, depth: null});
-          console.log('D2: ');console.dir(D2, {maxArrayLength: null, depth: null});
 
           // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
           if (col == 0) {
@@ -161,27 +154,8 @@ export default class DiscreteWavelets {
           bands.LL[col] = A1;
           bands.LH[col] = D1;
           bands.HL[col] = A2;
-          bands.HH[col] = D2;
-
-          
-/*
-          // Assign column results for cA
-          for (let i = 0; i < A1.length; i++) {
-              bands.LL[col][i] = A1[i];
-              bands.LH[col][i] = D1[i];
-          }
-          // Assign column results for cD
-          for (let i = 0; i < A2.length; i++) {
-              bands.HL[col][i] = A2[i];
-              bands.HH[col][i] = D2[i];
-          }
-*/              
+          bands.HH[col] = D2;         
       }
-          console.log('bands.LL: ');console.dir(bands.LL, {maxArrayLength: null, depth: null});
-          console.log('bands.LH: ');console.dir(bands.LH, {maxArrayLength: null, depth: null});
-          console.log('bands.HL: ');console.dir(bands.HL, {maxArrayLength: null, depth: null});
-          console.log('bands.HH: ');console.dir(bands.HH, {maxArrayLength: null, depth: null});
-
       return bands;
   }
 

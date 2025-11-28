@@ -648,7 +648,6 @@ var DiscreteWavelets = /** @class */ (function () {
             cA.push(approx);
             cD.push(detail);
         }
-        console.dir({ cA: cA, cD: cD }, { maxArrayLength: null, depth: null });
         return { cA: cA, cD: cD }; // cA.length = cD.length = rows
     };
     DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode, taintAnalysisOnly) {
@@ -659,21 +658,9 @@ var DiscreteWavelets = /** @class */ (function () {
         var bands = { LL: [], LH: [], HL: [], HH: [] };
         var _loop_1 = function (col) {
             var recA = cA.map(function (r) { return r[col]; }); // Effectively slices column col from cA[][]
-            console.log('recA: ');
-            console.dir(recA, { maxArrayLength: null, depth: null });
             var _a = this_1.dwt(recA, wavelet, paddingmode, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
-            console.log('A1: ');
-            console.dir(A1, { maxArrayLength: null, depth: null });
-            console.log('D1: ');
-            console.dir(D1, { maxArrayLength: null, depth: null });
             var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
-            console.log('recD: ');
-            console.dir(recD, { maxArrayLength: null, depth: null });
             var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
-            console.log('A2: ');
-            console.dir(A2, { maxArrayLength: null, depth: null });
-            console.log('D2: ');
-            console.dir(D2, { maxArrayLength: null, depth: null });
             // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
             if (col == 0) {
                 bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
@@ -691,14 +678,6 @@ var DiscreteWavelets = /** @class */ (function () {
         for (var col = 0; col < cols; col++) {
             _loop_1(col);
         }
-        console.log('bands.LL: ');
-        console.dir(bands.LL, { maxArrayLength: null, depth: null });
-        console.log('bands.LH: ');
-        console.dir(bands.LH, { maxArrayLength: null, depth: null });
-        console.log('bands.HL: ');
-        console.dir(bands.HL, { maxArrayLength: null, depth: null });
-        console.log('bands.HH: ');
-        console.dir(bands.HH, { maxArrayLength: null, depth: null });
         return bands;
     };
     DiscreteWavelets.idwtRows = function (cA, cD, wavelet) {
