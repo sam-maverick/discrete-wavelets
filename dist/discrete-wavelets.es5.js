@@ -648,7 +648,7 @@ var DiscreteWavelets = /** @class */ (function () {
             cA.push(approx);
             cD.push(detail);
         }
-        console.dir({ cA: cA, cD: cD }, { maxArrayLength: null, depth: null, showHidden: true, });
+        console.dir({ cA: cA, cD: cD }, { maxArrayLength: null, depth: null });
         return { cA: cA, cD: cD }; // cA.length = cD.length = rows
     };
     DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode, taintAnalysisOnly) {

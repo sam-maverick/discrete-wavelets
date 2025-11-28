@@ -120,7 +120,7 @@ export default class DiscreteWavelets {
           cA.push(approx);
           cD.push(detail);
       }
-      console.dir({ cA, cD }, {maxArrayLength: null, depth: null, showHidden: true,});
+      console.dir({ cA, cD }, {maxArrayLength: null, depth: null});
       return { cA, cD };  // cA.length = cD.length = rows
   }
 
