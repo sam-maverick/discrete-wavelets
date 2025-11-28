@@ -635,9 +635,7 @@ var DiscreteWavelets = /** @class */ (function () {
      */
     DiscreteWavelets.maxLevel2 = function (size, wavelet, roundingOption) {
         if (roundingOption === void 0) { roundingOption = 'LOW'; }
-        // !!! Assuming that the decimation factor is 2, it should be equal to:
-        // Math.floor(Math.log2(Math.min(rows, cols)))
-        return Math.min(this.maxLevel(size[0], wavelet, roundingOption), this.maxLevel(size[1], wavelet, roundingOption));
+        return Math.max(this.maxLevel(size[0], wavelet, roundingOption), this.maxLevel(size[1], wavelet, roundingOption));
     };
     DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode, taintAnalysisOnly) {
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }

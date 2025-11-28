@@ -97,9 +97,7 @@ export default class DiscreteWavelets {
       wavelet: Wavelet,
       roundingOption: 'LOW'|'HIGH' = 'LOW',
   ): number {
-      // !!! Assuming that the decimation factor is 2, it should be equal to:
-      // Math.floor(Math.log2(Math.min(rows, cols)))
-      return Math.min(
+      return Math.max(
           this.maxLevel(size[0], wavelet, roundingOption),
           this.maxLevel(size[1], wavelet, roundingOption)
       );
