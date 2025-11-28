@@ -74,7 +74,7 @@ var DiscreteWavelets = /** @class */ (function () {
             console.dir(D1, { maxArrayLength: null, depth: null });
             var recD = cD.map(function (r) { return r[col]; });
             console.log('recD: ');
-            console.dir(recA, { maxArrayLength: null, depth: null });
+            console.dir(recD, { maxArrayLength: null, depth: null });
             var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
             console.log('A2: ');
             console.dir(A2, { maxArrayLength: null, depth: null });
