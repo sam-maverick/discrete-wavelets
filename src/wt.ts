@@ -98,8 +98,8 @@ export default class DiscreteWavelets {
       roundingOption: 'LOW'|'HIGH' = 'LOW',
   ): number {
       return Math.max(
-          this.maxLevel(size[0], wavelet, roundingOption),
-          this.maxLevel(size[1], wavelet, roundingOption)
+        this.maxLevel(size[0], wavelet, roundingOption),
+        this.maxLevel(size[1], wavelet, roundingOption),
       );
   }
 
@@ -120,7 +120,7 @@ export default class DiscreteWavelets {
           cA.push(approx);
           cD.push(detail);
       }
-      
+      console.dir({ cA, cD }, {maxArrayLength: null, depth: null, showHidden: true,});
       return { cA, cD };  // cA.length = cD.length = rows
   }
 
