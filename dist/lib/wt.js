@@ -64,7 +64,7 @@ var DiscreteWavelets = /** @class */ (function () {
         // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
         var bands = { LL: [], LH: [], HL: [], HH: [] };
         var _loop_1 = function (col) {
-            var recA = cA.map(function (r) { return r[col]; });
+            var recA = cA.map(function (r) { return r[col]; }); // Effectively slices column col from cA[][]
             console.log('recA: ');
             console.dir(recA, { maxArrayLength: null, depth: null });
             var _a = this_1.dwt(recA, wavelet, paddingmode, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
@@ -72,7 +72,7 @@ var DiscreteWavelets = /** @class */ (function () {
             console.dir(A1, { maxArrayLength: null, depth: null });
             console.log('D1: ');
             console.dir(D1, { maxArrayLength: null, depth: null });
-            var recD = cD.map(function (r) { return r[col]; });
+            var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
             console.log('recD: ');
             console.dir(recD, { maxArrayLength: null, depth: null });
             var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
@@ -87,16 +87,19 @@ var DiscreteWavelets = /** @class */ (function () {
                 bands.HL = Array.from({ length: cols }, function () { return Array(A2.length).fill(0); }); // A2.length = D2.length
                 bands.HH = Array.from({ length: cols }, function () { return Array(D2.length).fill(0); });
             }
-            // assign column results for cA
-            for (var i = 0; i < A1.length; i++) {
-                bands.LL[col][i] = A1[i];
-                bands.LH[col][i] = D1[i];
-            }
-            // assign column results for cD
-            for (var i = 0; i < A2.length; i++) {
-                bands.HL[col][i] = A2[i];
-                bands.HH[col][i] = D2[i];
-            }
+            // Assign column results to the bands
+            bands.LL[col] = A1;
+            bands.LH[col] = D1;
+            bands.HL[col] = A2;
+            bands.HH[col] = D2;
+            console.log('bands.LL: ');
+            console.dir(bands.LL, { maxArrayLength: null, depth: null });
+            console.log('bands.LH: ');
+            console.dir(bands.LH, { maxArrayLength: null, depth: null });
+            console.log('bands.HL: ');
+            console.dir(bands.HL, { maxArrayLength: null, depth: null });
+            console.log('bands.HH: ');
+            console.dir(bands.HH, { maxArrayLength: null, depth: null });
         };
         var this_1 = this;
         for (var col = 0; col < cols; col++) {

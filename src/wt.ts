@@ -138,12 +138,12 @@ export default class DiscreteWavelets {
       let bands: DiscreteWavelets.WaveletBands2D = { LL: [], LH: [], HL: [], HH: [] };
 
       for (let col = 0; col < cols; col++) {
-          const recA = cA.map(r => r[col]);
+          const recA: number[] = cA.map(r => r[col]);  // Effectively slices column col from cA[][]
           console.log('recA: ');console.dir(recA, {maxArrayLength: null, depth: null});
           const [A1, D1] = this.dwt(recA, wavelet, paddingmode, taintAnalysisOnly);  // A1.length = D1.length = padding + cA.length / 2
           console.log('A1: ');console.dir(A1, {maxArrayLength: null, depth: null});
           console.log('D1: ');console.dir(D1, {maxArrayLength: null, depth: null});
-          const recD = cD.map(r => r[col]);
+          const recD: number[] = cD.map(r => r[col]);  // Effectively slices column col from cD[][]
           console.log('recD: ');console.dir(recD, {maxArrayLength: null, depth: null});
           const [A2, D2] = this.dwt(recD, wavelet, paddingmode, taintAnalysisOnly);  // A2.length = D2.length = padding + cD.length / 2
           console.log('A2: ');console.dir(A2, {maxArrayLength: null, depth: null});
@@ -157,16 +157,29 @@ export default class DiscreteWavelets {
               bands.HH = Array.from({ length: cols }, () => Array(D2.length).fill(0));
           }
 
-          // assign column results for cA
+          // Assign column results to the bands
+          bands.LL[col] = A1;
+          bands.LH[col] = D1;
+          bands.HL[col] = A2;
+          bands.HH[col] = D2;
+
+          console.log('bands.LL: ');console.dir(bands.LL, {maxArrayLength: null, depth: null});
+          console.log('bands.LH: ');console.dir(bands.LH, {maxArrayLength: null, depth: null});
+          console.log('bands.HL: ');console.dir(bands.HL, {maxArrayLength: null, depth: null});
+          console.log('bands.HH: ');console.dir(bands.HH, {maxArrayLength: null, depth: null});
+          
+/*
+          // Assign column results for cA
           for (let i = 0; i < A1.length; i++) {
               bands.LL[col][i] = A1[i];
               bands.LH[col][i] = D1[i];
           }
-          // assign column results for cD
+          // Assign column results for cD
           for (let i = 0; i < A2.length; i++) {
               bands.HL[col][i] = A2[i];
               bands.HH[col][i] = D2[i];
           }
+*/              
       }
 
       return bands;
