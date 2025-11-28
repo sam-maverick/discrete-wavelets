@@ -87,20 +87,29 @@ export default class DiscreteWavelets {
   /**
    * Determines the maximum level of useful decomposition in 2d.
    *
-   * @param  dataLength     Length of input data.
-   * @param  wavelet        Wavelet to use.
-   * @param  roundingOption When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW
-   * @return                Maximum useful level of decomposition.
+   * @param  dataLength              Length of input data.
+   * @param  wavelet                 Wavelet to use.
+   * @param  roundingOption          When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.
+   * @param  allowDimensionDowngrade When set to true, it allows to consider decompositions where one of the dimensions disappears. When set to false, it forces all decompositions to have 2x2 input size at least.
+   * @return                         Maximum useful level of decomposition.
    */
   static maxLevel2(
       size: [number, number], 
       wavelet: Wavelet,
       roundingOption: 'LOW'|'HIGH' = 'LOW',
+      allowDimensionDowngrade: boolean = true,
   ): number {
-      return Math.max(
-        this.maxLevel(size[0], wavelet, roundingOption),
-        this.maxLevel(size[1], wavelet, roundingOption),
-      );
+      if (allowDimensionDowngrade) {
+        return Math.max(
+          this.maxLevel(size[0], wavelet, roundingOption),
+          this.maxLevel(size[1], wavelet, roundingOption),
+        );
+      } else {
+        return Math.min(
+          this.maxLevel(size[0], wavelet, roundingOption),
+          this.maxLevel(size[1], wavelet, roundingOption),
+        );
+      }
   }
 
   private static dwtRows(
@@ -240,17 +249,19 @@ export default class DiscreteWavelets {
    * 2D wavelet decomposition. Transforms data by calculating coefficients from
    * input data.
    *
-   * @param  data           Input data.
-   * @param  wavelet        Wavelet to use.
-   * @param  mode           Signal extension mode.
-   * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
-   * @return                Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+   * @param  data                    Input data.
+   * @param  wavelet                 Wavelet to use.
+   * @param  mode                    Signal extension mode.
+   * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
+   * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
+   * @return                         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
    */  
   static wavedec2(
       data: number[][],
       wavelet: Wavelet,
       mode: PaddingMode = 'symmetric',
       level: number|'LOW'|'HIGH' = 'LOW',
+      allowDimensionDowngrade: boolean = true,
   ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D } {
 
       const rows = data.length;
@@ -258,7 +269,7 @@ export default class DiscreteWavelets {
 
       let numLevels: number;
       if (typeof level === 'string') {
-          numLevels = this.maxLevel2([rows, cols], wavelet, level);
+          numLevels = this.maxLevel2([rows, cols], wavelet, level, allowDimensionDowngrade);
       } else {
           numLevels = level;
       }

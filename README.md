@@ -145,13 +145,13 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 - `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
 - `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
-- `level` (`number|'LOW|'HIGH'`): Either decomposition level or roundingOption for calculating via [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function. Defaults to level calculated by  [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function with 'LOW' roundingOption.
+- `level` (`number|'LOW|'HIGH'`): Either the decomposition level or the roundingOption for calculating number of decompositions via [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function. Defaults to 'LOW'.
 
 **Return**
 
 `number[][]` or `{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }`:
-number\[]\[] and coeffs are the coefficients as result of the transform, for 1D and 2D respectively.
-In 2D, the ***mask*** is a structure with the same shape as the coefficients of the transform, where a '1' means that it is a position that holds actual data, and a '0' means that it is a zero that resulted from the synthetic data introduced by the padding. Therefore, wherever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that coefficient position.
+***number\[]\[]*** and ***coeffs*** are the coefficients as result of the transform, for 1D and 2D respectively.
+In 2D, the ***mask*** is a data structure with the same shape as coeffs, where a '1' means that it is a position that holds actual data, and a '0' means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that position of the mask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs.
 
 > [!WARNING]
 >
@@ -160,7 +160,7 @@ In 2D, the ***mask*** is a structure with the same shape as the coefficients of 
 **Example**
 
 ```javascript
-var coeffs = WT.wavedec([1, 2, 3, 4], "haar");
+var coeffs = WT.wavedec([1, 2, 3, 4], "haar", "HIGH");
 
 console.log(coeffs);
 // expected output: Array [[4.999999999999999], [-1.9999999999999993], [-0.7071067811865475, -0.7071067811865475]]
@@ -188,7 +188,7 @@ Single level inverse Discrete Wavelet Transform.
 var rec = WT.idwt(
   [(1 + 2) / Math.SQRT2, (3 + 4) / Math.SQRT2],
   [(1 - 2) / Math.SQRT2, (3 - 4) / Math.SQRT2],
-  "haar"
+  "haar",
 );
 
 console.log(rec);
@@ -204,7 +204,7 @@ Wavelet reconstruction. Inverses a transform by calculating input data from coef
 > [!WARNING]
 >
 > In 1D, this function assumes that the shape of the original data is the same shape as `coeffs`. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
-> In 2D, `DW.WaveletCoefficients2D.size` is used to accurately restore the original data with the original shape.
+> In 2D, `DW.WaveletCoefficients2D.size` is used to accurately restore the data with the original shape.
 
 **Arguments**
 
@@ -256,23 +256,28 @@ Determines the maximum level of useful decomposition.
 
 - `dataLength` (`number` or `[number,number]`): Dimensions of input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
-- `roundingOption` (`'LOW'|'HIGH'`): When set to LOW, it uses floor(log_2(.)) to calculate the maximum level. When set to HIGH, it uses ceil(floor_2(.)). Defaults to LOW.
+- `roundingOption` (`'LOW'|'HIGH'`):
+  When set to LOW, it uses floor(log_2(.)) to calculate the maximum level, meaning that, for example, for dataLength=5 and wavelet="haar" it will give 2. This ensures that if you perform this number of decomposition levels, after each decomposition level the set of approximation coefficients and the set of detail coefficients will both contain at least one coefficient that is uncorrupted by edge effects caused by signal padding. This is commonly known as "*number of useful levels of decomposition*". Check this [source](https://pywavelets.readthedocs.io/en/latest/ref/dwt-discrete-wavelet-transform.html#maximum-decomposition-level-dwt-max-level-dwtn-max-level).
+  When set to HIGH, it uses ceil(log_2(.)) to calculate the maximum level, meaning that, for example, for dataLength=5 and wavelet="haar" it will give 3. This ensures that you will always end with a single value as approximation coefficient, as opposed to a list of values. This option is recommended if you want to perform full decomposition.
+  Defaults to LOW.
+- `allowDimensionDowngrade` (`boolean`): When set to true, it considers as valid the decompositions where one of the dimensions virtually disappears. In other words, if width>> height or if width<<height we will keep decomposing even if there is only one row or one column with non artificial-zero values). When set to false, it forces all level decompositions to yield a 2x2 DiscreteWavelets.WaveletBands2D that is not equivalent to a 1D DWT single-level decomposition. A 1D DWT single-level decomposition can be represented by two `number[]` vectors, corresponding to the L and H band.
+  Defaults to true.
 
 **Return**
 
-`number`: Maximum useful level of decomposition.
+`number`: Maximum level of decomposition.
 
 **Examples**
 
 ```javascript
-var maxLevel = WT.maxLevel(4, "haar");
+var maxLevel = WT.maxLevel(4, "haar", "HIGH");
 
 console.log(maxLevel);
 // expected output: 2
 ```
 
 ```javascript
-var maxLevel = WT.maxLevel(1024, "haar");
+var maxLevel = WT.maxLevel(1024, "haar", "HIGH");
 
 console.log(maxLevel);
 // expected output: 10
