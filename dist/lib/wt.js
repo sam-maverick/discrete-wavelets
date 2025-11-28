@@ -21,6 +21,13 @@ var DEFAULT_PADDING_MODE = padding_1.PADDING_MODES.symmetric;
 var DiscreteWavelets = /** @class */ (function () {
     function DiscreteWavelets() {
     }
+    DiscreteWavelets.transposeMatrix = function (somearray) {
+        return Array.from({ length: somearray[0].length }, function (_, rowIndex) {
+            return Array.from({ length: somearray.length }, function (_, colIndex) {
+                return somearray[colIndex][rowIndex];
+            });
+        });
+    };
     /**
      *     2-D FUNCTIONS
      */
@@ -135,8 +142,13 @@ var DiscreteWavelets = /** @class */ (function () {
         if (mode === void 0) { mode = 'symmetric'; }
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
         var _a = this.dwtRows(data, wavelet, mode, taintAnalysisOnly), cA = _a.cA, cD = _a.cD;
-        var bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
-        return bands;
+        var bandsValues = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
+        // For correct matching of the coefficients with their meaning in the spatial domain:
+        for (var _i = 0, _b = ['LL', 'LH', 'HL', 'HH']; _i < _b.length; _i++) {
+            var band = _b[_i];
+            bandsValues.LL = this.transposeMatrix(bandsValues[band]);
+        }
+        return bandsValues;
     };
     /**
      * 2D wavelet decomposition. Transforms data by calculating coefficients from
@@ -200,7 +212,13 @@ var DiscreteWavelets = /** @class */ (function () {
      * @return         Approximation coefficients of previous level of transform.
      */
     DiscreteWavelets.idwt2 = function (approx, detail, wavelet) {
-        var _a = this.idwtCols({ LL: approx, LH: detail.LH, HL: detail.HL, HH: detail.HH }, wavelet), cA = _a.cA, cD = _a.cD;
+        var bandsValues = { LL: approx, LH: detail.LH, HL: detail.HL, HH: detail.HH };
+        // For correct matching of the coefficients with their meaning in the spatial domain:
+        for (var _i = 0, _a = ['LL', 'LH', 'HL', 'HH']; _i < _a.length; _i++) {
+            var band = _a[_i];
+            bandsValues.LL = this.transposeMatrix(bandsValues[band]);
+        }
+        var _b = this.idwtCols(bandsValues, wavelet), cA = _b.cA, cD = _b.cD;
         var data = this.idwtRows(cA, cD, wavelet);
         return data;
     };

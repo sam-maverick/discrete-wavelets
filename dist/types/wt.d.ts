@@ -27,6 +27,7 @@ export default class DiscreteWavelets {
      * Contains static information about the signal extension modes.
      */
     static readonly Modes: Readonly<PaddingModes>;
+    private static transposeMatrix;
     /**
      *     2-D FUNCTIONS
      */

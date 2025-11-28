@@ -72,7 +72,13 @@ export default class DiscreteWavelets {
   static readonly Modes: Readonly<PaddingModes> = PADDING_MODES;
 
 
-
+  private static transposeMatrix (somearray: number[][]): number[][] {
+      return Array.from({ length: somearray[0].length }, (_, rowIndex) => {
+          return Array.from({ length: somearray.length }, (_, colIndex) => 
+              somearray[colIndex][rowIndex]
+          );
+      });
+  }  
 
 /**
  *     2-D FUNCTIONS
@@ -231,8 +237,12 @@ export default class DiscreteWavelets {
       taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
       const { cA, cD } = this.dwtRows(data, wavelet, mode, taintAnalysisOnly);
-      const bands = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
-      return bands;
+      const bandsValues = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
+      // For correct matching of the coefficients with their meaning in the spatial domain:
+      for (const band of ['LL', 'LH', 'HL', 'HH']) {
+        bandsValues.LL = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
+      }
+      return bandsValues;
   }
 
   /**
@@ -314,7 +324,12 @@ export default class DiscreteWavelets {
       detail: { LH: number[][], HL: number[][], HH: number[][] },
       wavelet: Wavelet,
   ): number[][] {
-      const { cA, cD } = this.idwtCols({LL: approx, LH: detail.LH, HL: detail.HL, HH:detail.HH},  wavelet);
+      const bandsValues: DiscreteWavelets.WaveletBands2D = { LL: approx, LH: detail.LH, HL:detail.HL, HH: detail.HH };
+      // For correct matching of the coefficients with their meaning in the spatial domain:
+      for (const band of ['LL', 'LH', 'HL', 'HH']) {
+        bandsValues.LL = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
+      }
+      const { cA, cD } = this.idwtCols(bandsValues,  wavelet);
       let data = this.idwtRows(cA, cD, wavelet); 
       return data;
   }
