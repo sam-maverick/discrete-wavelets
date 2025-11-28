@@ -92,19 +92,19 @@ var DiscreteWavelets = /** @class */ (function () {
             bands.LH[col] = D1;
             bands.HL[col] = A2;
             bands.HH[col] = D2;
-            console.log('bands.LL: ');
-            console.dir(bands.LL, { maxArrayLength: null, depth: null });
-            console.log('bands.LH: ');
-            console.dir(bands.LH, { maxArrayLength: null, depth: null });
-            console.log('bands.HL: ');
-            console.dir(bands.HL, { maxArrayLength: null, depth: null });
-            console.log('bands.HH: ');
-            console.dir(bands.HH, { maxArrayLength: null, depth: null });
         };
         var this_1 = this;
         for (var col = 0; col < cols; col++) {
             _loop_1(col);
         }
+        console.log('bands.LL: ');
+        console.dir(bands.LL, { maxArrayLength: null, depth: null });
+        console.log('bands.LH: ');
+        console.dir(bands.LH, { maxArrayLength: null, depth: null });
+        console.log('bands.HL: ');
+        console.dir(bands.HL, { maxArrayLength: null, depth: null });
+        console.log('bands.HH: ');
+        console.dir(bands.HH, { maxArrayLength: null, depth: null });
         return bands;
     };
     DiscreteWavelets.idwtRows = function (cA, cD, wavelet) {

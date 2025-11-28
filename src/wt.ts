@@ -163,10 +163,6 @@ export default class DiscreteWavelets {
           bands.HL[col] = A2;
           bands.HH[col] = D2;
 
-          console.log('bands.LL: ');console.dir(bands.LL, {maxArrayLength: null, depth: null});
-          console.log('bands.LH: ');console.dir(bands.LH, {maxArrayLength: null, depth: null});
-          console.log('bands.HL: ');console.dir(bands.HL, {maxArrayLength: null, depth: null});
-          console.log('bands.HH: ');console.dir(bands.HH, {maxArrayLength: null, depth: null});
           
 /*
           // Assign column results for cA
@@ -181,6 +177,10 @@ export default class DiscreteWavelets {
           }
 */              
       }
+          console.log('bands.LL: ');console.dir(bands.LL, {maxArrayLength: null, depth: null});
+          console.log('bands.LH: ');console.dir(bands.LH, {maxArrayLength: null, depth: null});
+          console.log('bands.HL: ');console.dir(bands.HL, {maxArrayLength: null, depth: null});
+          console.log('bands.HH: ');console.dir(bands.HH, {maxArrayLength: null, depth: null});
 
       return bands;
   }
