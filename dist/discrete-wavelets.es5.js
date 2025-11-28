@@ -659,9 +659,15 @@ var DiscreteWavelets = /** @class */ (function () {
         var bands = { LL: [], LH: [], HL: [], HH: [] };
         var _loop_1 = function (col) {
             var recA = cA.map(function (r) { return r[col]; });
+            console.dir('recA: ' + recA, { maxArrayLength: null, depth: null });
             var _a = this_1.dwt(recA, wavelet, paddingmode, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+            console.dir('A1: ' + A1, { maxArrayLength: null, depth: null });
+            console.dir('D1: ' + D1, { maxArrayLength: null, depth: null });
             var recD = cD.map(function (r) { return r[col]; });
+            console.dir('recD: ' + recA, { maxArrayLength: null, depth: null });
             var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+            console.dir('A2: ' + A2, { maxArrayLength: null, depth: null });
+            console.dir('D2: ' + D2, { maxArrayLength: null, depth: null });
             // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
             if (col == 0) {
                 bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
