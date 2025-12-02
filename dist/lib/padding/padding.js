@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PADDING_MODES = exports.zeroPadding = exports.symmetricPadding = exports.smoothPadding = exports.reflectPadding = exports.periodicPadding = exports.constantPadding = exports.antisymmetricPadding = void 0;
+exports.PADDING_MODES = exports.onePadding = exports.zeroPadding = exports.symmetricPadding = exports.smoothPadding = exports.reflectPadding = exports.periodicPadding = exports.constantPadding = exports.antisymmetricPadding = void 0;
 var antisymmetric_1 = require("./antisymmetric/antisymmetric");
 Object.defineProperty(exports, "antisymmetricPadding", { enumerable: true, get: function () { return antisymmetric_1.antisymmetricPadding; } });
 var constant_1 = require("./constant/constant");
@@ -15,6 +15,8 @@ var symmetric_1 = require("./symmetric/symmetric");
 Object.defineProperty(exports, "symmetricPadding", { enumerable: true, get: function () { return symmetric_1.symmetricPadding; } });
 var zero_1 = require("./zero/zero");
 Object.defineProperty(exports, "zeroPadding", { enumerable: true, get: function () { return zero_1.zeroPadding; } });
+var one_1 = require("./one/one");
+Object.defineProperty(exports, "onePadding", { enumerable: true, get: function () { return one_1.onePadding; } });
 var antisymmetric_2 = require("./antisymmetric/antisymmetric");
 var constant_2 = require("./constant/constant");
 var periodic_2 = require("./periodic/periodic");
@@ -22,7 +24,7 @@ var reflect_2 = require("./reflect/reflect");
 var smooth_2 = require("./smooth/smooth");
 var symmetric_2 = require("./symmetric/symmetric");
 var zero_2 = require("./zero/zero");
-var one_1 = require("./one/one");
+var one_2 = require("./one/one");
 /**
  * Supported signal extension modes.
  */
@@ -34,9 +36,9 @@ exports.PADDING_MODES = {
     smooth: smooth_2.SMOOTH_PADDING,
     symmetric: symmetric_2.SYMMETRIC_PADDING,
     zero: zero_2.ZERO_PADDING,
-    one: one_1.ONE_PADDING,
+    one: one_2.ONE_PADDING,
     modes: [
-        one_1.ONE_PADDING,
+        one_2.ONE_PADDING,
         zero_2.ZERO_PADDING,
         constant_2.CONSTANT_PADDING,
         symmetric_2.SYMMETRIC_PADDING,

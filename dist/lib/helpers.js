@@ -160,6 +160,8 @@ function padElement(data, index, inverse, mode) {
             return (0, padding_1.symmetricPadding)(data, index, inverse);
         case padding_1.PADDING_MODES.zero:
             return (0, padding_1.zeroPadding)();
+        case padding_1.PADDING_MODES.one:
+            return (0, padding_1.onePadding)();
         default:
             throw new Error('Unknown signal extension mode: "' + mode + '"');
     }

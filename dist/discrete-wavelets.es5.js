@@ -193,6 +193,14 @@ function zeroPadding() {
  * Zero padding.
  */
 var ONE_PADDING = 'one';
+/**
+ * Returns a single value of one padding.
+ *
+ * @return         Single padding value.
+ */
+function onePadding() {
+    return 1;
+}
 
 /**
  * Supported signal extension modes.
@@ -556,6 +564,8 @@ function padElement(data, index, inverse, mode) {
             return symmetricPadding(data, index, inverse);
         case PADDING_MODES.zero:
             return zeroPadding();
+        case PADDING_MODES.one:
+            return onePadding();
         default:
             throw new Error('Unknown signal extension mode: "' + mode + '"');
     }

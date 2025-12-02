@@ -11,6 +11,7 @@ import {
   smoothPadding,
   symmetricPadding,
   zeroPadding,
+  onePadding,
 } from "./padding/padding";
 import {
   Filters,
@@ -210,6 +211,8 @@ export function padElement(
       return symmetricPadding(data, index, inverse);
     case PADDING_MODES.zero:
       return zeroPadding();
+    case PADDING_MODES.one:
+      return onePadding();
     default:
       throw new Error('Unknown signal extension mode: "' + mode + '"');
   }

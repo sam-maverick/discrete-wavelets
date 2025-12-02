@@ -5,6 +5,7 @@ export { reflectPadding } from './reflect/reflect';
 export { smoothPadding } from './smooth/smooth';
 export { symmetricPadding } from './symmetric/symmetric';
 export { zeroPadding } from './zero/zero';
+export { onePadding } from './one/one';
 
 import { ANTISYMMETRIC_PADDING } from './antisymmetric/antisymmetric';
 import { CONSTANT_PADDING } from './constant/constant';
