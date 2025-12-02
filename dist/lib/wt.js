@@ -50,30 +50,30 @@ var DiscreteWavelets = /** @class */ (function () {
             return Math.min(this.maxLevel(size[0], wavelet, roundingOption), this.maxLevel(size[1], wavelet, roundingOption));
         }
     };
-    DiscreteWavelets.dwtRows = function (matrix, wavelet, padding, taintAnalysisOnly) {
-        if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
+    DiscreteWavelets.dwtRows = function (matrix, wavelet, padding, mode) {
+        if (mode === void 0) { mode = 'regular'; }
         var rows = matrix.length;
         //const cols = matrix[0].length;
         var cA = [];
         var cD = [];
         for (var r = 0; r < rows; r++) {
-            var _a = this.dwt(matrix[r], wavelet, padding, taintAnalysisOnly), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
+            var _a = this.dwt(matrix[r], wavelet, padding, mode), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
             cA.push(approx);
             cD.push(detail);
         }
         return { cA: cA, cD: cD }; // cA.length = cD.length = rows
     };
-    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, padding, taintAnalysisOnly) {
-        if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
+    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, padding, mode) {
+        if (mode === void 0) { mode = 'regular'; }
         //const rows = cA.length;
         var cols = cA[0].length;
         // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
         var bands = { LL: [], LH: [], HL: [], HH: [] };
         var _loop_1 = function (col) {
             var recA = cA.map(function (r) { return r[col]; }); // Effectively slices column col from cA[][]
-            var _a = this_1.dwt(recA, wavelet, padding, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+            var _a = this_1.dwt(recA, wavelet, padding, mode), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
             var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
-            var _b = this_1.dwt(recD, wavelet, padding, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+            var _b = this_1.dwt(recD, wavelet, padding, mode), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
             // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
             if (col == 0) {
                 bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
@@ -138,11 +138,11 @@ var DiscreteWavelets = /** @class */ (function () {
      * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
      * @return                   Approximation and detail coefficients as result of the transform.
      */
-    DiscreteWavelets.dwt2 = function (data, wavelet, padding, taintAnalysisOnly) {
+    DiscreteWavelets.dwt2 = function (data, wavelet, padding, mode) {
         if (padding === void 0) { padding = 'symmetric'; }
-        if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
-        var _a = this.dwtRows(data, wavelet, padding, taintAnalysisOnly), cA = _a.cA, cD = _a.cD;
-        var bandsValues = this.dwtCols(cA, cD, wavelet, padding, taintAnalysisOnly);
+        if (mode === void 0) { mode = 'regular'; }
+        var _a = this.dwtRows(data, wavelet, padding, mode), cA = _a.cA, cD = _a.cD;
+        var bandsValues = this.dwtCols(cA, cD, wavelet, padding, mode);
         // For correct matching of the coefficients with their meaning in the spatial domain:
         for (var _i = 0, _b = ['LL', 'LH', 'HL', 'HH']; _i < _b.length; _i++) {
             var band = _b[_i];
@@ -178,23 +178,30 @@ var DiscreteWavelets = /** @class */ (function () {
         // We will use the taint analysis technique to track which coefficients are affected by original data (0) and which not(1)
         // Coefficients that are not affected by original data must be a result of padding; they are synthetic
         var currentSyntheticityMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }); // Creates an array with the same shape as data, but with all values as 0
-        var currentContaminationMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 0
+        var currentContaminationMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }); // Creates an array with the same shape as data, but with all values as 0
         var coeffs = {
             // We need to initialize approximation:data, because there is the possibility that numLevels==0 
             approximation: data,
             details: [],
             size: [rows, cols],
         };
-        // This will store an optional syntheticityMask matrix of coefficients, where 1 means that that position on the transform
+        // This will store a syntheticityMask matrix of coefficients, where 1 means that that position on the transform
         // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
         var syntheticityMask = {
             approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }),
             details: [],
             size: [rows, cols], // This would not be strictly necessary in the data model
         };
+        // This will store a contaminationMask matrix of coefficients, where a value greater than 0 means that that position on the transform
+        // result is affected by the effects of edges, and anything else means 'position with no edge effects'
+        var contaminationMask = {
+            approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }),
+            details: [],
+            size: [rows, cols], // This would not be strictly necessary in the data model
+        };
         for (var level_1 = 0; level_1 < numLevels; level_1++) {
-            var bands = this.dwt2(current, wavelet, padding); // Perform one level of decomposition
-            var bandsSyntheticityMask = this.dwt2(currentSyntheticityMask, wavelet, padding, true); // We do taint analysis to detect synthetic coefficients
+            var bands = this.dwt2(current, wavelet, padding); // Perform one level of decomposition (regular DWT)
+            var bandsSyntheticityMask = this.dwt2(currentSyntheticityMask, wavelet, padding, 'taintAnalysisSyntheticity'); // Perform taint analysis to detect synthetic coefficients
             // We keep LL for the next iteration or as the last-level approximation
             coeffs.approximation = bands.LL;
             syntheticityMask.approximation = bandsSyntheticityMask.LL;
@@ -263,16 +270,25 @@ var DiscreteWavelets = /** @class */ (function () {
      * @param  taintAnalysisOnly When set to true it performs a taint analysis to detect synthetic zero values. When set to false, it performs regular DWT.
      * @return                   Approximation and detail coefficients as result of the transform.
      */
-    DiscreteWavelets.dwt = function (data, wavelet, padding, taintAnalysisOnly) {
+    DiscreteWavelets.dwt = function (data, wavelet, padding, mode) {
         if (padding === void 0) { padding = DEFAULT_PADDING_MODE; }
-        if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
+        if (mode === void 0) { mode = 'regular'; }
         /* Determine wavelet basis and filters. */
         var waveletBasis = (0, helpers_1.basisFromWavelet)(wavelet);
         var filters = waveletBasis.dec;
         (0, helpers_1.assertValidFilters)(filters);
         var filterLength = filters.low.length;
         /* Add padding. */
-        data = this.pad(data, (0, helpers_1.padWidths)(data.length, filterLength), taintAnalysisOnly ? 'one' : padding);
+        var paddingModeFinal;
+        switch (mode) {
+            case 'taintAnalysisSyntheticity':
+            case 'taintAnalysisContamination':
+                paddingModeFinal = padding_1.PADDING_MODES.one;
+                break;
+            default:
+                paddingModeFinal = padding;
+        }
+        data = this.pad(data, (0, helpers_1.padWidths)(data.length, filterLength), paddingModeFinal);
         /* Initialize approximation and detail coefficients. */
         var approx = [];
         var detail = [];
@@ -280,23 +296,26 @@ var DiscreteWavelets = /** @class */ (function () {
         for (var offset = 0; offset + filterLength <= data.length; offset += filterLength) {
             /* Determine slice of values. */
             var values = data.slice(offset, offset + filterLength);
-            if (taintAnalysisOnly) {
+            if (mode === 'taintAnalysisSyntheticity') {
                 if (filterLength == 2 && padding == 'symmetric' && wavelet == 'haar') {
+                    /*
                     // Haar filters are [f1,-f1] (high-pass, details) and [f1,f1] (low-pass, approx), with f1=0.7071...
-                    if (values[0] == 0 && values[1] == 1) {
-                        approx.push(0); // Dotproduct of [a,a] with [f1,f1] depends on a
-                        detail.push(1); // Dotproduct of [a,a] with [f1,-f1] is always 0
+                    if (values[0]==0 && values[1]==1) {
+                      approx.push(0);  // Dotproduct of [a,a] with [f1,f1] depends on a
+                      detail.push(1);  // Dotproduct of [a,a] with [f1,-f1] is always 0
+                    } else if (values[0]==1 && values[1]==1) {
+                      // Dotproduct of [0,0] with [_,_] is always 0
+                      approx.push(1);
+                      detail.push(1);
+                    } else {  // (values[0]==0 && values[1]==0)
+                      // The result of the dotproduct depents on values[0] and values[1]
+                      approx.push(0);
+                      detail.push(0);
                     }
-                    else if (values[0] == 1 && values[1] == 1) {
-                        // Dotproduct of [0,0] with [_,_] is always 0
-                        approx.push(1);
-                        detail.push(1);
-                    }
-                    else {
-                        // The result of the dotproduct depents on values[0] and values[1]
-                        approx.push(0);
-                        detail.push(0);
-                    }
+                    // (values[0]==1 && values[1]==0) => not possible because padding can only be contiguously in edges
+                    */
+                    approx.push(values[0] && values[1]);
+                    detail.push(values[0] || values[1]);
                 }
                 else {
                     // NOT IMPLEMENTED !
@@ -304,7 +323,32 @@ var DiscreteWavelets = /** @class */ (function () {
                     detail.push(0);
                 }
             }
-            else {
+            else if (mode === 'taintAnalysisContamination') {
+                if (filterLength == 2 && padding == 'symmetric' && wavelet == 'haar') {
+                    // Haar filters are [f1,-f1] (high-pass, details) and [f1,f1] (low-pass, approx), with f1=0.7071...
+                    if (values[0] == 0 && values[1] == 1) {
+                        approx.push(1); // Dotproduct of [a,a] with [f1,f1] depends on a only
+                        detail.push(); // Dotproduct of [a,a] with [f1,-f1] is always 0
+                    }
+                    else if (values[0] == 1 && values[1] == 1) {
+                        // Dotproduct of [0,0] with [_,_] is always 0
+                        approx.push();
+                        detail.push();
+                    }
+                    else { // (values[0]==0 && values[1]==0)
+                        // The result of the dotproduct depents on values[0] and values[1]
+                        approx.push(0);
+                        detail.push(0);
+                    }
+                    // (values[0]==1 && values[1]==0) => not possible because padding can only be contiguously in edges
+                }
+                else {
+                    // NOT IMPLEMENTED !
+                    approx.push(0);
+                    detail.push(0);
+                }
+            }
+            else { // mode==='regular'
                 /* Calculate approximation coefficients. */
                 approx.push((0, helpers_1.dot)(values, filters.low));
                 /* Calculate detail coefficients. */

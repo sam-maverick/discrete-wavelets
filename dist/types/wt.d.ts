@@ -18,6 +18,7 @@ export declare namespace DiscreteWavelets {
         HL: number[][];
         HH: number[][];
     }
+    type DecompositionMode = 'regular' | 'taintAnalysisSyntheticity' | 'taintAnalysisContamination';
 }
 /**
  * Collection of methods for Discrete Wavelet Transform (DWT).
@@ -54,7 +55,7 @@ export default class DiscreteWavelets {
      * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
      * @return                   Approximation and detail coefficients as result of the transform.
      */
-    static dwt2(data: number[][], wavelet: Wavelet, padding?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
+    static dwt2(data: number[][], wavelet: Wavelet, padding?: PaddingMode, mode?: DiscreteWavelets.DecompositionMode): DiscreteWavelets.WaveletBands2D;
     /**
      * 2D wavelet decomposition. Transforms data by calculating coefficients from
      * input data.
@@ -104,7 +105,7 @@ export default class DiscreteWavelets {
      * @param  taintAnalysisOnly When set to true it performs a taint analysis to detect synthetic zero values. When set to false, it performs regular DWT.
      * @return                   Approximation and detail coefficients as result of the transform.
      */
-    static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, padding?: PaddingMode, taintAnalysisOnly?: boolean): number[][];
+    static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, padding?: PaddingMode, mode?: DiscreteWavelets.DecompositionMode): number[][];
     /**
      * Calculates the energy as sum of squares of an array of data or
      * coefficients.

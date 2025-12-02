@@ -60,6 +60,8 @@ export namespace DiscreteWavelets {
       HL: number[][],
       HH: number[][],
   }
+
+  export type DecompositionMode = 'regular'|'taintAnalysisSyntheticity'|'taintAnalysisContamination';  
 }
 
 /**
@@ -116,7 +118,7 @@ export default class DiscreteWavelets {
       matrix: number[][], 
       wavelet: Wavelet, 
       padding: PaddingMode,
-      taintAnalysisOnly: boolean = false,
+      mode: DiscreteWavelets.DecompositionMode = 'regular',
   ): {cA: number[][], cD: number[][]} {
       const rows = matrix.length;
       //const cols = matrix[0].length;
@@ -125,7 +127,7 @@ export default class DiscreteWavelets {
       const cD: number[][] = [];
 
       for (let r = 0; r < rows; r++) {
-          const [approx, detail] = this.dwt(matrix[r], wavelet, padding, taintAnalysisOnly);  // approx.length = detail.length = padding + cols / 2
+          const [approx, detail] = this.dwt(matrix[r], wavelet, padding, mode);  // approx.length = detail.length = padding + cols / 2
           cA.push(approx);
           cD.push(detail);
       }
@@ -137,7 +139,7 @@ export default class DiscreteWavelets {
       cD: number[][], 
       wavelet: Wavelet, 
       padding: PaddingMode,
-      taintAnalysisOnly: boolean = false,
+      mode: DiscreteWavelets.DecompositionMode = 'regular',
   ): DiscreteWavelets.WaveletBands2D {
       //const rows = cA.length;
       const cols = cA[0].length;
@@ -147,9 +149,9 @@ export default class DiscreteWavelets {
 
       for (let col = 0; col < cols; col++) {
           const recA: number[] = cA.map(r => r[col]);  // Effectively slices column col from cA[][]
-          const [A1, D1] = this.dwt(recA, wavelet, padding, taintAnalysisOnly);  // A1.length = D1.length = padding + cA.length / 2
+          const [A1, D1] = this.dwt(recA, wavelet, padding, mode);  // A1.length = D1.length = padding + cA.length / 2
           const recD: number[] = cD.map(r => r[col]);  // Effectively slices column col from cD[][]
-          const [A2, D2] = this.dwt(recD, wavelet, padding, taintAnalysisOnly);  // A2.length = D2.length = padding + cD.length / 2
+          const [A2, D2] = this.dwt(recD, wavelet, padding, mode);  // A2.length = D2.length = padding + cD.length / 2
 
           // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
           if (col == 0) {
@@ -234,10 +236,10 @@ export default class DiscreteWavelets {
       data: number[][],
       wavelet: Wavelet,
       padding: PaddingMode = 'symmetric',
-      taintAnalysisOnly: boolean = false,
+      mode: DiscreteWavelets.DecompositionMode = 'regular',
   ): DiscreteWavelets.WaveletBands2D {
-      const { cA, cD } = this.dwtRows(data, wavelet, padding, taintAnalysisOnly);
-      const bandsValues = this.dwtCols(cA, cD, wavelet, padding, taintAnalysisOnly);
+      const { cA, cD } = this.dwtRows(data, wavelet, padding, mode);
+      const bandsValues = this.dwtCols(cA, cD, wavelet, padding, mode);
       // For correct matching of the coefficients with their meaning in the spatial domain:
       for (const band of ['LL', 'LH', 'HL', 'HH']) {
         bandsValues[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
@@ -278,7 +280,7 @@ export default class DiscreteWavelets {
       // We will use the taint analysis technique to track which coefficients are affected by original data (0) and which not(1)
       // Coefficients that are not affected by original data must be a result of padding; they are synthetic
       let currentSyntheticityMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(0));  // Creates an array with the same shape as data, but with all values as 0
-      let currentContaminationMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 0
+      let currentContaminationMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(0));  // Creates an array with the same shape as data, but with all values as 0
 
       const coeffs: DiscreteWavelets.WaveletCoefficients2D = {
         // We need to initialize approximation:data, because there is the possibility that numLevels==0 
@@ -287,7 +289,7 @@ export default class DiscreteWavelets {
         size: [rows,cols],
       }
 
-      // This will store an optional syntheticityMask matrix of coefficients, where 1 means that that position on the transform
+      // This will store a syntheticityMask matrix of coefficients, where 1 means that that position on the transform
       // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
       const syntheticityMask: DiscreteWavelets.WaveletCoefficients2D = {
         approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(0)),  // We need to initialize here again in case level==0
@@ -295,10 +297,18 @@ export default class DiscreteWavelets {
         size: [rows,cols],  // This would not be strictly necessary in the data model
       }
 
+      // This will store a contaminationMask matrix of coefficients, where a value greater than 0 means that that position on the transform
+      // result is affected by the effects of edges, and anything else means 'position with no edge effects'
+      const contaminationMask: DiscreteWavelets.WaveletCoefficients2D = {
+        approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(0)),  // We need to initialize here again in case level==0
+        details: [],
+        size: [rows,cols],  // This would not be strictly necessary in the data model
+      }
+
       for (let level = 0; level < numLevels; level++) {
 
-          const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, padding);  // Perform one level of decomposition
-          const bandsSyntheticityMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentSyntheticityMask, wavelet, padding, true);  // We do taint analysis to detect synthetic coefficients
+          const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, padding);  // Perform one level of decomposition (regular DWT)
+          const bandsSyntheticityMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentSyntheticityMask, wavelet, padding, 'taintAnalysisSyntheticity');  // Perform taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
           coeffs.approximation = bands.LL;
@@ -393,15 +403,26 @@ export default class DiscreteWavelets {
     data: ReadonlyArray<number>,
     wavelet: Readonly<Wavelet>,
     padding: PaddingMode = DEFAULT_PADDING_MODE,
-    taintAnalysisOnly: boolean = false,
+    mode: DiscreteWavelets.DecompositionMode = 'regular',
   ): number[][] {
+
     /* Determine wavelet basis and filters. */
     const waveletBasis: Readonly<WaveletBasis> = basisFromWavelet(wavelet);
     const filters: Readonly<Filters> = waveletBasis.dec;
     assertValidFilters(filters);
     const filterLength: number = filters.low.length;
+
     /* Add padding. */
-    data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'one' : padding);
+    let paddingModeFinal;
+    switch (mode) {
+      case 'taintAnalysisSyntheticity':
+      case 'taintAnalysisContamination':
+        paddingModeFinal = PADDING_MODES.one;
+        break;
+      default:
+        paddingModeFinal = padding;
+    }
+    data = this.pad(data, padWidths(data.length, filterLength), paddingModeFinal);
 
     /* Initialize approximation and detail coefficients. */
     let approx: number[] = [];
@@ -412,8 +433,9 @@ export default class DiscreteWavelets {
       /* Determine slice of values. */
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
-      if (taintAnalysisOnly) {
+      if (mode==='taintAnalysisSyntheticity') {
         if (filterLength==2 && padding=='symmetric' && wavelet=='haar') {
+          /*
           // Haar filters are [f1,-f1] (high-pass, details) and [f1,f1] (low-pass, approx), with f1=0.7071...
           if (values[0]==0 && values[1]==1) {
             approx.push(0);  // Dotproduct of [a,a] with [f1,f1] depends on a
@@ -422,17 +444,42 @@ export default class DiscreteWavelets {
             // Dotproduct of [0,0] with [_,_] is always 0
             approx.push(1);
             detail.push(1);
-          } else {
+          } else {  // (values[0]==0 && values[1]==0)
             // The result of the dotproduct depents on values[0] and values[1]
             approx.push(0);
             detail.push(0);
           }
+          // (values[0]==1 && values[1]==0) => not possible because padding can only be contiguously in edges
+          */
+          approx.push(values[0] && values[1]);
+          detail.push(values[0] || values[1]);
         } else {
           // NOT IMPLEMENTED !
           approx.push(0);
           detail.push(0);
         }
-      } else {
+      } else if (mode==='taintAnalysisContamination') {
+        if (filterLength==2 && padding=='symmetric' && wavelet=='haar') {
+          // Haar filters are [f1,-f1] (high-pass, details) and [f1,f1] (low-pass, approx), with f1=0.7071...
+          if (values[0]==0 && values[1]==1) {
+            approx.push(1);  // Dotproduct of [a,a] with [f1,f1] depends on a only
+            detail.push( );  // Dotproduct of [a,a] with [f1,-f1] is always 0
+          } else if (values[0]==1 && values[1]==1) {
+            // Dotproduct of [0,0] with [_,_] is always 0
+            approx.push( );
+            detail.push( );
+          } else {  // (values[0]==0 && values[1]==0)
+            // The result of the dotproduct depents on values[0] and values[1]
+            approx.push(0);
+            detail.push(0);
+          }
+          // (values[0]==1 && values[1]==0) => not possible because padding can only be contiguously in edges
+        } else {
+          // NOT IMPLEMENTED !
+          approx.push(0);
+          detail.push(0);
+        }
+      } else {  // mode==='regular'
         /* Calculate approximation coefficients. */
         approx.push(dot(values, filters.low));
 
