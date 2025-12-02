@@ -792,7 +792,7 @@
                 numLevels = level;
             }
             var current = data;
-            // We will use the taint analysis technique to track which coefficients are affected by original data (1) and which not(0)
+            // We will use the taint analysis technique to track which coefficients are affected by original data (0) and which not(1)
             // Coefficients that are not affected by original data must be a result of padding; they are synthetic
             var currentSyntheticityMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }); // Creates an array with the same shape as data, but with all values as 0
             Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 0
@@ -805,7 +805,7 @@
             // This will store an optional syntheticityMask matrix of coefficients, where 1 means that that position on the transform
             // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
             var syntheticityMask = {
-                approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }),
+                approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }),
                 details: [],
                 size: [rows, cols], // This would not be strictly necessary in the data model
             };
