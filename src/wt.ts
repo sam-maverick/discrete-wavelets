@@ -227,7 +227,7 @@ export default class DiscreteWavelets {
    * @param  data              Input data.
    * @param  wavelet           Wavelet to use.
    * @param  mode              Signal extension mode.
-   * @param  taintAnalysisOnly If set to true it will only calculate the mask matrix, otherwise it will calculate the DWT coefficients
+   * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
    * @return                   Approximation and detail coefficients as result of the transform.
    */  
   static dwt2(
@@ -254,7 +254,7 @@ export default class DiscreteWavelets {
    * @param  mode                    Signal extension mode.
    * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
    * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
-   * @return                         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+   * @return                         Coefficients as result of the transform, and the syntheticityMask matrix that indicates which 0 coefficients are meaningless.
    */  
   static wavedec2(
       data: number[][],
@@ -262,7 +262,7 @@ export default class DiscreteWavelets {
       mode: PaddingMode = 'symmetric',
       level: number|'LOW'|'HIGH' = 'LOW',
       allowDimensionDowngrade: boolean = true,
-  ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, mask: DiscreteWavelets.WaveletCoefficients2D } {
+  ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, syntheticityMask: DiscreteWavelets.WaveletCoefficients2D } {
 
       const rows = data.length;
       const cols = data[0].length;
@@ -277,7 +277,7 @@ export default class DiscreteWavelets {
       let current: number[][] = data;
       // We will use the taint analysis technique to track which coefficients are affected by original data (1) and which not(0)
       // Coefficients that are not affected by original data must be a result of padding; they are synthetic
-      let currentMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 1
+      let currentSyntheticityMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 1
 
       const coeffs: DiscreteWavelets.WaveletCoefficients2D = {
         // We need to initialize approximation:data, because there is the possibility that numLevels==0 
@@ -286,9 +286,9 @@ export default class DiscreteWavelets {
         size: [rows,cols],
       }
 
-      // This will store an optional mask matrix of coefficients, where 0 means that that position on the transform
+      // This will store an optional syntheticityMask matrix of coefficients, where 0 means that that position on the transform
       // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
-      const mask: DiscreteWavelets.WaveletCoefficients2D = {
+      const syntheticityMask: DiscreteWavelets.WaveletCoefficients2D = {
         approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(1)),
         details: [],
         size: [rows,cols],  // This would not be strictly necessary in the data model
@@ -297,20 +297,20 @@ export default class DiscreteWavelets {
       for (let level = 0; level < numLevels; level++) {
 
           const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, mode);  // Perform one level of decomposition
-          const bandsMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentMask, wavelet, mode, true);  // We do taint analysis to detect synthetic coefficients
+          const bandsSyntheticityMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentSyntheticityMask, wavelet, mode, true);  // We do taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
           coeffs.approximation = bands.LL;
-          mask.approximation = bandsMask.LL;
+          syntheticityMask.approximation = bandsSyntheticityMask.LL;
           // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
           coeffs.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
-          mask.details.push({ LH: bandsMask.LH, HL: bandsMask.HL, HH: bandsMask.HH });
+          syntheticityMask.details.push({ LH: bandsSyntheticityMask.LH, HL: bandsSyntheticityMask.HL, HH: bandsSyntheticityMask.HH });
 
           current = coeffs.approximation; // Recurse only on the LL band
-          currentMask = mask.approximation;
+          currentSyntheticityMask = syntheticityMask.approximation;
       }
 
-      return { coeffs, mask };
+      return { coeffs, syntheticityMask };
   }
 
   /**

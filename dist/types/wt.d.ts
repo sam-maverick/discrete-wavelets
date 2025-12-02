@@ -51,7 +51,7 @@ export default class DiscreteWavelets {
      * @param  data              Input data.
      * @param  wavelet           Wavelet to use.
      * @param  mode              Signal extension mode.
-     * @param  taintAnalysisOnly If set to true it will only calculate the mask matrix, otherwise it will calculate the DWT coefficients
+     * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
      * @return                   Approximation and detail coefficients as result of the transform.
      */
     static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
@@ -64,11 +64,11 @@ export default class DiscreteWavelets {
      * @param  mode                    Signal extension mode.
      * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
      * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
-     * @return                         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+     * @return                         Coefficients as result of the transform, and the syntheticityMask matrix that indicates which 0 coefficients are meaningless.
      */
     static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number | 'LOW' | 'HIGH', allowDimensionDowngrade?: boolean): {
         coeffs: DiscreteWavelets.WaveletCoefficients2D;
-        mask: DiscreteWavelets.WaveletCoefficients2D;
+        syntheticityMask: DiscreteWavelets.WaveletCoefficients2D;
     };
     /**
      * Single level inverse 2D Discrete Wavelet Transform.

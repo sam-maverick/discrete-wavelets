@@ -150,8 +150,9 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 **Return**
 
 `number[][]` or `{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }`:
-***number\[]\[]*** and ***coeffs*** are the coefficients as result of the transform, for 1D and 2D respectively.
-In 2D, the ***mask*** is a data structure with the same shape as coeffs, where a '1' means that it is a position that holds actual data, and a '0' means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that position of the mask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs.
+
+- ***number\[]\[]*** and ***coeffs*** are the coefficients as result of the transform, for 1D and 2D respectively.
+- In 2D, the ***mask*** is a data structure with the same shape as coeffs, where a '1' means that it is a position that holds actual data, and a '0' means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that position of the mask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs. In 1D, it returns a dummy value.
 
 > [!WARNING]
 >

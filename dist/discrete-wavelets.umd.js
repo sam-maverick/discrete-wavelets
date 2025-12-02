@@ -735,7 +735,7 @@
          * @param  data              Input data.
          * @param  wavelet           Wavelet to use.
          * @param  mode              Signal extension mode.
-         * @param  taintAnalysisOnly If set to true it will only calculate the mask matrix, otherwise it will calculate the DWT coefficients
+         * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
          * @return                   Approximation and detail coefficients as result of the transform.
          */
         DiscreteWavelets.dwt2 = function (data, wavelet, mode, taintAnalysisOnly) {
@@ -759,7 +759,7 @@
          * @param  mode                    Signal extension mode.
          * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
          * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
-         * @return                         Coefficients as result of the transform, and the mask matrix that indicates which 0 coefficients are meaningless.
+         * @return                         Coefficients as result of the transform, and the syntheticityMask matrix that indicates which 0 coefficients are meaningless.
          */
         DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level, allowDimensionDowngrade) {
             if (mode === void 0) { mode = 'symmetric'; }
@@ -777,33 +777,33 @@
             var current = data;
             // We will use the taint analysis technique to track which coefficients are affected by original data (1) and which not(0)
             // Coefficients that are not affected by original data must be a result of padding; they are synthetic
-            var currentMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 1
+            var currentSyntheticityMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 1
             var coeffs = {
                 // We need to initialize approximation:data, because there is the possibility that numLevels==0 
                 approximation: data,
                 details: [],
                 size: [rows, cols],
             };
-            // This will store an optional mask matrix of coefficients, where 0 means that that position on the transform
+            // This will store an optional syntheticityMask matrix of coefficients, where 0 means that that position on the transform
             // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
-            var mask = {
+            var syntheticityMask = {
                 approximation: Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }),
                 details: [],
                 size: [rows, cols], // This would not be strictly necessary in the data model
             };
             for (var level_1 = 0; level_1 < numLevels; level_1++) {
                 var bands = this.dwt2(current, wavelet, mode); // Perform one level of decomposition
-                var bandsMask = this.dwt2(currentMask, wavelet, mode, true); // We do taint analysis to detect synthetic coefficients
+                var bandsSyntheticityMask = this.dwt2(currentSyntheticityMask, wavelet, mode, true); // We do taint analysis to detect synthetic coefficients
                 // We keep LL for the next iteration or as the last-level approximation
                 coeffs.approximation = bands.LL;
-                mask.approximation = bandsMask.LL;
+                syntheticityMask.approximation = bandsSyntheticityMask.LL;
                 // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
                 coeffs.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
-                mask.details.push({ LH: bandsMask.LH, HL: bandsMask.HL, HH: bandsMask.HH });
+                syntheticityMask.details.push({ LH: bandsSyntheticityMask.LH, HL: bandsSyntheticityMask.HL, HH: bandsSyntheticityMask.HH });
                 current = coeffs.approximation; // Recurse only on the LL band
-                currentMask = mask.approximation;
+                currentSyntheticityMask = syntheticityMask.approximation;
             }
-            return { coeffs: coeffs, mask: mask };
+            return { coeffs: coeffs, syntheticityMask: syntheticityMask };
         };
         /**
          * Single level inverse 2D Discrete Wavelet Transform.
