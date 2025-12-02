@@ -278,6 +278,7 @@ export default class DiscreteWavelets {
       // We will use the taint analysis technique to track which coefficients are affected by original data (1) and which not(0)
       // Coefficients that are not affected by original data must be a result of padding; they are synthetic
       let currentSyntheticityMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 1
+      let currentContaminationMask: number[][] = Array.from({ length: data.length }, () => Array(data[0].length).fill(1));  // Creates an array with the same shape as data, but with all values as 0
 
       const coeffs: DiscreteWavelets.WaveletCoefficients2D = {
         // We need to initialize approximation:data, because there is the possibility that numLevels==0 

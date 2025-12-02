@@ -13,6 +13,7 @@ import { REFLECT_PADDING } from './reflect/reflect';
 import { SMOOTH_PADDING } from './smooth/smooth';
 import { SYMMETRIC_PADDING } from './symmetric/symmetric';
 import { ZERO_PADDING } from './zero/zero';
+import { ONE_PADDING } from './one/one';
 
 /**
  * Signal extension mode.
@@ -24,7 +25,8 @@ export type PaddingMode =
     | 'reflect'
     | 'smooth'
     | 'symmetric'
-    | 'zero';
+    | 'zero'
+    | 'one';
 
 /**
  * Interface of supported padding mode.
@@ -38,6 +40,7 @@ export interface PaddingModes {
   smooth: PaddingMode;
   symmetric: PaddingMode;
   zero: PaddingMode;
+  one: PaddingMode;
 }
 
 /**
@@ -51,7 +54,9 @@ export const PADDING_MODES: Readonly<PaddingModes> = {
   smooth: SMOOTH_PADDING,
   symmetric: SYMMETRIC_PADDING,
   zero: ZERO_PADDING,
+  one: ONE_PADDING,
   modes: [
+    ONE_PADDING,
     ZERO_PADDING,
     CONSTANT_PADDING,
     SYMMETRIC_PADDING,

@@ -8,7 +8,7 @@ export { zeroPadding } from './zero/zero';
 /**
  * Signal extension mode.
  */
-export declare type PaddingMode = 'antisymmetric' | 'constant' | 'periodic' | 'reflect' | 'smooth' | 'symmetric' | 'zero';
+export declare type PaddingMode = 'antisymmetric' | 'constant' | 'periodic' | 'reflect' | 'smooth' | 'symmetric' | 'zero' | 'one';
 /**
  * Interface of supported padding mode.
  */
@@ -21,6 +21,7 @@ export interface PaddingModes {
     smooth: PaddingMode;
     symmetric: PaddingMode;
     zero: PaddingMode;
+    one: PaddingMode;
 }
 /**
  * Supported signal extension modes.

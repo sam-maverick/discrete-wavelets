@@ -22,6 +22,7 @@ var reflect_2 = require("./reflect/reflect");
 var smooth_2 = require("./smooth/smooth");
 var symmetric_2 = require("./symmetric/symmetric");
 var zero_2 = require("./zero/zero");
+var one_1 = require("./one/one");
 /**
  * Supported signal extension modes.
  */
@@ -33,7 +34,9 @@ exports.PADDING_MODES = {
     smooth: smooth_2.SMOOTH_PADDING,
     symmetric: symmetric_2.SYMMETRIC_PADDING,
     zero: zero_2.ZERO_PADDING,
+    one: one_1.ONE_PADDING,
     modes: [
+        one_1.ONE_PADDING,
         zero_2.ZERO_PADDING,
         constant_2.CONSTANT_PADDING,
         symmetric_2.SYMMETRIC_PADDING,
