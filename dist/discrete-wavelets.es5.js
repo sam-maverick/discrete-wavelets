@@ -778,7 +778,7 @@ var DiscreteWavelets = /** @class */ (function () {
         var current = data;
         // We will use the taint analysis technique to track which coefficients are affected by original data (1) and which not(0)
         // Coefficients that are not affected by original data must be a result of padding; they are synthetic
-        var currentSyntheticityMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 1
+        var currentSyntheticityMask = Array.from({ length: data.length }, function () { return Array(data[0].length).fill(0); }); // Creates an array with the same shape as data, but with all values as 0
         Array.from({ length: data.length }, function () { return Array(data[0].length).fill(1); }); // Creates an array with the same shape as data, but with all values as 0
         var coeffs = {
             // We need to initialize approximation:data, because there is the possibility that numLevels==0 
@@ -858,10 +858,11 @@ var DiscreteWavelets = /** @class */ (function () {
     /**
      * Single level 1D Discrete Wavelet Transform.
      *
-     * @param  data    Input data.
-     * @param  wavelet Wavelet to use.
-     * @param  padding    Signal extension mode.
-     * @return         Approximation and detail coefficients as result of the transform.
+     * @param  data              Input data.
+     * @param  wavelet           Wavelet to use.
+     * @param  padding           Signal extension mode.
+     * @param  taintAnalysisOnly When set to true it performs a taint analysis to detect synthetic zero values. When set to false, it performs regular DWT.
+     * @return                   Approximation and detail coefficients as result of the transform.
      */
     DiscreteWavelets.dwt = function (data, wavelet, padding, taintAnalysisOnly) {
         if (padding === void 0) { padding = DEFAULT_PADDING_MODE; }
@@ -882,26 +883,26 @@ var DiscreteWavelets = /** @class */ (function () {
             var values = data.slice(offset, offset + filterLength);
             if (taintAnalysisOnly) {
                 if (filterLength == 2 && padding == 'symmetric' && wavelet == 'haar') {
-                    // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
-                    if (values[0] == 1 && values[1] == 0) {
-                        approx.push(1); // Dotproduct of [a,a] with [f1,f1] depends on a
-                        detail.push(0); // Dotproduct of [a,a] with [f1,-f1] is 0
+                    // Haar filters are [f1,-f1] (high-pass, details) and [f1,f1] (low-pass, approx), with f1=0.7071...
+                    if (values[0] == 0 && values[1] == 1) {
+                        approx.push(0); // Dotproduct of [a,a] with [f1,f1] depends on a
+                        detail.push(1); // Dotproduct of [a,a] with [f1,-f1] is always 0
                     }
-                    else if (values[0] == 0 && values[1] == 0) {
-                        // Dotproduct of [0,0] with [_,_] is 0
-                        approx.push(0);
-                        detail.push(0);
+                    else if (values[0] == 1 && values[1] == 1) {
+                        // Dotproduct of [0,0] with [_,_] is always 0
+                        approx.push(1);
+                        detail.push(1);
                     }
                     else {
                         // The result of the dotproduct depents on values[0] and values[1]
-                        approx.push(1);
-                        detail.push(1);
+                        approx.push(0);
+                        detail.push(0);
                     }
                 }
                 else {
                     // NOT IMPLEMENTED !
-                    approx.push(1);
-                    detail.push(1);
+                    approx.push(0);
+                    detail.push(0);
                 }
             }
             else {

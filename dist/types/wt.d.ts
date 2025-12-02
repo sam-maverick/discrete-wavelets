@@ -98,10 +98,11 @@ export default class DiscreteWavelets {
     /**
      * Single level 1D Discrete Wavelet Transform.
      *
-     * @param  data    Input data.
-     * @param  wavelet Wavelet to use.
-     * @param  padding    Signal extension mode.
-     * @return         Approximation and detail coefficients as result of the transform.
+     * @param  data              Input data.
+     * @param  wavelet           Wavelet to use.
+     * @param  padding           Signal extension mode.
+     * @param  taintAnalysisOnly When set to true it performs a taint analysis to detect synthetic zero values. When set to false, it performs regular DWT.
+     * @return                   Approximation and detail coefficients as result of the transform.
      */
     static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, padding?: PaddingMode, taintAnalysisOnly?: boolean): number[][];
     /**
