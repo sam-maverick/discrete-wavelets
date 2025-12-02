@@ -264,7 +264,11 @@ export default class DiscreteWavelets {
       padding: PaddingMode = 'symmetric',
       level: number|'LOW'|'HIGH' = 'LOW',
       allowDimensionDowngrade: boolean = true,
-  ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, syntheticityMask: DiscreteWavelets.WaveletCoefficients2D } {
+  ): { 
+    coeffs: DiscreteWavelets.WaveletCoefficients2D, 
+    syntheticityMask: DiscreteWavelets.WaveletCoefficients2D,
+    contaminationMask: DiscreteWavelets.WaveletCoefficients2D,
+   } {
 
       const rows = data.length;
       const cols = data[0].length;
@@ -290,15 +294,15 @@ export default class DiscreteWavelets {
       }
 
       // This will store a syntheticityMask matrix of coefficients, where 1 means that that position on the transform
-      // result is a synthetic zero produced by the padding, and anything else means 'position with actual data'
+      // result is a synthetic zero produced by the padding, and 0 means 'position with actual data'
       const syntheticityMask: DiscreteWavelets.WaveletCoefficients2D = {
         approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(0)),  // We need to initialize here again in case level==0
         details: [],
         size: [rows,cols],  // This would not be strictly necessary in the data model
       }
 
-      // This will store a contaminationMask matrix of coefficients, where a value greater than 0 means that that position on the transform
-      // result is affected by the effects of edges, and anything else means 'position with no edge effects'
+      // This will store a contaminationMask matrix of coefficients, where a value v greater than 0 means that that position on the transform
+      // result is affected by v effects of edges, and 0 means 'position with no edge effects'
       const contaminationMask: DiscreteWavelets.WaveletCoefficients2D = {
         approximation: Array.from({ length: data.length }, () => Array(data[0].length).fill(0)),  // We need to initialize here again in case level==0
         details: [],
@@ -309,19 +313,23 @@ export default class DiscreteWavelets {
 
           const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, padding);  // Perform one level of decomposition (regular DWT)
           const bandsSyntheticityMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentSyntheticityMask, wavelet, padding, 'taintAnalysisSyntheticity');  // Perform taint analysis to detect synthetic coefficients
+          const bandsContaminationMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentContaminationMask, wavelet, padding, 'taintAnalysisContamination');  // Perform taint analysis to detect coefficients affected by edges
 
           // We keep LL for the next iteration or as the last-level approximation
           coeffs.approximation = bands.LL;
           syntheticityMask.approximation = bandsSyntheticityMask.LL;
+          contaminationMask.approximation = bandsContaminationMask.LL;
           // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
           coeffs.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
           syntheticityMask.details.push({ LH: bandsSyntheticityMask.LH, HL: bandsSyntheticityMask.HL, HH: bandsSyntheticityMask.HH });
+          contaminationMask.details.push({ LH: bandsContaminationMask.LH, HL: bandsContaminationMask.HL, HH: bandsContaminationMask.HH });
 
           current = coeffs.approximation; // Recurse only on the LL band
           currentSyntheticityMask = syntheticityMask.approximation;
+          currentContaminationMask = contaminationMask.approximation;
       }
 
-      return { coeffs, syntheticityMask };
+      return { coeffs, syntheticityMask, contaminationMask };
   }
 
   /**
@@ -449,35 +457,39 @@ export default class DiscreteWavelets {
             approx.push(0);
             detail.push(0);
           }
-          // (values[0]==1 && values[1]==0) => not possible because padding can only be contiguously in edges
+          // (values[0]==1 && values[1]==0) => not possible because (padding U synthetic zeros) can only exist contiguously in edges
           */
           approx.push(values[0] && values[1]);
           detail.push(values[0] || values[1]);
         } else {
           // NOT IMPLEMENTED !
-          approx.push(0);
-          detail.push(0);
+          approx.push(NaN);
+          detail.push(NaN);
         }
       } else if (mode==='taintAnalysisContamination') {
         if (filterLength==2 && padding=='symmetric' && wavelet=='haar') {
+          /*
           // Haar filters are [f1,-f1] (high-pass, details) and [f1,f1] (low-pass, approx), with f1=0.7071...
           if (values[0]==0 && values[1]==1) {
-            approx.push(1);  // Dotproduct of [a,a] with [f1,f1] depends on a only
-            detail.push( );  // Dotproduct of [a,a] with [f1,-f1] is always 0
+            approx.push(values[0]+values[1]);  // Dotproduct of [a,a] with [f1,f1] depends on a only
+            detail.push(not relevant);  // Dotproduct of [a,a] with [f1,-f1] is always 0
           } else if (values[0]==1 && values[1]==1) {
             // Dotproduct of [0,0] with [_,_] is always 0
-            approx.push( );
-            detail.push( );
+            approx.push(not relevant);
+            detail.push(not relevant);
           } else {  // (values[0]==0 && values[1]==0)
             // The result of the dotproduct depents on values[0] and values[1]
-            approx.push(0);
-            detail.push(0);
+            approx.push(values[0]+values[1]);
+            detail.push(values[0]+values[1]);
           }
-          // (values[0]==1 && values[1]==0) => not possible because padding can only be contiguously in edges
+          // (values[0]==1 && values[1]==0) => not possible because (padding U synthetic zeros) can only exist contiguously in edges
+          */
+          approx.push(values[0]+values[1]);
+          detail.push(values[0]+values[1]);
         } else {
           // NOT IMPLEMENTED !
-          approx.push(0);
-          detail.push(0);
+          approx.push(NaN);
+          detail.push(NaN);
         }
       } else {  // mode==='regular'
         /* Calculate approximation coefficients. */

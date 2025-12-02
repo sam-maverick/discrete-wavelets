@@ -70,6 +70,7 @@ export default class DiscreteWavelets {
     static wavedec2(data: number[][], wavelet: Wavelet, padding?: PaddingMode, level?: number | 'LOW' | 'HIGH', allowDimensionDowngrade?: boolean): {
         coeffs: DiscreteWavelets.WaveletCoefficients2D;
         syntheticityMask: DiscreteWavelets.WaveletCoefficients2D;
+        contaminationMask: DiscreteWavelets.WaveletCoefficients2D;
     };
     /**
      * Single level inverse 2D Discrete Wavelet Transform.
