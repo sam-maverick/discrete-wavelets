@@ -651,20 +651,20 @@ var DiscreteWavelets = /** @class */ (function () {
             return Math.min(this.maxLevel(size[0], wavelet, roundingOption), this.maxLevel(size[1], wavelet, roundingOption));
         }
     };
-    DiscreteWavelets.dwtRows = function (matrix, wavelet, paddingmode, taintAnalysisOnly) {
+    DiscreteWavelets.dwtRows = function (matrix, wavelet, padding, taintAnalysisOnly) {
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
         var rows = matrix.length;
         //const cols = matrix[0].length;
         var cA = [];
         var cD = [];
         for (var r = 0; r < rows; r++) {
-            var _a = this.dwt(matrix[r], wavelet, paddingmode, taintAnalysisOnly), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
+            var _a = this.dwt(matrix[r], wavelet, padding, taintAnalysisOnly), approx = _a[0], detail = _a[1]; // approx.length = detail.length = padding + cols / 2
             cA.push(approx);
             cD.push(detail);
         }
         return { cA: cA, cD: cD }; // cA.length = cD.length = rows
     };
-    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, paddingmode, taintAnalysisOnly) {
+    DiscreteWavelets.dwtCols = function (cA, cD, wavelet, padding, taintAnalysisOnly) {
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
         //const rows = cA.length;
         var cols = cA[0].length;
@@ -672,9 +672,9 @@ var DiscreteWavelets = /** @class */ (function () {
         var bands = { LL: [], LH: [], HL: [], HH: [] };
         var _loop_1 = function (col) {
             var recA = cA.map(function (r) { return r[col]; }); // Effectively slices column col from cA[][]
-            var _a = this_1.dwt(recA, wavelet, paddingmode, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+            var _a = this_1.dwt(recA, wavelet, padding, taintAnalysisOnly), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
             var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
-            var _b = this_1.dwt(recD, wavelet, paddingmode, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+            var _b = this_1.dwt(recD, wavelet, padding, taintAnalysisOnly), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
             // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
             if (col == 0) {
                 bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
@@ -735,15 +735,15 @@ var DiscreteWavelets = /** @class */ (function () {
      *
      * @param  data              Input data.
      * @param  wavelet           Wavelet to use.
-     * @param  mode              Signal extension mode.
+     * @param  padding              Signal extension mode.
      * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
      * @return                   Approximation and detail coefficients as result of the transform.
      */
-    DiscreteWavelets.dwt2 = function (data, wavelet, mode, taintAnalysisOnly) {
-        if (mode === void 0) { mode = 'symmetric'; }
+    DiscreteWavelets.dwt2 = function (data, wavelet, padding, taintAnalysisOnly) {
+        if (padding === void 0) { padding = 'symmetric'; }
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
-        var _a = this.dwtRows(data, wavelet, mode, taintAnalysisOnly), cA = _a.cA, cD = _a.cD;
-        var bandsValues = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
+        var _a = this.dwtRows(data, wavelet, padding, taintAnalysisOnly), cA = _a.cA, cD = _a.cD;
+        var bandsValues = this.dwtCols(cA, cD, wavelet, padding, taintAnalysisOnly);
         // For correct matching of the coefficients with their meaning in the spatial domain:
         for (var _i = 0, _b = ['LL', 'LH', 'HL', 'HH']; _i < _b.length; _i++) {
             var band = _b[_i];
@@ -757,13 +757,13 @@ var DiscreteWavelets = /** @class */ (function () {
      *
      * @param  data                    Input data.
      * @param  wavelet                 Wavelet to use.
-     * @param  mode                    Signal extension mode.
+     * @param  padding                    Signal extension mode.
      * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
      * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
      * @return                         Coefficients as result of the transform, and the syntheticityMask matrix that indicates which 0 coefficients are meaningless.
      */
-    DiscreteWavelets.wavedec2 = function (data, wavelet, mode, level, allowDimensionDowngrade) {
-        if (mode === void 0) { mode = 'symmetric'; }
+    DiscreteWavelets.wavedec2 = function (data, wavelet, padding, level, allowDimensionDowngrade) {
+        if (padding === void 0) { padding = 'symmetric'; }
         if (level === void 0) { level = 'LOW'; }
         if (allowDimensionDowngrade === void 0) { allowDimensionDowngrade = true; }
         var rows = data.length;
@@ -794,8 +794,8 @@ var DiscreteWavelets = /** @class */ (function () {
             size: [rows, cols], // This would not be strictly necessary in the data model
         };
         for (var level_1 = 0; level_1 < numLevels; level_1++) {
-            var bands = this.dwt2(current, wavelet, mode); // Perform one level of decomposition
-            var bandsSyntheticityMask = this.dwt2(currentSyntheticityMask, wavelet, mode, true); // We do taint analysis to detect synthetic coefficients
+            var bands = this.dwt2(current, wavelet, padding); // Perform one level of decomposition
+            var bandsSyntheticityMask = this.dwt2(currentSyntheticityMask, wavelet, padding, true); // We do taint analysis to detect synthetic coefficients
             // We keep LL for the next iteration or as the last-level approximation
             coeffs.approximation = bands.LL;
             syntheticityMask.approximation = bandsSyntheticityMask.LL;
@@ -860,11 +860,11 @@ var DiscreteWavelets = /** @class */ (function () {
      *
      * @param  data    Input data.
      * @param  wavelet Wavelet to use.
-     * @param  mode    Signal extension mode.
+     * @param  padding    Signal extension mode.
      * @return         Approximation and detail coefficients as result of the transform.
      */
-    DiscreteWavelets.dwt = function (data, wavelet, mode, taintAnalysisOnly) {
-        if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
+    DiscreteWavelets.dwt = function (data, wavelet, padding, taintAnalysisOnly) {
+        if (padding === void 0) { padding = DEFAULT_PADDING_MODE; }
         if (taintAnalysisOnly === void 0) { taintAnalysisOnly = false; }
         /* Determine wavelet basis and filters. */
         var waveletBasis = basisFromWavelet(wavelet);
@@ -872,7 +872,7 @@ var DiscreteWavelets = /** @class */ (function () {
         assertValidFilters(filters);
         var filterLength = filters.low.length;
         /* Add padding. */
-        data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'zero' : mode);
+        data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'one' : padding);
         /* Initialize approximation and detail coefficients. */
         var approx = [];
         var detail = [];
@@ -881,7 +881,7 @@ var DiscreteWavelets = /** @class */ (function () {
             /* Determine slice of values. */
             var values = data.slice(offset, offset + filterLength);
             if (taintAnalysisOnly) {
-                if (filterLength == 2 && mode == 'symmetric' && wavelet == 'haar') {
+                if (filterLength == 2 && padding == 'symmetric' && wavelet == 'haar') {
                     // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
                     if (values[0] == 1 && values[1] == 0) {
                         approx.push(1); // Dotproduct of [a,a] with [f1,f1] depends on a
@@ -1015,10 +1015,10 @@ var DiscreteWavelets = /** @class */ (function () {
      *
      * @param  data      Input data.
      * @param  padWidths Widths of padding at front and back.
-     * @param  mode      Signal extension mode.
+     * @param  padding      Signal extension mode.
      * @return           Data with padding.
      */
-    DiscreteWavelets.pad = function (data, padWidths, mode) {
+    DiscreteWavelets.pad = function (data, padWidths, padding) {
         /* Check for undefined data. */
         if (!data) {
             throw new Error("Cannot add padding to empty data.");
@@ -1027,9 +1027,9 @@ var DiscreteWavelets = /** @class */ (function () {
         var front = padWidths[0];
         var back = padWidths[1];
         /* Add padding. */
-        return createArray(front, function (index) { return padElement(data, front - 1 - index, true, mode); })
+        return createArray(front, function (index) { return padElement(data, front - 1 - index, true, padding); })
             .concat(data)
-            .concat(createArray(back, function (index) { return padElement(data, index, false, mode); }));
+            .concat(createArray(back, function (index) { return padElement(data, index, false, padding); }));
     };
     /**
      * 1D wavelet decomposition. Transforms data by calculating coefficients from
@@ -1037,12 +1037,12 @@ var DiscreteWavelets = /** @class */ (function () {
      *
      * @param  data           Input data.
      * @param  wavelet        Wavelet to use.
-     * @param  mode           Signal extension mode.
+     * @param  padding           Signal extension mode.
      * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
      * @return                Coefficients as result of the transform.
      */
-    DiscreteWavelets.wavedec = function (data, wavelet, mode, level) {
-        if (mode === void 0) { mode = DEFAULT_PADDING_MODE; }
+    DiscreteWavelets.wavedec = function (data, wavelet, padding, level) {
+        if (padding === void 0) { padding = DEFAULT_PADDING_MODE; }
         if (level === void 0) { level = 'LOW'; }
         /* Determine decomposition level. */
         if (typeof level === 'string') {
@@ -1057,7 +1057,7 @@ var DiscreteWavelets = /** @class */ (function () {
         /* Transform. */
         for (var l = 1; l <= level; l++) {
             /* Perform single level transform. */
-            var approxDetail = this.dwt(approx, wavelet, mode);
+            var approxDetail = this.dwt(approx, wavelet, padding);
             approx = approxDetail[0];
             var detail = approxDetail[1];
             /* Prepend detail coefficients. */

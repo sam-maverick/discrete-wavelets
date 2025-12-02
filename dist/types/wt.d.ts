@@ -50,23 +50,23 @@ export default class DiscreteWavelets {
      *
      * @param  data              Input data.
      * @param  wavelet           Wavelet to use.
-     * @param  mode              Signal extension mode.
+     * @param  padding              Signal extension mode.
      * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
      * @return                   Approximation and detail coefficients as result of the transform.
      */
-    static dwt2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
+    static dwt2(data: number[][], wavelet: Wavelet, padding?: PaddingMode, taintAnalysisOnly?: boolean): DiscreteWavelets.WaveletBands2D;
     /**
      * 2D wavelet decomposition. Transforms data by calculating coefficients from
      * input data.
      *
      * @param  data                    Input data.
      * @param  wavelet                 Wavelet to use.
-     * @param  mode                    Signal extension mode.
+     * @param  padding                    Signal extension mode.
      * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
      * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
      * @return                         Coefficients as result of the transform, and the syntheticityMask matrix that indicates which 0 coefficients are meaningless.
      */
-    static wavedec2(data: number[][], wavelet: Wavelet, mode?: PaddingMode, level?: number | 'LOW' | 'HIGH', allowDimensionDowngrade?: boolean): {
+    static wavedec2(data: number[][], wavelet: Wavelet, padding?: PaddingMode, level?: number | 'LOW' | 'HIGH', allowDimensionDowngrade?: boolean): {
         coeffs: DiscreteWavelets.WaveletCoefficients2D;
         syntheticityMask: DiscreteWavelets.WaveletCoefficients2D;
     };
@@ -100,10 +100,10 @@ export default class DiscreteWavelets {
      *
      * @param  data    Input data.
      * @param  wavelet Wavelet to use.
-     * @param  mode    Signal extension mode.
+     * @param  padding    Signal extension mode.
      * @return         Approximation and detail coefficients as result of the transform.
      */
-    static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, mode?: PaddingMode, taintAnalysisOnly?: boolean): number[][];
+    static dwt(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, padding?: PaddingMode, taintAnalysisOnly?: boolean): number[][];
     /**
      * Calculates the energy as sum of squares of an array of data or
      * coefficients.
@@ -135,21 +135,21 @@ export default class DiscreteWavelets {
      *
      * @param  data      Input data.
      * @param  padWidths Widths of padding at front and back.
-     * @param  mode      Signal extension mode.
+     * @param  padding      Signal extension mode.
      * @return           Data with padding.
      */
-    static pad(data: ReadonlyArray<number>, padWidths: Readonly<PaddingWidths>, mode: PaddingMode): number[];
+    static pad(data: ReadonlyArray<number>, padWidths: Readonly<PaddingWidths>, padding: PaddingMode): number[];
     /**
      * 1D wavelet decomposition. Transforms data by calculating coefficients from
      * input data.
      *
      * @param  data           Input data.
      * @param  wavelet        Wavelet to use.
-     * @param  mode           Signal extension mode.
+     * @param  padding           Signal extension mode.
      * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
      * @return                Coefficients as result of the transform.
      */
-    static wavedec(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, mode?: PaddingMode, level?: number | 'LOW' | 'HIGH'): number[][];
+    static wavedec(data: ReadonlyArray<number>, wavelet: Readonly<Wavelet>, padding?: PaddingMode, level?: number | 'LOW' | 'HIGH'): number[][];
     /**
      * 1D wavelet reconstruction. Inverses a transform by calculating input data
      * from coefficients.

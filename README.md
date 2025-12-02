@@ -32,6 +32,7 @@ The following values for `PaddingMode` are supported at the moment:
 | Name                  | Value             | Description                         |
 | --------------------- | ----------------- | ----------------------------------- |
 | Zero Padding          | `'zero'`          | Adding zeros.                       |
+| One Padding           | `'one'`           | Adding ones.                        |
 | Constant Padding      | `'constant'`      | Replication of border values.       |
 | Symmetric Padding     | `'symmetric'`     | Mirroring of samples.               |
 | Reflect Padding       | `'reflect'`       | Reflecting of samples.              |
@@ -43,7 +44,7 @@ You can get a list of the supported signal extension modes:
 
 ```javascript
 console.log(WT.Modes.modes);
-// expected output: Array ['zero', 'constant', 'symmetric', 'periodic', 'smooth', 'reflect', 'antisymmetric']
+// expected output: Array ['zero', 'one', constant', 'symmetric', 'periodic', 'smooth', 'reflect', 'antisymmetric']
 ```
 
 ### Wavelets
@@ -121,7 +122,7 @@ Single level Discrete Wavelet Transform.
 
 - `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
-- `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
+- `padding` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
 
 **Return**
 
@@ -144,19 +145,19 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 
 - `data` (`number[]` or `number[][]`): Input data.
 - `wavelet` (`Wavelet`): Wavelet to use.
-- `mode` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
+- `padding` (`PaddingMode`): Signal extension mode. Defaults to `'symmetric'`.
 - `level` (`number|'LOW|'HIGH'`): Either the decomposition level or the roundingOption for calculating number of decompositions via [maxLevel](#maxLevel) or [maxLevel2](#maxLevel2) function. Defaults to 'LOW'.
 
 **Return**
 
-`number[][]` or `{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }`:
+`number[][]` or `{ coeffs: DW.WaveletCoefficients2D, syntheticityMask: DW.WaveletCoefficients2D }`:
 
 - ***number\[]\[]*** and ***coeffs*** are the coefficients as result of the transform, for 1D and 2D respectively.
-- In 2D, the ***mask*** is a data structure with the same shape as coeffs, where a '1' means that it is a position that holds actual data, and a '0' means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that position of the mask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs. In 1D, it returns a dummy value.
+- In 2D, the ***syntheticityMask*** is a data structure with the same shape as coeffs, where a '1' means that it is a position that holds actual data, and a '0' means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the syntheticityMask, this means that any input with the same shape will always produce a 0 in that position of the syntheticityMask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs. In 1D, it returns a dummy value.
 
 > [!WARNING]
 >
-> At the moment, mask data is only supported in the `haar` wavelet with `symmetric` padding.
+> At the moment, syntheticityMask data is only supported in the `haar` wavelet with `symmetric` padding.
 
 **Example**
 
@@ -292,7 +293,7 @@ Extends a signal with a given padding mode.
 
 - `data` (`number[]`): Input data.
 - `padWidths` (`[number, number]`): Widths of padding at front and back.
-- `mode` (`PaddingMode`): Signal extension mode.
+- `padding` (`PaddingMode`): Signal extension mode.
 
 **Return**
 

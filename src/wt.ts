@@ -115,7 +115,7 @@ export default class DiscreteWavelets {
   private static dwtRows(
       matrix: number[][], 
       wavelet: Wavelet, 
-      paddingmode: PaddingMode,
+      padding: PaddingMode,
       taintAnalysisOnly: boolean = false,
   ): {cA: number[][], cD: number[][]} {
       const rows = matrix.length;
@@ -125,7 +125,7 @@ export default class DiscreteWavelets {
       const cD: number[][] = [];
 
       for (let r = 0; r < rows; r++) {
-          const [approx, detail] = this.dwt(matrix[r], wavelet, paddingmode, taintAnalysisOnly);  // approx.length = detail.length = padding + cols / 2
+          const [approx, detail] = this.dwt(matrix[r], wavelet, padding, taintAnalysisOnly);  // approx.length = detail.length = padding + cols / 2
           cA.push(approx);
           cD.push(detail);
       }
@@ -136,7 +136,7 @@ export default class DiscreteWavelets {
       cA: number[][], 
       cD: number[][], 
       wavelet: Wavelet, 
-      paddingmode: PaddingMode,
+      padding: PaddingMode,
       taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
       //const rows = cA.length;
@@ -147,9 +147,9 @@ export default class DiscreteWavelets {
 
       for (let col = 0; col < cols; col++) {
           const recA: number[] = cA.map(r => r[col]);  // Effectively slices column col from cA[][]
-          const [A1, D1] = this.dwt(recA, wavelet, paddingmode, taintAnalysisOnly);  // A1.length = D1.length = padding + cA.length / 2
+          const [A1, D1] = this.dwt(recA, wavelet, padding, taintAnalysisOnly);  // A1.length = D1.length = padding + cA.length / 2
           const recD: number[] = cD.map(r => r[col]);  // Effectively slices column col from cD[][]
-          const [A2, D2] = this.dwt(recD, wavelet, paddingmode, taintAnalysisOnly);  // A2.length = D2.length = padding + cD.length / 2
+          const [A2, D2] = this.dwt(recD, wavelet, padding, taintAnalysisOnly);  // A2.length = D2.length = padding + cD.length / 2
 
           // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
           if (col == 0) {
@@ -226,18 +226,18 @@ export default class DiscreteWavelets {
    *
    * @param  data              Input data.
    * @param  wavelet           Wavelet to use.
-   * @param  mode              Signal extension mode.
+   * @param  padding              Signal extension mode.
    * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
    * @return                   Approximation and detail coefficients as result of the transform.
    */  
   static dwt2(
       data: number[][],
       wavelet: Wavelet,
-      mode: PaddingMode = 'symmetric',
+      padding: PaddingMode = 'symmetric',
       taintAnalysisOnly: boolean = false,
   ): DiscreteWavelets.WaveletBands2D {
-      const { cA, cD } = this.dwtRows(data, wavelet, mode, taintAnalysisOnly);
-      const bandsValues = this.dwtCols(cA, cD, wavelet, mode, taintAnalysisOnly);
+      const { cA, cD } = this.dwtRows(data, wavelet, padding, taintAnalysisOnly);
+      const bandsValues = this.dwtCols(cA, cD, wavelet, padding, taintAnalysisOnly);
       // For correct matching of the coefficients with their meaning in the spatial domain:
       for (const band of ['LL', 'LH', 'HL', 'HH']) {
         bandsValues[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
@@ -251,7 +251,7 @@ export default class DiscreteWavelets {
    *
    * @param  data                    Input data.
    * @param  wavelet                 Wavelet to use.
-   * @param  mode                    Signal extension mode.
+   * @param  padding                    Signal extension mode.
    * @param  level                   Decomposition level or roundingOption parameter for calculating via maxLevel2 function. Defaults to 'LOW'.
    * @param  allowDimensionDowngrade allowDimensionDowngrade parameter for maxLevel2. Defaults to true. Only applies when level parameter is 'LOW' or 'HIGH'.
    * @return                         Coefficients as result of the transform, and the syntheticityMask matrix that indicates which 0 coefficients are meaningless.
@@ -259,7 +259,7 @@ export default class DiscreteWavelets {
   static wavedec2(
       data: number[][],
       wavelet: Wavelet,
-      mode: PaddingMode = 'symmetric',
+      padding: PaddingMode = 'symmetric',
       level: number|'LOW'|'HIGH' = 'LOW',
       allowDimensionDowngrade: boolean = true,
   ): { coeffs: DiscreteWavelets.WaveletCoefficients2D, syntheticityMask: DiscreteWavelets.WaveletCoefficients2D } {
@@ -297,8 +297,8 @@ export default class DiscreteWavelets {
 
       for (let level = 0; level < numLevels; level++) {
 
-          const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, mode);  // Perform one level of decomposition
-          const bandsSyntheticityMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentSyntheticityMask, wavelet, mode, true);  // We do taint analysis to detect synthetic coefficients
+          const bands: DiscreteWavelets.WaveletBands2D = this.dwt2(current, wavelet, padding);  // Perform one level of decomposition
+          const bandsSyntheticityMask: DiscreteWavelets.WaveletBands2D = this.dwt2(currentSyntheticityMask, wavelet, padding, true);  // We do taint analysis to detect synthetic coefficients
 
           // We keep LL for the next iteration or as the last-level approximation
           coeffs.approximation = bands.LL;
@@ -385,13 +385,13 @@ export default class DiscreteWavelets {
    *
    * @param  data    Input data.
    * @param  wavelet Wavelet to use.
-   * @param  mode    Signal extension mode.
+   * @param  padding    Signal extension mode.
    * @return         Approximation and detail coefficients as result of the transform.
    */
   static dwt(
     data: ReadonlyArray<number>,
     wavelet: Readonly<Wavelet>,
-    mode: PaddingMode = DEFAULT_PADDING_MODE,
+    padding: PaddingMode = DEFAULT_PADDING_MODE,
     taintAnalysisOnly: boolean = false,
   ): number[][] {
     /* Determine wavelet basis and filters. */
@@ -401,7 +401,7 @@ export default class DiscreteWavelets {
     const filterLength: number = filters.low.length;
 
     /* Add padding. */
-    data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'zero' : mode);
+    data = this.pad(data, padWidths(data.length, filterLength), taintAnalysisOnly ? 'one' : padding);
 
     /* Initialize approximation and detail coefficients. */
     let approx: number[] = [];
@@ -413,7 +413,7 @@ export default class DiscreteWavelets {
       const values: ReadonlyArray<number> = data.slice(offset, offset + filterLength);
 
       if (taintAnalysisOnly) {
-        if (filterLength==2 && mode=='symmetric' && wavelet=='haar') {
+        if (filterLength==2 && padding=='symmetric' && wavelet=='haar') {
           // Haar filters are [f1,-f1] (high-pass) and [f1,f1] (low-pass), with f1=0.7071...
           if (values[0]==1 && values[1]==0) {
             approx.push(1);  // Dotproduct of [a,a] with [f1,f1] depends on a
@@ -564,13 +564,13 @@ export default class DiscreteWavelets {
    *
    * @param  data      Input data.
    * @param  padWidths Widths of padding at front and back.
-   * @param  mode      Signal extension mode.
+   * @param  padding      Signal extension mode.
    * @return           Data with padding.
    */
   static pad(
     data: ReadonlyArray<number>,
     padWidths: Readonly<PaddingWidths>,
-    mode: PaddingMode
+    padding: PaddingMode
   ): number[] {
     /* Check for undefined data. */
     if (!data) {
@@ -582,9 +582,9 @@ export default class DiscreteWavelets {
     const back: number = padWidths[1];
 
     /* Add padding. */
-    return createArray(front, (index) => padElement(data, front - 1 - index, true, mode))
+    return createArray(front, (index) => padElement(data, front - 1 - index, true, padding))
       .concat(data)
-      .concat(createArray(back, (index) => padElement(data, index, false, mode)));
+      .concat(createArray(back, (index) => padElement(data, index, false, padding)));
   }
 
   /**
@@ -593,14 +593,14 @@ export default class DiscreteWavelets {
    *
    * @param  data           Input data.
    * @param  wavelet        Wavelet to use.
-   * @param  mode           Signal extension mode.
+   * @param  padding           Signal extension mode.
    * @param  level          Decomposition level or roundingOption for calculating via maxLevel function. Defaults to level calculated by maxLevel function with 'LOW' Roundingoption.
    * @return                Coefficients as result of the transform.
    */
   static wavedec(
     data: ReadonlyArray<number>,
     wavelet: Readonly<Wavelet>,
-    mode: PaddingMode = DEFAULT_PADDING_MODE,
+    padding: PaddingMode = DEFAULT_PADDING_MODE,
     level: number|'LOW'|'HIGH' = 'LOW',
   ): number[][] {
     /* Determine decomposition level. */
@@ -617,7 +617,7 @@ export default class DiscreteWavelets {
     /* Transform. */
     for (let l: number = 1; l <= level; l++) {
       /* Perform single level transform. */
-      const approxDetail: ReadonlyArray<ReadonlyArray<number>> = this.dwt(approx, wavelet, mode);
+      const approxDetail: ReadonlyArray<ReadonlyArray<number>> = this.dwt(approx, wavelet, padding);
       approx = approxDetail[0];
       const detail: ReadonlyArray<number> = approxDetail[1];
 

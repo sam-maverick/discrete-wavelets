@@ -47,6 +47,11 @@
 <td>Adding zeros.</td>
 </tr>
 <tr>
+<td>One Padding</td>
+<td><code>&#39;one&#39;</code></td>
+<td>Adding ones.</td>
+</tr>
+<tr>
 <td>Constant Padding</td>
 <td><code>&#39;constant&#39;</code></td>
 <td>Replication of border values.</td>
@@ -78,7 +83,7 @@
 </tr>
 </tbody></table>
 <p>You can get a list of the supported signal extension modes:</p>
-<pre><code class="language-javascript"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-0">Modes</span><span class="hl-1">.</span><span class="hl-0">modes</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [&#39;zero&#39;, &#39;constant&#39;, &#39;symmetric&#39;, &#39;periodic&#39;, &#39;smooth&#39;, &#39;reflect&#39;, &#39;antisymmetric&#39;]</span>
+<pre><code class="language-javascript"><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-0">Modes</span><span class="hl-1">.</span><span class="hl-0">modes</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [&#39;zero&#39;, &#39;one&#39;, constant&#39;, &#39;symmetric&#39;, &#39;periodic&#39;, &#39;smooth&#39;, &#39;reflect&#39;, &#39;antisymmetric&#39;]</span>
 </code></pre>
 
 <a href="#wavelets" id="wavelets" style="color: inherit; text-decoration: none;">
@@ -186,7 +191,7 @@
 <ul>
 <li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
-<li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
+<li><code>padding</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number[][]</code> or <code>DW.WaveletBands2D</code>: Approximation and detail coefficients as result of the transform.</p>
@@ -202,18 +207,18 @@
 <ul>
 <li><code>data</code> (<code>number[]</code> or <code>number[][]</code>): Input data.</li>
 <li><code>wavelet</code> (<code>Wavelet</code>): Wavelet to use.</li>
-<li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
+<li><code>padding</code> (<code>PaddingMode</code>): Signal extension mode. Defaults to <code>&#39;symmetric&#39;</code>.</li>
 <li><code>level</code> (<code>number|&#39;LOW|&#39;HIGH&#39;</code>): Either the decomposition level or the roundingOption for calculating number of decompositions via <a href="#maxLevel">maxLevel</a> or <a href="#maxLevel2">maxLevel2</a> function. Defaults to &#39;LOW&#39;.</li>
 </ul>
 <p><strong>Return</strong></p>
-<p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, mask: DW.WaveletCoefficients2D }</code>:</p>
+<p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, syntheticityMask: DW.WaveletCoefficients2D }</code>:</p>
 <ul>
 <li><em><strong>number[][]</strong></em> and <em><strong>coeffs</strong></em> are the coefficients as result of the transform, for 1D and 2D respectively.</li>
-<li>In 2D, the <em><strong>mask</strong></em> is a data structure with the same shape as coeffs, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the mask, this means that any input with the same shape will always produce a 0 in that position of the mask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs. In 1D, it returns a dummy value.</li>
+<li>In 2D, the <em><strong>syntheticityMask</strong></em> is a data structure with the same shape as coeffs, where a &#39;1&#39; means that it is a position that holds actual data, and a &#39;0&#39; means that the correspondiing value in coeffs for that position has a zero that resulted from the synthetic data introduced by the padding. Note that whenever you see a 0 in the syntheticityMask, this means that any input with the same shape will always produce a 0 in that position of the syntheticityMask, and it will always have a 0 (or near-zero, due to precision errors) in that position in coeffs. In 1D, it returns a dummy value.</li>
 </ul>
 <blockquote>
 <p>[!WARNING]</p>
-<p>At the moment, mask data is only supported in the <code>haar</code> wavelet with <code>symmetric</code> padding.</p>
+<p>At the moment, syntheticityMask data is only supported in the <code>haar</code> wavelet with <code>symmetric</code> padding.</p>
 </blockquote>
 <p><strong>Example</strong></p>
 <pre><code class="language-javascript"><span class="hl-6">var</span><span class="hl-1"> </span><span class="hl-0">coeffs</span><span class="hl-1"> = </span><span class="hl-3">WT</span><span class="hl-1">.</span><span class="hl-2">wavedec</span><span class="hl-1">([</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">3</span><span class="hl-1">, </span><span class="hl-7">4</span><span class="hl-1">], </span><span class="hl-8">&quot;haar&quot;</span><span class="hl-1">, </span><span class="hl-8">&quot;HIGH&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-2">log</span><span class="hl-1">(</span><span class="hl-0">coeffs</span><span class="hl-1">);</span><br/><span class="hl-4">// expected output: Array [[4.999999999999999], [-1.9999999999999993], [-0.7071067811865475, -0.7071067811865475]]</span>
@@ -303,7 +308,7 @@ Defaults to true.</li>
 <ul>
 <li><code>data</code> (<code>number[]</code>): Input data.</li>
 <li><code>padWidths</code> (<code>[number, number]</code>): Widths of padding at front and back.</li>
-<li><code>mode</code> (<code>PaddingMode</code>): Signal extension mode.</li>
+<li><code>padding</code> (<code>PaddingMode</code>): Signal extension mode.</li>
 </ul>
 <p><strong>Return</strong></p>
 <p><code>number[]</code>: Data with padding.</p>
