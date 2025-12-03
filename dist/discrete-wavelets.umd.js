@@ -758,11 +758,11 @@
         /**
          * Single level 2D Discrete Wavelet Transform.
          *
-         * @param  data              Input data.
-         * @param  wavelet           Wavelet to use.
-         * @param  padding              Signal extension mode.
-         * @param  taintAnalysisOnly If set to true it will only calculate the syntheticityMask matrix, otherwise it will calculate the DWT coefficients
-         * @return                   Approximation and detail coefficients as result of the transform.
+         * @param  data     Input data.
+         * @param  wavelet  Wavelet to use.
+         * @param  padding  Signal extension mode.
+         * @param  mode     When set to 'regular' it performs the DWT on the input data. When set to 'taintAnalysisSyntheticity' it performs a taint analysis to detect synthetic zero values. When set to 'taintAnalysisContamination' it performs taint analysis to see hich values are affected by edge effects.
+         * @return          Approximation and detail coefficients as result of the transform, or results of the taint analysis (check the documentation).
          */
         DiscreteWavelets.dwt2 = function (data, wavelet, padding, mode) {
             if (padding === void 0) { padding = 'symmetric'; }
@@ -884,11 +884,11 @@
         /**
          * Single level 1D Discrete Wavelet Transform.
          *
-         * @param  data              Input data.
-         * @param  wavelet           Wavelet to use.
-         * @param  padding           Signal extension mode.
-         * @param  taintAnalysisOnly When set to true it performs a taint analysis to detect synthetic zero values. When set to false, it performs regular DWT.
-         * @return                   Approximation and detail coefficients as result of the transform.
+         * @param  data     Input data.
+         * @param  wavelet  Wavelet to use.
+         * @param  padding  Signal extension mode.
+         * @param  mode     When set to 'regular' it performs the DWT on the input data. When set to 'taintAnalysisSyntheticity' it performs a taint analysis to detect synthetic zero values. When set to 'taintAnalysisContamination' it performs taint analysis to see hich values are affected by edge effects.
+         * @return          Approximation and detail coefficients as result of the transform, or results of the taint analysis (check the documentation).
          */
         DiscreteWavelets.dwt = function (data, wavelet, padding, mode) {
             if (padding === void 0) { padding = DEFAULT_PADDING_MODE; }
@@ -1081,7 +1081,7 @@
          *
          * @param  data      Input data.
          * @param  padWidths Widths of padding at front and back.
-         * @param  padding      Signal extension mode.
+         * @param  padding   Signal extension mode.
          * @return           Data with padding.
          */
         DiscreteWavelets.pad = function (data, padWidths, padding) {
