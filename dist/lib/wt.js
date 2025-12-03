@@ -68,19 +68,17 @@ var DiscreteWavelets = /** @class */ (function () {
         //const rows = cA.length;
         var cols = cA[0].length;
         // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
-        var bands = { LL: [], LH: [], HL: [], HH: [] };
+        var bands = {
+            LL: Array.from({ length: cols }, function () { return []; }),
+            LH: Array.from({ length: cols }, function () { return []; }),
+            HL: Array.from({ length: cols }, function () { return []; }),
+            HH: Array.from({ length: cols }, function () { return []; }),
+        };
         var _loop_1 = function (col) {
             var recA = cA.map(function (r) { return r[col]; }); // Effectively slices column col from cA[][]
             var _b = this_1.dwt(recA, wavelet, padding, mode), A1 = _b[0], D1 = _b[1]; // A1.length = D1.length = padding + cA.length / 2
             var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
             var _c = this_1.dwt(recD, wavelet, padding, mode), A2 = _c[0], D2 = _c[1]; // A2.length = D2.length = padding + cD.length / 2
-            // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
-            if (col == 0) {
-                bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
-                bands.LH = Array.from({ length: cols }, function () { return Array(D1.length).fill(0); });
-                bands.HL = Array.from({ length: cols }, function () { return Array(A2.length).fill(0); }); // A2.length = D2.length
-                bands.HH = Array.from({ length: cols }, function () { return Array(D2.length).fill(0); });
-            }
             // Assign column results to the bands
             bands.LL[col] = A1;
             bands.LH[col] = D1;

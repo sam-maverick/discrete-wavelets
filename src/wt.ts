@@ -145,21 +145,18 @@ export default class DiscreteWavelets {
       const cols = cA[0].length;
 
       // This initialization is necessary for later to be able to access bands.something; otherwise bands is undefined so that we cannot access sub-fields
-      let bands: DiscreteWavelets.WaveletBands2D = { LL: [], LH: [], HL: [], HH: [] };
+      let bands: DiscreteWavelets.WaveletBands2D = { 
+        LL: Array.from({ length: cols }, () => []), 
+        LH: Array.from({ length: cols }, () => []), 
+        HL: Array.from({ length: cols }, () => []), 
+        HH: Array.from({ length: cols }, () => []), 
+      };
 
       for (let col = 0; col < cols; col++) {
           const recA: number[] = cA.map(r => r[col]);  // Effectively slices column col from cA[][]
           const [A1, D1] = this.dwt(recA, wavelet, padding, mode);  // A1.length = D1.length = padding + cA.length / 2
           const recD: number[] = cD.map(r => r[col]);  // Effectively slices column col from cD[][]
           const [A2, D2] = this.dwt(recD, wavelet, padding, mode);  // A2.length = D2.length = padding + cD.length / 2
-
-          // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
-          if (col == 0) {
-              bands.LL = Array.from({ length: cols }, () => Array(A1.length).fill(0));  // A1.length = D1.length
-              bands.LH = Array.from({ length: cols }, () => Array(D1.length).fill(0));
-              bands.HL = Array.from({ length: cols }, () => Array(A2.length).fill(0));  // A2.length = D2.length
-              bands.HH = Array.from({ length: cols }, () => Array(D2.length).fill(0));
-          }
 
           // Assign column results to the bands
           bands.LL[col] = A1;
