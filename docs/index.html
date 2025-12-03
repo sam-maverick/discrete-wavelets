@@ -211,11 +211,11 @@
 <li><code>level</code> (<code>number|&#39;LOW|&#39;HIGH&#39;</code>): Either the decomposition level or the roundingOption for calculating number of decompositions via <a href="#maxLevel">maxLevel</a> or <a href="#maxLevel2">maxLevel2</a> function. Defaults to &#39;LOW&#39;.</li>
 </ul>
 <p><strong>Return</strong></p>
-<p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, syntheticityMask: DW.WaveletCoefficients2D }</code>:</p>
+<p><code>number[][]</code> or <code>{ coeffs: DW.WaveletCoefficients2D, syntheticityMask: DW.WaveletCoefficients2D, contaminationMask: DW.WaveletCoefficients2D }</code>:</p>
 <ul>
 <li><em><strong>number[][]</strong></em> and <em><strong>coeffs</strong></em> are the coefficients as result of the transform, for 1D and 2D respectively.</li>
-<li>In 2D, the <em><strong>syntheticityMask</strong></em> is a data structure with the same shape as coeffs, where a &#39;0&#39; means that it is a position that holds actual data, and a &#39;1&#39; means that the correspondiing value in coeffs for that position has a zero (or a near-zero, if there are precision errors) that resulted from the synthetic data introduced by the padding. Note that syntheticityMask depends on the shape (or, size) of the data, not the values of the data.
-In 1D, it returns a dummy value.</li>
+<li>In 2D, the <em><strong>syntheticityMask</strong></em> is a data structure with the same shape as coeffs, where a &#39;0&#39; means that it is a position that holds actual data, and a &#39;1&#39; means that the correspondiing value in coeffs for that position has a zero (or a near-zero, if there are precision errors) that resulted from the synthetic data introduced by the padding. Note that syntheticityMask depends on the shape (or, size) of the data, not the values of the data.</li>
+<li>In 2D, the <em><strong>contaminationMask</strong></em> is a data structure with the same shape as coeffs, where a &#39;0&#39; means that it is a position that holds a coefficient not affected by edge effects, and something greater than zero otherwise. When a coefficient is affected by edge effects, it becomes less meaningful because its value is calculated from less inputs. The number in contaminationMask indicates the number of inputs that have been missed as a result of the edge effects. For instance, if a coefficient is calculated as a function of inputs f(a,b,c,d) and for a certain coefficient position we have that a=b will always hold (as a result of the edge effect), then the contamination level is (at least) 1 because b is irrelevant. Note that syntheticityMask depends on the shape (or, size) of the data, not the values of the data.</li>
 </ul>
 <blockquote>
 <p>[!WARNING]</p>

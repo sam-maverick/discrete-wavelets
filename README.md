@@ -150,11 +150,11 @@ Wavelet decomposition. Transforms data by calculating coefficients from input da
 
 **Return**
 
-`number[][]` or `{ coeffs: DW.WaveletCoefficients2D, syntheticityMask: DW.WaveletCoefficients2D }`:
+`number[][]` or `{ coeffs: DW.WaveletCoefficients2D, syntheticityMask: DW.WaveletCoefficients2D, contaminationMask: DW.WaveletCoefficients2D }`:
 
 - ***number\[]\[]*** and ***coeffs*** are the coefficients as result of the transform, for 1D and 2D respectively.
 - In 2D, the ***syntheticityMask*** is a data structure with the same shape as coeffs, where a '0' means that it is a position that holds actual data, and a '1' means that the correspondiing value in coeffs for that position has a zero (or a near-zero, if there are precision errors) that resulted from the synthetic data introduced by the padding. Note that syntheticityMask depends on the shape (or, size) of the data, not the values of the data.
-  In 1D, it returns a dummy value.
+- In 2D, the ***contaminationMask*** is a data structure with the same shape as coeffs, where a '0' means that it is a position that holds a coefficient not affected by edge effects, and something greater than zero otherwise. When a coefficient is affected by edge effects, it becomes less meaningful because its value is calculated from less inputs. The number in contaminationMask indicates the number of inputs that have been missed as a result of the edge effects. For instance, if a coefficient is calculated as a function of inputs f(a,b,c,d) and for a certain coefficient position we have that a=b will always hold (as a result of the edge effect), then the contamination level is (at least) 1 because b is irrelevant. Note that syntheticityMask depends on the shape (or, size) of the data, not the values of the data.
 
 > [!WARNING]
 >
