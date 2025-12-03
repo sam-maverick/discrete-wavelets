@@ -688,9 +688,9 @@
             var bands = { LL: [], LH: [], HL: [], HH: [] };
             var _loop_1 = function (col) {
                 var recA = cA.map(function (r) { return r[col]; }); // Effectively slices column col from cA[][]
-                var _a = this_1.dwt(recA, wavelet, padding, mode), A1 = _a[0], D1 = _a[1]; // A1.length = D1.length = padding + cA.length / 2
+                var _b = this_1.dwt(recA, wavelet, padding, mode), A1 = _b[0], D1 = _b[1]; // A1.length = D1.length = padding + cA.length / 2
                 var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
-                var _b = this_1.dwt(recD, wavelet, padding, mode), A2 = _b[0], D2 = _b[1]; // A2.length = D2.length = padding + cD.length / 2
+                var _c = this_1.dwt(recD, wavelet, padding, mode), A2 = _c[0], D2 = _c[1]; // A2.length = D2.length = padding + cD.length / 2
                 // Initialize the bands as [][] on the first iteration, now that we know the result of WT.dwt() *with the padding*
                 if (col == 0) {
                     bands.LL = Array.from({ length: cols }, function () { return Array(A1.length).fill(0); }); // A1.length = D1.length
@@ -708,6 +708,11 @@
             for (var col = 0; col < cols; col++) {
                 _loop_1(col);
             }
+            // For correct matching of the coefficients with their meaning in the spatial domain
+            for (var _i = 0, _a = ['LL', 'LH', 'HL', 'HH']; _i < _a.length; _i++) {
+                var band = _a[_i];
+                bands[band] = this.transposeMatrix(bands[band]);
+            }
             return bands;
         };
         DiscreteWavelets.idwtRows = function (cA, cD, wavelet) {
@@ -720,15 +725,21 @@
             return result;
         };
         DiscreteWavelets.idwtCols = function (bands, wavelet) {
-            var trimmedLL = bands.LL.map(function (row) { return __spreadArray([], row, true); });
+            // For correct matching of the coefficients with their meaning in the spatial domain
+            var bandsT = { LL: [], LH: [], HL: [], HH: [] };
+            for (var _i = 0, _a = ['LL', 'LH', 'HL', 'HH']; _i < _a.length; _i++) {
+                var band = _a[_i];
+                bandsT[band] = this.transposeMatrix(bands[band]);
+            }
+            var trimmedLL = bandsT.LL.map(function (row) { return __spreadArray([], row, true); });
             // Undo the padding(s)
             // !!! Assuming that the decimation factor is 2
-            if (bands.LL.length > bands.LH.length) {
+            if (bandsT.LL.length > bandsT.LH.length) {
                 trimmedLL.pop();
             }
-            if (bands.LL[0].length > bands.LH[0].length) {
-                for (var _i = 0, trimmedLL_1 = trimmedLL; _i < trimmedLL_1.length; _i++) {
-                    var row = trimmedLL_1[_i];
+            if (bandsT.LL[0].length > bandsT.LH[0].length) {
+                for (var _b = 0, trimmedLL_1 = trimmedLL; _b < trimmedLL_1.length; _b++) {
+                    var row = trimmedLL_1[_b];
                     row.pop();
                 }
             }
@@ -737,8 +748,8 @@
             var cA = Array.from({ length: rows }, function () { return Array(cols).fill(0); });
             var cD = Array.from({ length: rows }, function () { return Array(cols).fill(0); });
             for (var col = 0; col < cols; col++) {
-                var recA = this.idwt(trimmedLL[col] /*approx*/, bands.LH[col] /*details*/, wavelet);
-                var recD = this.idwt(bands.HL[col] /*approx*/, bands.HH[col] /*details*/, wavelet);
+                var recA = this.idwt(trimmedLL[col] /*approx*/, bandsT.LH[col] /*details*/, wavelet);
+                var recD = this.idwt(bandsT.HL[col] /*approx*/, bandsT.HH[col] /*details*/, wavelet);
                 for (var r = 0; r < recA.length; r++) {
                     cA[r][col] = recA[r];
                     cD[r][col] = recD[r];
@@ -760,11 +771,6 @@
             if (mode === void 0) { mode = 'regular'; }
             var _a = this.dwtRows(data, wavelet, padding, mode), cA = _a.cA, cD = _a.cD;
             var bandsValues = this.dwtCols(cA, cD, wavelet, padding, mode);
-            // For correct matching of the coefficients with their meaning in the spatial domain:
-            for (var _i = 0, _b = ['LL', 'LH', 'HL', 'HH']; _i < _b.length; _i++) {
-                var band = _b[_i];
-                bandsValues[band] = this.transposeMatrix(bandsValues[band]);
-            }
             return bandsValues;
         };
         /**
@@ -844,12 +850,7 @@
          */
         DiscreteWavelets.idwt2 = function (approx, detail, wavelet) {
             var bandsValues = { LL: approx, LH: detail.LH, HL: detail.HL, HH: detail.HH };
-            // For correct matching of the coefficients with their meaning in the spatial domain:
-            for (var _i = 0, _a = ['LL', 'LH', 'HL', 'HH']; _i < _a.length; _i++) {
-                var band = _a[_i];
-                bandsValues[band] = this.transposeMatrix(bandsValues[band]);
-            }
-            var _b = this.idwtCols(bandsValues, wavelet), cA = _b.cA, cD = _b.cD;
+            var _a = this.idwtCols(bandsValues, wavelet), cA = _a.cA, cD = _a.cD;
             var data = this.idwtRows(cA, cD, wavelet);
             return data;
         };

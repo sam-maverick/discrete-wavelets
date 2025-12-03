@@ -167,6 +167,12 @@ export default class DiscreteWavelets {
           bands.HL[col] = A2;
           bands.HH[col] = D2;         
       }
+
+      // For correct matching of the coefficients with their meaning in the spatial domain
+      for (const band of ['LL', 'LH', 'HL', 'HH']) {
+        bands[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bands[band as keyof DiscreteWavelets.WaveletBands2D]);
+      }
+
       return bands;
   }
 
@@ -191,14 +197,20 @@ export default class DiscreteWavelets {
       wavelet: Wavelet,
   ): { cA: number[][], cD: number[][] } {
 
-      let trimmedLL = bands.LL.map(row => [...row]);
+      // For correct matching of the coefficients with their meaning in the spatial domain
+      let bandsT: DiscreteWavelets.WaveletBands2D = { LL: [], LH: [], HL: [], HH: [] };
+      for (const band of ['LL', 'LH', 'HL', 'HH']) {
+        bandsT[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bands[band as keyof DiscreteWavelets.WaveletBands2D]);
+      }
+
+      let trimmedLL = bandsT.LL.map(row => [...row]);
 
       // Undo the padding(s)
       // !!! Assuming that the decimation factor is 2
-      if (bands.LL.length > bands.LH.length) {
+      if (bandsT.LL.length > bandsT.LH.length) {
           trimmedLL.pop();
       }
-      if (bands.LL[0].length > bands.LH[0].length) {
+      if (bandsT.LL[0].length > bandsT.LH[0].length) {
           for (const row of trimmedLL) {
               row.pop();
           }
@@ -211,8 +223,8 @@ export default class DiscreteWavelets {
       const cD: number[][] = Array.from({ length: rows }, () => Array(cols).fill(0));
 
       for (let col = 0; col < cols; col++) {
-          const recA = this.idwt(trimmedLL[col]/*approx*/, bands.LH[col]/*details*/, wavelet);
-          const recD = this.idwt(bands.HL[col]/*approx*/, bands.HH[col]/*details*/, wavelet);
+          const recA = this.idwt(trimmedLL[col]/*approx*/, bandsT.LH[col]/*details*/, wavelet);
+          const recD = this.idwt(bandsT.HL[col]/*approx*/, bandsT.HH[col]/*details*/, wavelet);
 
           for (let r = 0; r < recA.length; r++) {
               cA[r][col] = recA[r];
@@ -240,10 +252,6 @@ export default class DiscreteWavelets {
   ): DiscreteWavelets.WaveletBands2D {
       const { cA, cD } = this.dwtRows(data, wavelet, padding, mode);
       const bandsValues = this.dwtCols(cA, cD, wavelet, padding, mode);
-      // For correct matching of the coefficients with their meaning in the spatial domain:
-      for (const band of ['LL', 'LH', 'HL', 'HH']) {
-        bandsValues[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
-      }
       return bandsValues;
   }
 
@@ -346,10 +354,6 @@ export default class DiscreteWavelets {
       wavelet: Wavelet,
   ): number[][] {
       const bandsValues: DiscreteWavelets.WaveletBands2D = { LL: approx, LH: detail.LH, HL:detail.HL, HH: detail.HH };
-      // For correct matching of the coefficients with their meaning in the spatial domain:
-      for (const band of ['LL', 'LH', 'HL', 'HH']) {
-        bandsValues[band as keyof DiscreteWavelets.WaveletBands2D] = this.transposeMatrix(bandsValues[band as keyof DiscreteWavelets.WaveletBands2D]);
-      }
       const { cA, cD } = this.idwtCols(bandsValues,  wavelet);
       let data = this.idwtRows(cA, cD, wavelet); 
       return data;
