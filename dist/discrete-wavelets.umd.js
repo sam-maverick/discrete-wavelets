@@ -746,8 +746,8 @@
             var cA = Array.from({ length: rows }, function () { return Array(cols).fill(0); });
             var cD = Array.from({ length: rows }, function () { return Array(cols).fill(0); });
             for (var col = 0; col < cols; col++) {
-                var recA = this.idwt(trimmedLL[col] /*approx*/, bandsT.LH[col] /*details*/, wavelet);
-                var recD = this.idwt(bandsT.HL[col] /*approx*/, bandsT.HH[col] /*details*/, wavelet);
+                var recA = this.idwt(trimmedLL[col] /*approx*/, bandsT.HL[col] /*details*/, wavelet);
+                var recD = this.idwt(bandsT.LH[col] /*approx*/, bandsT.HH[col] /*details*/, wavelet);
                 for (var r = 0; r < recA.length; r++) {
                     cA[r][col] = recA[r];
                     cD[r][col] = recD[r];

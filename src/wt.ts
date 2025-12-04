@@ -220,8 +220,8 @@ export default class DiscreteWavelets {
       const cD: number[][] = Array.from({ length: rows }, () => Array(cols).fill(0));
 
       for (let col = 0; col < cols; col++) {
-          const recA = this.idwt(trimmedLL[col]/*approx*/, bandsT.LH[col]/*details*/, wavelet);
-          const recD = this.idwt(bandsT.HL[col]/*approx*/, bandsT.HH[col]/*details*/, wavelet);
+          const recA = this.idwt(trimmedLL[col]/*approx*/, bandsT.HL[col]/*details*/, wavelet);
+          const recD = this.idwt(bandsT.LH[col]/*approx*/, bandsT.HH[col]/*details*/, wavelet);
 
           for (let r = 0; r < recA.length; r++) {
               cA[r][col] = recA[r];
