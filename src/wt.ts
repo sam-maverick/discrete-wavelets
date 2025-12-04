@@ -44,13 +44,14 @@ const DEFAULT_PADDING_MODE: PaddingMode = PADDING_MODES.symmetric;
 
 export namespace DiscreteWavelets {
   export interface WaveletCoefficients2D {
-      approximation: number[][];  // This is the LL band
-      details: { 
-          LH: number[][],
-          HL: number[][],
-          HH: number[][]
-      }[];  // Mind that this is an array of objects!
-      // Information of the original input size must be kept to reliably undo the padding in the last step of waverec2()
+      // Approximation iss is the LL band of the last decomposition.
+      approximation: number[][];
+      // Details consist of the LH,HL,HH bands of each decomposition level.
+      // Note that details.LL is not needed to reconstruct the data since it is redundant information 
+      // because it is covered in higher-decomposition levels. However, it is included as extra information.
+      details: WaveletBands2D[];  // Mind that this is an array of objects!
+      // Information of the original input size must be kept to reliably undo the 
+      // padding in the last step of waverec2().
       size: [number, number];
   }
 
@@ -294,7 +295,7 @@ export default class DiscreteWavelets {
       const coeffs: DiscreteWavelets.WaveletCoefficients2D = {
         // We need to initialize approximation:data, because there is the possibility that numLevels==0 
         approximation: data,  // Reminder: WaveletCoefficients2D['approximation'] is number[][]
-        details: [],  // Reminder: WaveletCoefficients2D['details'] variable types are an array of objects, where each object has 3 elements, and each element is a number[][]
+        details: [],  // Reminder: WaveletCoefficients2D['details'] variable types are an array of objects, where each object has 4 elements, and each element is a number[][]
         size: [rows,cols],
       }
 
@@ -325,11 +326,12 @@ export default class DiscreteWavelets {
           syntheticityMask.approximation = bandsSyntheticityMask.LL;
           contaminationMask.approximation = bandsContaminationMask.LL;
           // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
-          coeffs.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
-          syntheticityMask.details.push({ LH: bandsSyntheticityMask.LH, HL: bandsSyntheticityMask.HL, HH: bandsSyntheticityMask.HH });
-          contaminationMask.details.push({ LH: bandsContaminationMask.LH, HL: bandsContaminationMask.HL, HH: bandsContaminationMask.HH });
+          coeffs.details.push(bands);
+          syntheticityMask.details.push(bandsSyntheticityMask);
+          contaminationMask.details.push(bandsContaminationMask);
 
-          current = coeffs.approximation; // Recurse only on the LL band
+          // Recurse only on the LL band
+          current = coeffs.approximation;
           currentSyntheticityMask = syntheticityMask.approximation;
           currentContaminationMask = contaminationMask.approximation;
       }

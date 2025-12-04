@@ -5,11 +5,7 @@ import { Wavelet } from "./wavelets/wavelets";
 export declare namespace DiscreteWavelets {
     interface WaveletCoefficients2D {
         approximation: number[][];
-        details: {
-            LH: number[][];
-            HL: number[][];
-            HH: number[][];
-        }[];
+        details: WaveletBands2D[];
         size: [number, number];
     }
     interface WaveletBands2D {

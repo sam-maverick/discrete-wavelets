@@ -823,10 +823,11 @@ var DiscreteWavelets = /** @class */ (function () {
             syntheticityMask.approximation = bandsSyntheticityMask.LL;
             contaminationMask.approximation = bandsContaminationMask.LL;
             // We push this result to the matrix, so that details[0] will be the first-level decomposition and details[details.length-1] will be the last-level decomposition
-            coeffs.details.push({ LH: bands.LH, HL: bands.HL, HH: bands.HH });
-            syntheticityMask.details.push({ LH: bandsSyntheticityMask.LH, HL: bandsSyntheticityMask.HL, HH: bandsSyntheticityMask.HH });
-            contaminationMask.details.push({ LH: bandsContaminationMask.LH, HL: bandsContaminationMask.HL, HH: bandsContaminationMask.HH });
-            current = coeffs.approximation; // Recurse only on the LL band
+            coeffs.details.push(bands);
+            syntheticityMask.details.push(bandsSyntheticityMask);
+            contaminationMask.details.push(bandsContaminationMask);
+            // Recurse only on the LL band
+            current = coeffs.approximation;
             currentSyntheticityMask = syntheticityMask.approximation;
             currentContaminationMask = contaminationMask.approximation;
         }
