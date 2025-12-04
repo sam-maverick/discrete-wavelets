@@ -87,7 +87,7 @@ HH: number[][],
 ```
 // Approximation is the LL band of the last decomposition.
 approximation: number[][],
-// Details consist of the LH,HL,HH bands of each decomposition level.
+// Details consist of the bands of each decomposition level.
 // Note that details.LL is not needed to reconstruct the data since it is redundant information 
 // because it is covered in higher-decomposition levels. However, it is included as extra information.
 details: WaveletBands2D[],  // Mind that this is an array of objects!
