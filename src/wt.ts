@@ -158,10 +158,10 @@ export default class DiscreteWavelets {
           const recD: number[] = cD.map(r => r[col]);  // Effectively slices column col from cD[][]
           const [A2, D2] = this.dwt(recD, wavelet, padding, mode);  // A2.length = D2.length = padding + cD.length / 2
 
-          // Assign column results to the bands. Be careful with that - D1 is  LH, not HL.
+          // Assign column results to the bands.
           bands.LL[col] = A1;
-          bands.LH[col] = D1;
-          bands.HL[col] = A2;
+          bands.HL[col] = D1;
+          bands.LH[col] = A2;
           bands.HH[col] = D2;         
       }
 

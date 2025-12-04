@@ -79,10 +79,10 @@ var DiscreteWavelets = /** @class */ (function () {
             var _b = this_1.dwt(recA, wavelet, padding, mode), A1 = _b[0], D1 = _b[1]; // A1.length = D1.length = padding + cA.length / 2
             var recD = cD.map(function (r) { return r[col]; }); // Effectively slices column col from cD[][]
             var _c = this_1.dwt(recD, wavelet, padding, mode), A2 = _c[0], D2 = _c[1]; // A2.length = D2.length = padding + cD.length / 2
-            // Assign column results to the bands. Be careful with that - D1 is  LH, not HL.
+            // Assign column results to the bands.
             bands.LL[col] = A1;
-            bands.LH[col] = D1;
-            bands.HL[col] = A2;
+            bands.HL[col] = D1;
+            bands.LH[col] = A2;
             bands.HH[col] = D2;
         };
         var this_1 = this;
