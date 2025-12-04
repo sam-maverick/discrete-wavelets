@@ -70,23 +70,8 @@ The following `Wavelet` types are supported at the moment:
 
 The library uses the following interfaces:
 
-- [WaveletCoefficients2D](#WaveletCoefficients2D): The set of coefficients that result from the transformation, plus the original input dimensions
 - [WaveletBands2D](#WaveletBands2D): The four bands that result from a single-level decomposition.
-
-### WaveletCoefficients2D
-
-```
-approximation: number[][];  // This is the LL band
-details: { 
-  LH: number[][],
-  HL: number[][],
-  HH: number[][]
-}[];  // Mind that this is an array of objects!
-// Information of the original input size must be kept to reliably undo the padding 
-// in the last step of waverec2()
-size: [number, number];
-}
-```
+- [WaveletCoefficients2D](#WaveletCoefficients2D): The set of coefficients that result from the transformation, plus the original input dimensions.
 
 ### WaveletBands2D
 
@@ -95,6 +80,20 @@ LL: number[][],
 LH: number[][],
 HL: number[][],
 HH: number[][],
+```
+
+### WaveletCoefficients2D
+
+```
+// Approximation is the LL band of the last decomposition.
+approximation: number[][],
+// Details consist of the LH,HL,HH bands of each decomposition level.
+// Note that details.LL is not needed to reconstruct the data since it is redundant information 
+// because it is covered in higher-decomposition levels. However, it is included as extra information.
+details: WaveletBands2D[],  // Mind that this is an array of objects!
+// Information of the original input size must be kept to reliably undo the 
+// padding in the last step of waverec2().
+size: [number, number],
 ```
 
 
@@ -126,7 +125,7 @@ Single level Discrete Wavelet Transform.
 
 **Return**
 
-`number[][]` or `DW.WaveletBands2D`: Approximation and detail coefficients as result of the transform.
+`number[][]` or `DW.WaveletBands2D`: Approximation and detail coefficients as result of the transform in one decomposition step.
 
 **Example**
 
@@ -206,7 +205,7 @@ Wavelet reconstruction. Inverses a transform by calculating input data from coef
 
 > [!WARNING]
 >
-> In 1D, this function assumes that the shape of the original data is the same shape as `coeffs`. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary.
+> In 1D, this function assumes that the shape of the original data is the same shape as `coeffs`. If you want to be able to restore the original shape, you will have to store the original data size separately, and then trim the output of waverec accordingly, if necessary. This has not been "fixed", to preserve legacy behavior.
 > In 2D, `DW.WaveletCoefficients2D.size` is used to accurately restore the data with the original shape.
 
 **Arguments**

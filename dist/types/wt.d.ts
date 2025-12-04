@@ -3,16 +3,16 @@ export { Filters, Wavelet, WaveletBasis, WaveletType, } from './wavelets/wavelet
 import { PaddingMode, PaddingModes, PaddingWidths } from './padding/padding';
 import { Wavelet } from "./wavelets/wavelets";
 export declare namespace DiscreteWavelets {
-    interface WaveletCoefficients2D {
-        approximation: number[][];
-        details: WaveletBands2D[];
-        size: [number, number];
-    }
     interface WaveletBands2D {
         LL: number[][];
         LH: number[][];
         HL: number[][];
         HH: number[][];
+    }
+    interface WaveletCoefficients2D {
+        approximation: number[][];
+        details: WaveletBands2D[];
+        size: [number, number];
     }
     type DecompositionMode = 'regular' | 'taintAnalysisSyntheticity' | 'taintAnalysisContamination';
 }

@@ -43,25 +43,23 @@ import {
 const DEFAULT_PADDING_MODE: PaddingMode = PADDING_MODES.symmetric;
 
 export namespace DiscreteWavelets {
-  export interface WaveletCoefficients2D {
-      // Approximation iss is the LL band of the last decomposition.
-      approximation: number[][];
-      // Details consist of the LH,HL,HH bands of each decomposition level.
-      // Note that details.LL is not needed to reconstruct the data since it is redundant information 
-      // because it is covered in higher-decomposition levels. However, it is included as extra information.
-      details: WaveletBands2D[];  // Mind that this is an array of objects!
-      // Information of the original input size must be kept to reliably undo the 
-      // padding in the last step of waverec2().
-      size: [number, number];
-  }
-
   export interface WaveletBands2D {
       LL: number[][],
       LH: number[][],
       HL: number[][],
       HH: number[][],
   }
-
+  export interface WaveletCoefficients2D {
+      // Approximation is the LL band of the last decomposition.
+      approximation: number[][],
+      // Details consist of the bands of each decomposition level.
+      // Note that details.LL is not needed to reconstruct the data since it is redundant information 
+      // because it is covered in higher-decomposition levels. However, it is included as extra information.
+      details: WaveletBands2D[],  // Mind that this is an array of objects!
+      // Information of the original input size must be kept to reliably undo the 
+      // padding in the last step of waverec2().
+      size: [number, number],
+  }
   export type DecompositionMode = 'regular'|'taintAnalysisSyntheticity'|'taintAnalysisContamination';  
 }
 
