@@ -2,8 +2,7 @@
 <a href="#discrete-wavelets" id="discrete-wavelets" style="color: inherit; text-decoration: none;">
   <h1>Discrete Wavelets</h1>
 </a>
-<p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web, for one-dimensional and two-dimensional inputs. This project is a fork of <a href="https://github.com/Symmetronic/discrete-wavelets">https://github.com/Symmetronic/discrete-wavelets</a>.</p>
-<p>It performs transform to padded data only, in other words, a padding mode is mandatory. See below the supported padding modes.</p>
+<p>A <a href="https://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> library for the web, for one-dimensional (1D) and two-dimensional (2D) inputs. This project is a fork of <a href="https://github.com/Symmetronic/discrete-wavelets">https://github.com/Symmetronic/discrete-wavelets</a>.</p>
 
 <a href="#importing-this-library" id="importing-this-library" style="color: inherit; text-decoration: none;">
   <h2>Importing this library</h2>
@@ -178,7 +177,7 @@
 <li>Other<ul>
 <li><a href="#energy">energy</a>: Calculates the energy as sum of squares of an array of data or coefficients.</li>
 <li><a href="#maxLevel">maxLevel</a> and <a href="#maxLevel2">maxLevel2</a>: Determines the maximum level of useful decomposition.</li>
-<li><a href="#pad">pad</a>: Extends a signal with a given padding mode.</li>
+<li><a href="#pad">pad</a>: Extends a 1D signal with a given padding mode.</li>
 </ul>
 </li>
 </ul>
@@ -304,7 +303,7 @@ Defaults to true.</li>
 <a href="#pad" id="pad" style="color: inherit; text-decoration: none;">
   <h3>pad</h3>
 </a>
-<p>Extends a signal with a given padding mode.</p>
+<p>Extends a 1D signal with a given padding mode.</p>
 <p><strong>Arguments</strong></p>
 <ul>
 <li><code>data</code> (<code>number[]</code>): Input data.</li>

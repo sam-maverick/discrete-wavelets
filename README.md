@@ -1,8 +1,6 @@
 # Discrete Wavelets
 
-A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web, for one-dimensional and two-dimensional inputs. This project is a fork of [https://github.com/Symmetronic/discrete-wavelets](https://github.com/Symmetronic/discrete-wavelets).
-
-It performs transform to padded data only, in other words, a padding mode is mandatory. See below the supported padding modes.
+A [Discrete Wavelet Transform (DWT)](https://en.wikipedia.org/wiki/Discrete_wavelet_transform) library for the web, for one-dimensional (1D) and two-dimensional (2D) inputs. This project is a fork of [https://github.com/Symmetronic/discrete-wavelets](https://github.com/Symmetronic/discrete-wavelets).
 
 
 
@@ -111,7 +109,7 @@ The library offers the functions below. A '2' at the end of a function name mean
 - Other
   - [energy](#energy): Calculates the energy as sum of squares of an array of data or coefficients.
   - [maxLevel](#maxLevel) and [maxLevel2](#maxLevel2): Determines the maximum level of useful decomposition.
-  - [pad](#pad): Extends a signal with a given padding mode.
+  - [pad](#pad): Extends a 1D signal with a given padding mode.
 
 ### dwt and dwt2
 
@@ -287,7 +285,7 @@ console.log(maxLevel);
 
 ### pad
 
-Extends a signal with a given padding mode.
+Extends a 1D signal with a given padding mode.
 
 **Arguments**
 
